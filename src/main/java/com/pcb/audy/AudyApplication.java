@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AudyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AudyApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(AudyApplication.class, args);
+    }
 }
