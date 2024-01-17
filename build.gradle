@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'com.diffplug.spotless' version '6.11.0'
 }
 
 group = 'com.pcb.audy'
@@ -35,6 +36,24 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
 }
+
+spotless {
+	java {
+		// 사용하지 않는 import 제거
+		removeUnusedImports()
+		// 구글 자바 포맷 적용
+		googleJavaFormat()
+		indentWithTabs(2)
+		indentWithSpaces(4)
+		// 공백 제거
+		trimTrailingWhitespace()
+		// 끝부분 New Line 처리
+		endWithNewline()
+	}
+}
+
+// 의존성을 설정해줌 test 끝나고 spotlessjava 수행되도록
+tasks.named("spotlessJava").configure { dependsOn("compileTestJava") }
 
 tasks.named('test') {
 	useJUnitPlatform()
