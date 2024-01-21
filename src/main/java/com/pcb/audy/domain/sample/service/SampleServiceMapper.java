@@ -1,15 +1,13 @@
 package com.pcb.audy.domain.sample.service;
 
-// import org.mapstruct.Mapper;
-// import org.mapstruct.factory.Mappers;
-
 import com.pcb.audy.domain.sample.dto.response.SampleGetRes;
 import com.pcb.audy.domain.sample.dto.response.SampleSaveRes;
 import com.pcb.audy.domain.sample.entity.Sample;
 import java.util.List;
+import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-// @Mapper
+@Mapper
 public interface SampleServiceMapper {
 
     SampleServiceMapper INSTANCE = Mappers.getMapper(SampleServiceMapper.class);
