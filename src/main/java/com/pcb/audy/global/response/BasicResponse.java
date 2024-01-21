@@ -16,13 +16,6 @@ public class BasicResponse<T> implements Serializable {
     private final String message;
     private final Object data;
 
-    public static <T> BasicResponse<T> success() {
-        return BasicResponse.<T>builder()
-                .code(ResultCode.SUCCESS.getCode())
-                .message(ResultCode.SUCCESS.getMessage())
-                .build();
-    }
-
     public static <T> BasicResponse<T> success(T data) {
         return BasicResponse.<T>builder()
                 .code(ResultCode.SUCCESS.getCode())
