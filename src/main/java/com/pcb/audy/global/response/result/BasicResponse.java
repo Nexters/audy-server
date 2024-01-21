@@ -1,12 +1,11 @@
 package com.pcb.audy.global.response.result;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import java.io.Serializable;
 
 @Getter
 @Builder
@@ -26,6 +25,7 @@ public class BasicResponse<T> implements Serializable {
                 .message(ResultCode.SUCCESS.getMessage())
                 .build();
     }
+
     public static <T> BasicResponse<T> success(T data) {
         return BasicResponse.<T>builder()
                 .status(ResultCode.SUCCESS.getStatus())
@@ -34,5 +34,4 @@ public class BasicResponse<T> implements Serializable {
                 .data(data)
                 .build();
     }
-
 }

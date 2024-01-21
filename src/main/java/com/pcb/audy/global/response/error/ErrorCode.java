@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "알 수 없는 에러가 발생했습니다.");
 
-    final private HttpStatus status;
-    final private String errorCode;
-    final private String message;
+    private final HttpStatus status;
+    private final String errorCode;
+    private final String message;
 }
