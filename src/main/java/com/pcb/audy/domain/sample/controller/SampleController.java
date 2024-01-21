@@ -5,12 +5,12 @@ import com.pcb.audy.domain.sample.dto.response.SampleGetRes;
 import com.pcb.audy.domain.sample.dto.response.SampleGetResList;
 import com.pcb.audy.domain.sample.dto.response.SampleSaveRes;
 import com.pcb.audy.domain.sample.service.SampleService;
-import com.pcb.audy.global.response.result.BasicResponse;
+import com.pcb.audy.global.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/sample")
+@RequestMapping("/v1/samples")
 @RequiredArgsConstructor
 public class SampleController {
 

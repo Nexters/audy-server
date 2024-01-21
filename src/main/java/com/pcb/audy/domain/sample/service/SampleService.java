@@ -6,10 +6,10 @@ import com.pcb.audy.domain.sample.dto.response.SampleGetResList;
 import com.pcb.audy.domain.sample.dto.response.SampleSaveRes;
 import com.pcb.audy.domain.sample.entity.Sample;
 import com.pcb.audy.domain.sample.respository.SampleRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public class SampleService {
                                 .build()));
     }
 
+    @Transactional(readOnly = true)
     public SampleGetResList getAllSamples() {
         List<SampleGetRes> sampleGetReses =
                 SampleServiceMapper.INSTANCE.toSampleGetReses(sampleRepository.findAll());
@@ -36,6 +37,7 @@ public class SampleService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public SampleGetRes getSample(Long sampleId) {
         Sample sample = sampleRepository.findBySampleId(sampleId);
         // SampleValidator.validate(sample);
