@@ -47,9 +47,9 @@ public class BaseMvcTest {
                         .apply(
                                 MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
                                         .uris()
-                                        .withScheme("https")
-                                        .withHost("alpha.whenwheres.com")
-                                        .withPort(443)
+                                        .withScheme("http")
+                                        .withHost("localhost")
+                                        .withPort(8080)
                                         .and()
                                         .snippets()
                                         .withDefaults(
