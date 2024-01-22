@@ -35,7 +35,7 @@ class SampleControllerTest extends BaseMvcTest {
         when(sampleService.saveSample(any())).thenReturn(sampleSaveRes);
         this.mockMvc
                 .perform(
-                        post("/v1/sample")
+                        post("/v1/samples")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(sampleSaveReq)))
                 .andDo(print())
@@ -54,6 +54,6 @@ class SampleControllerTest extends BaseMvcTest {
                 SampleGetResList.builder().sampleGetReses(List.of(sampleGetRes)).total(1).build();
 
         when(sampleService.getAllSamples()).thenReturn(sampleGetResList);
-        this.mockMvc.perform(get("/v1/sample")).andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(get("/v1/samples")).andDo(print()).andExpect(status().isOk());
     }
 }
