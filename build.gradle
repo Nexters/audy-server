@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'com.diffplug.spotless' version '6.11.0'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com.pcb.audy'
@@ -13,6 +14,7 @@ java {
 }
 
 configurations {
+	asciidoctorExtensions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -37,26 +39,53 @@ dependencies {
 //	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'capital.scalable:spring-auto-restdocs-core:2.0.11'
 }
 
 spotless {
 	java {
-		// 사용하지 않는 import 제거
 		removeUnusedImports()
-		// 구글 자바 포맷 적용
 		googleJavaFormat()
 		indentWithTabs(2)
 		indentWithSpaces(4)
-		// 공백 제거
 		trimTrailingWhitespace()
-		// 끝부분 New Line 처리
 		endWithNewline()
 	}
 }
 
-// 의존성을 설정해줌 test 끝나고 spotlessjava 수행되도록
 tasks.named("spotlessJava").configure { dependsOn("compileTestJava") }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+asciidoctor {
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExtensions'
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+bootJar {
+	dependsOn asciidoctor
+	copy {
+		from asciidoctor.outputDir
+		into "src/main/resources/static/docs"
+	}
+}
+
