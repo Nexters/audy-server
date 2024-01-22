@@ -25,6 +25,7 @@ public class User extends BaseEntity {
     private Long userId;
 
     private String oauthId;
+    private String email;
     private String username;
 
     @Enumerated(EnumType.STRING)
@@ -39,12 +40,14 @@ public class User extends BaseEntity {
     private User(
             Long userId,
             String oauthId,
+            String email,
             String username,
             Authority authority,
             Social social,
             String imageUrl) {
         this.userId = userId;
         this.oauthId = oauthId;
+        this.email = email;
         this.username = username;
         this.authority = authority;
         this.social = social;

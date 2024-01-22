@@ -26,10 +26,11 @@ public class Pin extends BaseEntity {
     private Long pinId;
 
     private String pinName;
+    private String originName;
     private Double latitude;
     private Double longitude;
     private String address;
-    private Double sequence;
+    private Integer sequence;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "courseId")
@@ -39,13 +40,15 @@ public class Pin extends BaseEntity {
     private Pin(
             Long pinId,
             String pinName,
+            String originName,
             Double latitude,
             Double longitude,
             String address,
-            Double sequence,
+            Integer sequence,
             Course course) {
         this.pinId = pinId;
         this.pinName = pinName;
+        this.originName = originName;
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
