@@ -6,60 +6,50 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
-    private final String TOKEN_TYPE = "Bearer ";
+
+    public static final String ACCESS_TOKEN_HEADER = "Authorization";
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
     private final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;
     private final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
-    private final Key key;
+    private Key key;
 
-    public JwtUtils() {
+    @PostConstruct
+    public void init() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public AccessToken getAccessToken(String email) {
-        String accessToken = Jwts.builder()
-            .setSubject("accessToken")
-            .claim("email", email)
-            .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+        String accessToken =
+                Jwts.builder()
+                        .setSubject("accessToken")
+                        .claim("email", email)
+                        .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                        .signWith(key, SignatureAlgorithm.HS256)
+                        .compact();
 
-        return AccessToken.builder()
-            .token(accessToken)
-            .expireTime(ACCESS_TOKEN_EXPIRE_TIME)
-            .build();
+        return AccessToken.builder().token(accessToken).expireTime(ACCESS_TOKEN_EXPIRE_TIME).build();
     }
 
     public RefreshToken getRefreshToken(String email) {
-        String refreshToken = Jwts.builder()
-            .setSubject("refreshToken")
-            .claim("email", email)
-            .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+        String refreshToken =
+                Jwts.builder()
+                        .setSubject("refreshToken")
+                        .claim("email", email)
+                        .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
+                        .signWith(key, SignatureAlgorithm.HS256)
+                        .compact();
 
-        return RefreshToken.builder()
-            .token(refreshToken)
-            .expireTime(REFRESH_TOKEN_EXPIRE_TIME)
-            .build();
-    }
-
-    public String getOauthId(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("email").toString();
-    }
-
-    public Date getExpiration(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration();
+        return RefreshToken.builder().token(refreshToken).expireTime(REFRESH_TOKEN_EXPIRE_TIME).build();
     }
 }

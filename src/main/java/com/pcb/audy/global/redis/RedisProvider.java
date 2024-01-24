@@ -1,8 +1,5 @@
 package com.pcb.audy.global.redis;
 
-import static java.lang.Boolean.TRUE;
-
-import com.pcb.audy.global.jwt.tokens.RefreshToken;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
