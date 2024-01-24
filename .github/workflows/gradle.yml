@@ -1,0 +1,104 @@
+  # This workflow uses actions that are not certified by GitHub.
+  # They are provided by a third-party and are governed by
+  # separate terms of service, privacy policy, and support
+  # documentation.
+  # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+  # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+  name: CICD for audy server
+
+  on:
+    push:
+      branches: [ "develop" ]
+
+  jobs:
+    build:
+      name: Build
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Set up JDK 17
+          uses: actions/setup-java@v3
+          with:
+            java-version: '17'
+            distribution: 'corretto'
+
+        - name: make application-prod.yml
+          if: contains(github.ref, 'develop')
+          run: |
+            mkdir -p ./src/main/resources
+            cd ./src/main/resources
+            touch ./application.yml
+            echo "${{ secrets.APPLICATION }}" > ./application.yml
+          shell: bash
+
+        - name: Grant execute permission for gradlew
+          run: chmod +x gradlew
+
+        - name: Build with Gradle
+          run: ./gradlew clean build --stacktrace
+          shell: bash
+
+        - name: Archive artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: restdocs
+            path: build/docs/asciidoc
+
+        - name: Docker build & push to prod
+          if: contains(github.ref, 'develop')
+          run: |
+            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker build -t audy -f ./Dockerfile .
+            docker tag audy:latest ${{ secrets.DOCKER_USER }}/audy-be:latest
+            docker push ${{ secrets.DOCKER_USER }}/audy-be:latest
+
+    pull:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Deploy to prod
+          if: contains(github.ref, 'develop')
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST_NAME }}
+            username: ${{ secrets.EC2_USERNAME }}
+            key: ${{ secrets.AWS_PRIVATE_KEY }}
+            port: ${{ secrets.AWS_PORT }}
+            script: |
+              docker pull ${{ secrets.DOCKER_USER }}/audy-be:latest
+              docker stop audy-be
+              docker rm audy-be
+              docker run -d --network audy-be --name audy-be -p 8080:8080 ${{ secrets.DOCKER_USER }}/audy-be
+              if docker images -f "dangling=true" -q | grep . > /dev/null; then
+                docker rmi $(docker images -f "dangling=true" -q)
+              fi
+
+    upload_docs:
+      name: Connect server s3 and cloudfront
+      needs: build
+      runs-on: ubuntu-latest
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-northeast-2
+      steps:
+        - name: Download artifacts
+          uses: actions/download-artifact@v2
+          with:
+            name: restdocs
+
+        - name: Upload binary to S3 bucket
+          uses: jakejarvis/s3-sync-action@master
+          env:
+            AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_NAME }}
+            SOURCE_DIR: .
+
+        - name: Invalidate cache CloudFront
+          uses: chetan/invalidate-cloudfront-action@master
+          env:
+            DISTRIBUTION: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+            PATHS: '/*'
+          continue-on-error: true
