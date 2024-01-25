@@ -9,5 +9,5 @@ public enum Authority {
     ADMIN("ROLE_ADMIN"),
     USER("ROLE_USER");
 
-    private final String authority;
+    private final String value;
 }
