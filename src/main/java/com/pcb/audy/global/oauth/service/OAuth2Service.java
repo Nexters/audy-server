@@ -5,9 +5,11 @@ import static com.pcb.audy.global.meta.Authority.USER;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.auth.PrincipalDetails;
+import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Social;
 import com.pcb.audy.global.oauth.info.OAuth2UserInfo;
 import com.pcb.audy.global.oauth.info.OAuth2UserInfoFactory;
+import com.pcb.audy.global.response.ResultCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -29,7 +31,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         try {
             return process(oAuth2UserRequest, oAuth2User);
         } catch (Exception e) {
-            throw new InternalAuthenticationServiceException(e.getMessage());
+            throw new GlobalException(ResultCode.INTERNAL_SERVER_ERROR);
         }
     }
 
