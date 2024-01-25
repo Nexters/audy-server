@@ -11,7 +11,6 @@ import com.pcb.audy.global.oauth.info.OAuth2UserInfo;
 import com.pcb.audy.global.oauth.info.OAuth2UserInfoFactory;
 import com.pcb.audy.global.response.ResultCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
