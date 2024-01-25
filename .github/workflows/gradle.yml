@@ -25,7 +25,7 @@
             java-version: '17'
             distribution: 'corretto'
 
-        - name: make application-prod.yml
+        - name: make application.yml
           if: contains(github.ref, 'develop')
           run: |
             mkdir -p ./src/main/resources
@@ -69,6 +69,7 @@
             port: ${{ secrets.AWS_PORT }}
             script: |
               docker pull ${{ secrets.DOCKER_USER }}/audy-be:latest
+              docker-compose up -d
               docker stop audy-be
               docker rm audy-be
               docker run -d --network audy-be --name audy-be -p 8080:8080 ${{ secrets.DOCKER_USER }}/audy-be
