@@ -35,7 +35,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User, CredentialsCon
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(user.getAuthority()::getAuthority);
+        return List.of(user.getAuthority()::getValue);
     }
 
     @Override
