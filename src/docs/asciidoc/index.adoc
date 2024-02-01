@@ -22,3 +22,7 @@ Audy API 명세서
 
 include::{snippets}/sample-controller-test/샘플_저장/auto-section.adoc[]
 include::{snippets}/sample-controller-test/샘플_전체_조회/auto-section.adoc[]
+
+== user API
+
+include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
