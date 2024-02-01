@@ -29,4 +29,17 @@ class UserRepositoryTest implements UserTest {
         // then
         assertThat(user).isEqualTo(savedUser);
     }
+
+    @Test
+    @DisplayName("email로 유저 조회 테스트")
+    void email_유저_조회() {
+        // given
+        User savedUser = userRepository.save(TEST_USER);
+
+        // when
+        User user = userRepository.findByEmail(TEST_USER_EMAIL);
+
+        // then
+        assertThat(user).isEqualTo(savedUser);
+    }
 }
