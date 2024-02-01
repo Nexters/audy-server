@@ -12,6 +12,7 @@ public enum ResultCode {
     // 실패
     INTERNAL_SERVER_ERROR(1000, "알 수 없는 에러가 발생했습니다."),
     UNKNOWN_SOCIAL(1001, "알 수 없는 소셜입니다."),
+    INVALID_TOKEN(1002, "유효하지 않은 토큰입니다."),
 
     NOT_FOUND_USER(2000, "유저를 찾을 수 없습니다.");
 

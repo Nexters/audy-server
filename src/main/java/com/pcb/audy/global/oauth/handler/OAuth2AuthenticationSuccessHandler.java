@@ -1,7 +1,9 @@
 package com.pcb.audy.global.oauth.handler;
 
 import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_HEADER;
+import static com.pcb.audy.global.jwt.JwtUtils.KEY_PREFIX;
 import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_HEADER;
+import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.global.auth.PrincipalDetails;
@@ -29,8 +31,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtUtils jwtUtils;
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
-    private final String TOKEN_TYPE = "Bearer ";
-    private final String KEY_PREFIX = "jwt:";
 
     @Override
     public void onAuthenticationSuccess(
