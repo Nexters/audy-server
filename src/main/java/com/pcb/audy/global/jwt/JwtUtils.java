@@ -19,6 +19,8 @@ public class JwtUtils {
 
     public static final String ACCESS_TOKEN_HEADER = "Authorization";
     public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
+    public static final String TOKEN_TYPE = "Bearer ";
+    public static final String KEY_PREFIX = "jwt:";
     private final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;
     private final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
     private Key key;
