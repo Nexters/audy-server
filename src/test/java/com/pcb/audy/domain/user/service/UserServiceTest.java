@@ -35,6 +35,6 @@ class UserServiceTest implements UserTest {
         verify(userRepository).findByUserId(any());
         assertThat(userGetRes.getEmail()).isEqualTo(TEST_USER_EMAIL);
         assertThat(userGetRes.getUsername()).isEqualTo(TEST_USER_NAME);
-        assertThat(userGetRes.getImageUrl()).isEqualTo(TEST_USER_PROFILE_URL);
+        assertThat(userGetRes.getImageUrl()).isEqualTo(TEST_USER_IMAGE_URL);
     }
 }

@@ -11,7 +11,7 @@ public interface UserTest {
     String TEST_OAUTH_ID = "oauthId";
     String TEST_USER_NAME = "username";
     String TEST_USER_EMAIL = "username@gmail.com";
-    String TEST_USER_PROFILE_URL = "imageUrl";
+    String TEST_USER_IMAGE_URL = "imageUrl";
 
     User TEST_USER =
             User.builder()
@@ -21,6 +21,6 @@ public interface UserTest {
                     .username(TEST_USER_NAME)
                     .authority(USER)
                     .social(KAKAO)
-                    .imageUrl(TEST_USER_PROFILE_URL)
+                    .imageUrl(TEST_USER_IMAGE_URL)
                     .build();
 }
