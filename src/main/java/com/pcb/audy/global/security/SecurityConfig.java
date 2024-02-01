@@ -41,6 +41,13 @@ public class SecurityConfig {
                 .sessionManagement(
                         (sessionManagement) ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        (authorizationHttpRequests) ->
+                                authorizationHttpRequests
+                                        .requestMatchers("/oauth2/**")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
                 .addFilterBefore(authorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(
                         oauth2LoginConfigurer ->
