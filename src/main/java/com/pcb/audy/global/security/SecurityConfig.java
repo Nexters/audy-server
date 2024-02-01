@@ -1,6 +1,8 @@
 package com.pcb.audy.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pcb.audy.domain.user.repository.UserRepository;
+import com.pcb.audy.global.jwt.AuthorizationFilter;
 import com.pcb.audy.global.jwt.JwtUtils;
 import com.pcb.audy.global.oauth.handler.OAuth2AuthenticationFailHandler;
 import com.pcb.audy.global.oauth.handler.OAuth2AuthenticationSuccessHandler;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,6 +29,7 @@ public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +41,7 @@ public class SecurityConfig {
                 .sessionManagement(
                         (sessionManagement) ->
                                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(authorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(
                         oauth2LoginConfigurer ->
                                 oauth2LoginConfigurer
@@ -45,9 +50,13 @@ public class SecurityConfig {
                                         .userInfoEndpoint(
                                                 userInfoEndpointConfig ->
                                                         userInfoEndpointConfig.userService(oAuth2Service)));
-        // TODO add authorization filter
 
         return http.build();
+    }
+
+    @Bean
+    public AuthorizationFilter authorizationFilter() {
+        return new AuthorizationFilter(jwtUtils, redisProvider, userRepository);
     }
 
     @Bean
