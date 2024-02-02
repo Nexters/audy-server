@@ -51,6 +51,9 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	testImplementation 'com.h2database:h2:2.1.214'
+	compileOnly('com.h2database:h2:2.1.214')
 }
 
 spotless {
