@@ -47,9 +47,9 @@ public class BaseMvcTest {
                         .apply(
                                 MockMvcRestDocumentation.documentationConfiguration(restDocumentation)
                                         .uris()
-                                        .withScheme("http")
-                                        .withHost("localhost")
-                                        .withPort(8080)
+                                        .withScheme("https")
+                                        .withHost("api.audy-gakka.com")
+                                        .withPort(443)
                                         .and()
                                         .snippets()
                                         .withDefaults(
