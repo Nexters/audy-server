@@ -14,7 +14,9 @@ public enum ResultCode {
     UNKNOWN_SOCIAL(1001, "알 수 없는 소셜입니다."),
     INVALID_TOKEN(1002, "유효하지 않은 토큰입니다."),
 
-    NOT_FOUND_USER(2000, "유저를 찾을 수 없습니다.");
+    NOT_FOUND_USER(2000, "유저를 찾을 수 없습니다."),
+
+    NOT_FOUND_COURSE(3000, "코스를 찾을 수 없습니다.");
 
     private Integer code;
     private String message;
