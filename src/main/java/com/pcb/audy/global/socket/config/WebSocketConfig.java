@@ -1,6 +1,6 @@
-package com.pcb.audy.domain.socket.config;
+package com.pcb.audy.global.socket.config;
 
-import com.pcb.audy.domain.socket.handler.SocketHandler;
+import com.pcb.audy.global.socket.handler.SocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
