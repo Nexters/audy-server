@@ -22,12 +22,13 @@ public class SocketHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        String authorization = accessor.getFirstNativeHeader("Authorization");
-        String token = authorization.replace("Bearer ", "");
+        String authorization = accessor.getFirstNativeHeader(JwtUtils.ACCESS_TOKEN_HEADER);
+        String token = authorization.replace(JwtUtils.TOKEN_TYPE, "");
 
-        if (accessor.getCommand() == StompCommand.CONNECT) {
+        if (accessor.getCommand().equals(StompCommand.CONNECT)) {
             if (jwtUtils.getEmail(token) == null) {
-                throw new GlobalException(INVALID_TOKEN);
+                // throw new GlobalException(INVALID_TOKEN);
+                // socket Errorhandler 생성 예정
             }
         }
 
