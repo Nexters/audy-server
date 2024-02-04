@@ -10,7 +10,7 @@ import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.jwt.JwtUtils;
 import com.pcb.audy.global.jwt.tokens.AccessToken;
 import com.pcb.audy.global.jwt.tokens.RefreshToken;
-import com.pcb.audy.global.oauth.dto.response.OAuth2Res;
+import com.pcb.audy.global.oauth.service.OAuth2ServiceMapper;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.response.BasicResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,10 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         AccessToken accessToken = jwtUtils.getAccessToken(principalDetails.getUser().getEmail());
         RefreshToken refreshToken = jwtUtils.getRefreshToken(principalDetails.getUser().getEmail());
         registerTokens(response, principalDetails.getUser().getEmail(), accessToken, refreshToken);
-        settingResponse(response, BasicResponse.success(new OAuth2Res()));
+        settingResponse(
+                response,
+                BasicResponse.success(
+                        OAuth2ServiceMapper.INSTANCE.toOAuth2Res(principalDetails.getUser())));
     }
 
     private void registerTokens(
