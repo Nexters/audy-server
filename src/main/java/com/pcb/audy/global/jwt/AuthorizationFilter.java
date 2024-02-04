@@ -16,10 +16,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
@@ -27,6 +31,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final RedisProvider redisProvider;
     private final UserRepository userRepository;
+
+    private static final List<RequestMatcher> whiteList =
+            List.of(new AntPathRequestMatcher("/oauth2/**", HttpMethod.POST.name()));
 
     @Override
     protected void doFilterInternal(
@@ -85,5 +92,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private static boolean isExistHeader(String header) {
         return header != null && header.startsWith(TOKEN_TYPE);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return whiteList.stream().anyMatch(url -> url.matches(request));
     }
 }
