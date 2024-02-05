@@ -1,6 +1,7 @@
 package com.pcb.audy.global.redis;
 
 import static java.lang.Boolean.TRUE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -38,5 +39,21 @@ class RedisProviderTest implements RedisTest {
         verify(redisTemplate).delete(anyString());
         verify(redisTemplate).opsForValue();
         verify(valueOperations).set(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("데이터 조회 테스트")
+    void 데이터_조회() {
+        // given
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(any())).thenReturn(TEST_VALUE);
+
+        // when
+        String value = (String) redisProvider.get(TEST_KEY);
+
+        // then
+        verify(redisTemplate).opsForValue();
+        verify(valueOperations).get(any());
+        assertThat(value).isEqualTo(TEST_VALUE);
     }
 }
