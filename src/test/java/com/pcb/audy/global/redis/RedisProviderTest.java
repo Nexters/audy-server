@@ -68,4 +68,18 @@ class RedisProviderTest implements RedisTest {
         // then
         verify(redisTemplate).delete(anyString());
     }
+
+    @Test
+    @DisplayName("데이터 존재 확인 테스트")
+    void 데이터_존재_확인() {
+        // given
+        when(redisTemplate.hasKey(any())).thenReturn(TRUE);
+
+        // when
+        Boolean result = redisProvider.hasKey(TEST_KEY);
+
+        // then
+        verify(redisTemplate).hasKey(any());
+        assertThat(result).isEqualTo(TRUE);
+    }
 }
