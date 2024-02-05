@@ -4,7 +4,6 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.model.BaseEntity;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.global.meta.Role;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

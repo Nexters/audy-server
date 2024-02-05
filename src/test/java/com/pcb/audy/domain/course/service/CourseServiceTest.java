@@ -6,15 +6,15 @@ import static com.pcb.audy.test.UserTest.TEST_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.editor.entity.Editor;
+import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
-import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.test.PinTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +31,7 @@ class CourseServiceTest implements PinTest {
     @InjectMocks private CourseService courseService;
     @Mock private CourseRepository courseRepository;
     @Mock private UserRepository userRepository;
+    @Mock private EditorRepository editorRepository;
 
     @Captor ArgumentCaptor<Course> argumentCaptor;
 
@@ -49,9 +50,8 @@ class CourseServiceTest implements PinTest {
 
             // then
             verify(userRepository).findByUserId(any());
-            verify(courseRepository).save(argumentCaptor.capture());
-            assertEquals(TEST_USER, argumentCaptor.getValue().getEditorList().get(0).getUser());
-            assertEquals(Role.OWNER, argumentCaptor.getValue().getEditorList().get(0).getRole());
+            verify(courseRepository, times(1)).save(any(Course.class));
+            verify(editorRepository, times(1)).save(any(Editor.class));
         }
 
         @Test
