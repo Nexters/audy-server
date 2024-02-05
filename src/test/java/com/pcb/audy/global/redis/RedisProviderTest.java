@@ -56,4 +56,16 @@ class RedisProviderTest implements RedisTest {
         verify(valueOperations).get(any());
         assertThat(value).isEqualTo(TEST_VALUE);
     }
+
+    @Test
+    @DisplayName("데이터 삭제 테스트")
+    void 데이터_삭제() {
+        // given
+
+        // when
+        redisProvider.delete(TEST_KEY);
+
+        // then
+        verify(redisTemplate).delete(anyString());
+    }
 }
