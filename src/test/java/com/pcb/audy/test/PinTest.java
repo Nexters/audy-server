@@ -12,6 +12,8 @@ public interface PinTest extends CourseTest {
     String TEST_ADDRESS = "address";
     Integer TEST_SEQUENCE = 1;
 
+    String TEST_UPDATED_PIN_NAME = "updatedPinName";
+
     Pin TEST_PIN =
             Pin.builder()
                     .pinId(TEST_PIN_ID)

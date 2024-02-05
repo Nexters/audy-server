@@ -30,3 +30,4 @@ include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
 == pin API
 
 include::{snippets}/pin-controller-test/pin_저장/auto-section.adoc[]
+include::{snippets}/pin-controller-test/pin_이름_수정/auto-section.adoc[]
