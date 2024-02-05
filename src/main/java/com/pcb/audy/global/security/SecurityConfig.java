@@ -2,6 +2,7 @@ package com.pcb.audy.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.user.repository.UserRepository;
+import com.pcb.audy.global.exception.ExceptionHandlerFilter;
 import com.pcb.audy.global.jwt.AuthorizationFilter;
 import com.pcb.audy.global.jwt.JwtUtils;
 import com.pcb.audy.global.oauth.handler.OAuth2AuthenticationFailHandler;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -49,6 +51,7 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(authorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .oauth2Login(
                         oauth2LoginConfigurer ->
                                 oauth2LoginConfigurer
@@ -59,6 +62,11 @@ public class SecurityConfig {
                                                         userInfoEndpointConfig.userService(oAuth2Service)));
 
         return http.build();
+    }
+
+    @Bean
+    public ExceptionHandlerFilter exceptionHandlerFilter() {
+        return new ExceptionHandlerFilter(objectMapper);
     }
 
     @Bean

@@ -4,12 +4,10 @@ import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_HEADER;
 import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_HEADER;
 import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 import static com.pcb.audy.global.response.ResultCode.INVALID_TOKEN;
-import static com.pcb.audy.global.response.ResultCode.NOT_FOUND_USER;
 
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.auth.PrincipalDetails;
-import com.pcb.audy.global.exception.ExceptionHandler;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.validator.UserValidator;
@@ -18,10 +16,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
@@ -29,6 +31,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final RedisProvider redisProvider;
     private final UserRepository userRepository;
+
+    private static final List<RequestMatcher> whiteList =
+            List.of(new AntPathRequestMatcher("/oauth2/**", HttpMethod.POST.name()));
 
     @Override
     protected void doFilterInternal(
@@ -38,23 +43,18 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String accessHeader = request.getHeader(ACCESS_TOKEN_HEADER);
         String refreshHeader = request.getHeader(REFRESH_TOKEN_HEADER);
         if (!isExistHeader(accessHeader)) {
-            ExceptionHandler.setErrorResponse(response, INVALID_TOKEN);
-            return;
+            throw new GlobalException(INVALID_TOKEN);
         }
 
         String accessToken = accessHeader.replace(TOKEN_TYPE, "");
         String email = jwtUtils.getEmail(accessToken);
         if (email == null) {
             if (!isExistHeader(refreshHeader)) {
-                ExceptionHandler.setErrorResponse(response, INVALID_TOKEN);
-                return;
+                throw new GlobalException(INVALID_TOKEN);
             }
 
             String refreshToken = refreshHeader.replace(TOKEN_TYPE, "");
             email = getNewToken(response, refreshToken);
-            if (email == null) {
-                return;
-            }
         }
 
         setAuthentication(email);
@@ -74,8 +74,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private String getNewToken(HttpServletResponse response, String refreshToken) {
         String email = jwtUtils.getEmail(refreshToken);
         if (email == null) {
-            ExceptionHandler.setErrorResponse(response, NOT_FOUND_USER);
-            return null;
+            throw new GlobalException(INVALID_TOKEN);
         }
 
         updateTokens(response, email);
@@ -93,5 +92,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private static boolean isExistHeader(String header) {
         return header != null && header.startsWith(TOKEN_TYPE);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return whiteList.stream().anyMatch(url -> url.matches(request));
     }
 }
