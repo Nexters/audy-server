@@ -29,7 +29,7 @@ public class Pin extends BaseEntity {
     private String address;
     private Integer sequence;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")
     private Course course;
 

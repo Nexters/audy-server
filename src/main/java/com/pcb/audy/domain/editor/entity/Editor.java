@@ -26,12 +26,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_editor")
 public class Editor extends BaseEntity {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")
     private Course course;
 
