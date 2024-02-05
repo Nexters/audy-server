@@ -17,6 +17,7 @@ import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.test.PinTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,40 +34,43 @@ class CourseServiceTest implements PinTest {
 
     @Captor ArgumentCaptor<Course> argumentCaptor;
 
-    @Test
-    @DisplayName("course 저장 테스트")
-    void course_저장() {
-        // given
-        CourseSaveReq courseSaveReq =
-                CourseSaveReq.builder().userId(TEST_USER_ID).courseName(TEST_COURSE_NAME).build();
-        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+    @Nested
+    class course_저장 {
+        @Test
+        @DisplayName("course 저장 테스트")
+        void course_저장() {
+            // given
+            CourseSaveReq courseSaveReq =
+                    CourseSaveReq.builder().userId(TEST_USER_ID).courseName(TEST_COURSE_NAME).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
 
-        // when
-        courseService.saveCourse(courseSaveReq);
+            // when
+            courseService.saveCourse(courseSaveReq);
 
-        // then
-        verify(userRepository).findByUserId(any());
-        verify(courseRepository).save(argumentCaptor.capture());
-        assertEquals(TEST_USER, argumentCaptor.getValue().getEditorList().get(0).getUser());
-        assertEquals(Role.OWNER, argumentCaptor.getValue().getEditorList().get(0).getRole());
-    }
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).save(argumentCaptor.capture());
+            assertEquals(TEST_USER, argumentCaptor.getValue().getEditorList().get(0).getUser());
+            assertEquals(Role.OWNER, argumentCaptor.getValue().getEditorList().get(0).getRole());
+        }
 
-    @Test
-    @DisplayName("course 저장 실패 테스트 - 사용자 권한 없음")
-    void invalidUserSaveCourseTest() {
-        // given
-        CourseSaveReq courseSaveReq =
-                CourseSaveReq.builder().userId(TEST_USER_ID).courseName(TEST_COURSE_NAME).build();
+        @Test
+        @DisplayName("course 저장 실패 테스트 - 사용자 권한 없음")
+        void invalidUserSaveCourseTest() {
+            // given
+            CourseSaveReq courseSaveReq =
+                    CourseSaveReq.builder().userId(TEST_USER_ID).courseName(TEST_COURSE_NAME).build();
 
-        // when
-        GlobalException exception =
-                assertThrows(
-                        GlobalException.class,
-                        () -> {
-                            courseService.saveCourse(courseSaveReq);
-                        });
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                courseService.saveCourse(courseSaveReq);
+                            });
 
-        // then
-        assertEquals(NOT_FOUND_USER, exception.getResultCode());
+            // then
+            assertEquals(NOT_FOUND_USER, exception.getResultCode());
+        }
     }
 }
