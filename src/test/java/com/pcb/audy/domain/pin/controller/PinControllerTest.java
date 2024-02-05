@@ -37,7 +37,7 @@ class PinControllerTest extends BaseMvcTest implements PinTest {
                         .address(TEST_ADDRESS)
                         .sequence(TEST_SEQUENCE)
                         .build();
-        PinSaveRes pinSaveRes = new PinSaveRes();
+        PinSaveRes pinSaveRes = PinSaveRes.builder().pinId(TEST_PIN_ID.toString()).build();
         when(pinService.savePin(any())).thenReturn(pinSaveRes);
         this.mockMvc
                 .perform(

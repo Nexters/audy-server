@@ -26,8 +26,7 @@ public class PinService {
 
     public PinSaveRes savePin(PinSaveReq pinSaveReq) {
         UUID pinId = getPinId();
-        redisProvider.set(
-                getKey(pinSaveReq.getCourseId(), pinId),
+        Pin pin =
                 Pin.builder()
                         .pinId(pinId)
                         .pinName(pinSaveReq.getPinName())
@@ -37,10 +36,9 @@ public class PinService {
                         .address(pinSaveReq.getAddress())
                         .sequence(pinSaveReq.getSequence())
                         .course(getCourse(pinSaveReq.getCourseId()))
-                        .build(),
-                PIN_EXPIRE_TIME);
-
-        return new PinSaveRes();
+                        .build();
+        redisProvider.set(getKey(pinSaveReq.getCourseId(), pinId), pin, PIN_EXPIRE_TIME);
+        return PinServiceMapper.INSTANCE.toPinSaveRes(pin);
     }
 
     public PinNameUpdateRes updatePinName(PinNameUpdateReq pinNameUpdateReq) {

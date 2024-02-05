@@ -1,6 +1,17 @@
 package com.pcb.audy.domain.pin.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@JsonIgnoreProperties
-public class PinSaveRes {}
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PinSaveRes {
+    private String pinId;
+
+    @Builder
+    private PinSaveRes(String pinId) {
+        this.pinId = pinId;
+    }
+}
