@@ -25,8 +25,8 @@ public class CourseService {
     @Transactional
     public CourseSaveRes saveCourse(CourseSaveReq commentSaveReq) {
         User user = getUserByUserId(commentSaveReq.getUserId());
-        Course course = Course.builder().courseName(commentSaveReq.getCourseName()).build();
-        Course savedCourse = courseRepository.save(course);
+        Course savedCourse =
+                courseRepository.save(Course.builder().courseName(commentSaveReq.getCourseName()).build());
 
         Editor editor = Editor.builder().course(savedCourse).user(user).role(Role.OWNER).build();
         editorRepository.save(editor);
