@@ -45,7 +45,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
 
     @Test
     @DisplayName("CourseName 수정 테스트")
-    void courseName_수정() throws Exception {
+    void course_이름_수정() throws Exception {
 
         CourseUpdateReq courseUpdateReq =
                 CourseUpdateReq.builder().courseName(TEST_UPDATED_COURSE_NAME).build();
