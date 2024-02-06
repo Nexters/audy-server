@@ -1,7 +1,9 @@
 package com.pcb.audy.domain.course.service;
 
+import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.response.CourseDeleteRes;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.dto.response.CourseUpdateRes;
 import com.pcb.audy.domain.course.entity.Course;
@@ -50,6 +52,17 @@ public class CourseService {
                         .build());
 
         return new CourseUpdateRes();
+    }
+
+    @Transactional
+    public CourseDeleteRes deleteCourse(CourseDeleteReq courseDeleteReq) {
+        User user = getUserByUserId(courseDeleteReq.getUserId());
+        Course course = getCourseByCourseId(courseDeleteReq.getCourseId());
+
+        isAdminUser(user, course);
+        courseRepository.delete(course);
+
+        return new CourseDeleteRes();
     }
 
     private User getUserByUserId(Long userId) {
