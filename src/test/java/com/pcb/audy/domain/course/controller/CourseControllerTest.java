@@ -2,14 +2,17 @@ package com.pcb.audy.domain.course.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.pcb.audy.domain.BaseMvcTest;
+import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.response.CourseDeleteRes;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.dto.response.CourseUpdateRes;
 import com.pcb.audy.domain.course.service.CourseService;
@@ -57,6 +60,25 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 .perform(
                         patch("/v1/courses")
                                 .content(objectMapper.writeValueAsString(courseUpdateReq))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Course 삭제 테스트")
+    void course_삭제() throws Exception {
+
+        CourseDeleteReq courseDeleteReq = CourseDeleteReq.builder().courseId(TEST_COURSE_ID).build();
+
+        CourseDeleteRes courseDeleteRes = new CourseDeleteRes();
+        when(courseService.deleteCourse(any())).thenReturn(courseDeleteRes);
+
+        this.mockMvc
+                .perform(
+                        delete("/v1/courses")
+                                .content(objectMapper.writeValueAsString(courseDeleteReq))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .principal(mockPrincipal))
                 .andDo(print())

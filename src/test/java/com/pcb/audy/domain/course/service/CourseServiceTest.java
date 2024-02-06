@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.entity.Course;
@@ -131,6 +132,50 @@ class CourseServiceTest implements PinTest {
                             GlobalException.class,
                             () -> {
                                 courseService.updateCourseName(courseUpdateReq);
+                            });
+
+            // then
+            assertEquals(NOT_ADMIN_COURSE, exception.getResultCode());
+        }
+    }
+
+    @Nested
+    class course_삭제 {
+        @Test
+        @DisplayName("course 삭제 테스트")
+        void course_삭제() {
+            // given
+            CourseDeleteReq courseDeleteReq = CourseDeleteReq.builder().courseId(TEST_COURSE_ID).build();
+
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+
+            // when
+            courseService.deleteCourse(courseDeleteReq);
+
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(courseRepository).delete(any());
+        }
+
+        @Test
+        @DisplayName("course 삭제 테스트 - 사용자 권한 없음")
+        void course_삭제_실패() {
+            // given
+            CourseDeleteReq courseDeleteReq = CourseDeleteReq.builder().courseId(TEST_COURSE_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_MEMBER);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                courseService.deleteCourse(courseDeleteReq);
                             });
 
             // then
