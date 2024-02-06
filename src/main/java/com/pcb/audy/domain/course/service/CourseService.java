@@ -26,9 +26,9 @@ public class CourseService {
     public CourseSaveRes saveCourse(CourseSaveReq commentSaveReq) {
         User user = getUserByUserId(commentSaveReq.getUserId());
         Course course = Course.builder().courseName(commentSaveReq.getCourseName()).build();
-        Editor editor = Editor.builder().course(course).user(user).role(Role.OWNER).build();
-
         Course savedCourse = courseRepository.save(course);
+
+        Editor editor = Editor.builder().course(savedCourse).user(user).role(Role.OWNER).build();
         editorRepository.save(editor);
         return CourseServiceMapper.INSTANCE.toCourseSaveRes(savedCourse);
     }
