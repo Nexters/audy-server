@@ -66,7 +66,6 @@ public class CourseService {
 
     private void isAdminUser(User user, Course course) {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
-        EditorValidator.validate(editor);
         EditorValidator.checkIsAdminUser(editor);
     }
 }

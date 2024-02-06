@@ -15,7 +15,11 @@ public class EditorValidator {
     }
 
     public static void checkIsAdminUser(Editor editor) {
-        if (editor != null && !isAdminEditor(editor)) {
+        if (!isExistEditor(editor)) {
+            throw new GlobalException(NOT_FOUND_EDITOR);
+        }
+
+        if (!isAdminEditor(editor)) {
             throw new GlobalException(NOT_ADMIN_COURSE);
         }
     }
