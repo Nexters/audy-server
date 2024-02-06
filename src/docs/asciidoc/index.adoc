@@ -33,4 +33,6 @@ include::{snippets}/pin-controller-test/pin_저장/auto-section.adoc[]
 include::{snippets}/pin-controller-test/pin_이름_수정/auto-section.adoc[]
 
 == course API
+
 include::{snippets}/course-controller-test/course_저장/auto-section.adoc[]
+include::{snippets}/course-controller-test/course_이름_수정/auto-section.adoc[]

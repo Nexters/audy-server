@@ -1,6 +1,9 @@
 package com.pcb.audy.domain.course.service;
 
+import static com.pcb.audy.global.response.ResultCode.NOT_ADMIN_COURSE;
 import static com.pcb.audy.global.response.ResultCode.NOT_FOUND_USER;
+import static com.pcb.audy.test.EditorTest.TEST_EDITOR_ADMIN;
+import static com.pcb.audy.test.EditorTest.TEST_EDITOR_MEMBER;
 import static com.pcb.audy.test.UserTest.TEST_USER;
 import static com.pcb.audy.test.UserTest.TEST_USER_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
+import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
@@ -78,6 +82,59 @@ class CourseServiceTest implements PinTest {
 
             // then
             assertEquals(NOT_FOUND_USER, exception.getResultCode());
+        }
+    }
+
+    @Nested
+    class course_이름수정 {
+        @Test
+        @DisplayName("course 수정 테스트")
+        void course_수정() {
+            // given
+            CourseUpdateReq courseUpdateReq =
+                    CourseUpdateReq.builder()
+                            .courseId(TEST_COURSE_ID)
+                            .courseName(TEST_UPDATED_COURSE_NAME)
+                            .build();
+
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+
+            // when
+            courseService.updateCourseName(courseUpdateReq);
+
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(courseRepository).save(any());
+        }
+
+        @Test
+        @DisplayName("course 수정 실패 테스트 - 사용자 권한 없음")
+        void course_수정_실패() {
+            // given
+            CourseUpdateReq courseUpdateReq =
+                    CourseUpdateReq.builder()
+                            .userId(TEST_USER_ID)
+                            .courseId(TEST_COURSE_ID)
+                            .courseName(TEST_UPDATED_COURSE_NAME)
+                            .build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_MEMBER);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                courseService.updateCourseName(courseUpdateReq);
+                            });
+
+            // then
+            assertEquals(NOT_ADMIN_COURSE, exception.getResultCode());
         }
     }
 }

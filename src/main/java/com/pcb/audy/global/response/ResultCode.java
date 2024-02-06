@@ -17,8 +17,11 @@ public enum ResultCode {
     NOT_FOUND_USER(2000, "유저를 찾을 수 없습니다."),
 
     NOT_FOUND_COURSE(3000, "코스를 찾을 수 없습니다."),
+    NOT_ADMIN_COURSE(3001, "해당 코스에 변경 권한이 없습니다."),
 
-    NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다.");
+    NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다."),
+
+    NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다.");
 
     private Integer code;
     private String message;
