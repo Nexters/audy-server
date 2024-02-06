@@ -4,6 +4,7 @@ import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.CourseDeleteRes;
+import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.dto.response.CourseUpdateRes;
 import com.pcb.audy.domain.course.service.CourseService;
@@ -43,4 +44,20 @@ public class CourseController {
         courseDeleteReq.setUserId(userDetails.getUser().getUserId());
         return BasicResponse.success(courseService.deleteCourse(courseDeleteReq));
     }
+
+    @GetMapping("/all")
+    public BasicResponse<CourseGetResList> getAllCourses(@AuthenticationPrincipal PrincipalDetails userDetails){
+        return BasicResponse.success(courseService.getAllCourse(userDetails.getUser().getUserId()));
+    }
+
+    @GetMapping("/owner")
+    public BasicResponse<CourseGetResList> getOwnedCourses(@AuthenticationPrincipal PrincipalDetails userDetails) {
+        return BasicResponse.success(courseService.getOwnedCourse(userDetails.getUser().getUserId()));
+    }
+
+    @GetMapping("/member")
+    public BasicResponse<CourseGetResList> getMemberCourses(@AuthenticationPrincipal PrincipalDetails userDetails) {
+        return BasicResponse.success(courseService.getMemberCourse(userDetails.getUser().getUserId()));
+    }
+
 }
