@@ -4,7 +4,6 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.model.BaseEntity;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.global.meta.Role;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,12 +25,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "tb_editor")
 public class Editor extends BaseEntity {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")
     private Course course;
 

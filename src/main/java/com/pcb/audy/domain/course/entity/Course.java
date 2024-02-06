@@ -1,11 +1,11 @@
 package com.pcb.audy.domain.course.entity;
 
+import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.model.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.pcb.audy.domain.pin.entity.Pin;
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +21,12 @@ public class Course extends BaseEntity {
     private Long courseId;
 
     private String courseName;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Pin> pinList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Editor> editorList = new ArrayList<>();
 
     @Builder
     private Course(Long courseId, String courseName) {

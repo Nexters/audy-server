@@ -2,7 +2,6 @@ package com.pcb.audy.domain.pin.entity;
 
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.model.BaseEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -29,7 +28,7 @@ public class Pin extends BaseEntity {
     private String address;
     private Integer sequence;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")
     private Course course;
 
