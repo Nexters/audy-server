@@ -1,7 +1,9 @@
 package com.pcb.audy.domain.course.controller;
 
+import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.response.CourseDeleteRes;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.dto.response.CourseUpdateRes;
 import com.pcb.audy.domain.course.service.CourseService;
@@ -32,5 +34,13 @@ public class CourseController {
             @AuthenticationPrincipal PrincipalDetails userDetails) {
         courseUpdateReq.setUserId(userDetails.getUser().getUserId());
         return BasicResponse.success(courseService.updateCourseName(courseUpdateReq));
+    }
+
+    @DeleteMapping
+    public BasicResponse<CourseDeleteRes> deleteCourse(
+            @RequestBody CourseDeleteReq courseDeleteReq,
+            @AuthenticationPrincipal PrincipalDetails userDetails) {
+        courseDeleteReq.setUserId(userDetails.getUser().getUserId());
+        return BasicResponse.success(courseService.deleteCourse(courseDeleteReq));
     }
 }
