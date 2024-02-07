@@ -154,7 +154,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         CourseGetResList courseGetResList = CourseGetResList.builder()
                 .courseGetResList(List.of(courseGetRes)).build();
 
-        when(courseService.getOwnedCourse(any())).thenReturn(courseGetResList);
+        when(courseService.getMemberCourse(any())).thenReturn(courseGetResList);
 
         this.mockMvc
                 .perform(
