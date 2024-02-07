@@ -20,7 +20,6 @@ jobs:
           distribution: 'corretto'
 
       - name: make application.yml
-        if: contains(github.ref, 'develop')
         run: |
           mkdir -p ./src/main/resources
           cd ./src/main/resources
