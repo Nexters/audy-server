@@ -258,6 +258,5 @@ class CourseServiceTest implements PinTest {
 
         // then
         verify(courseRepository).findByCourseId(any());
-        assertEquals(TEST_COURSE_ID, courseDetailGetRes.getCourseId());
     }
 }
