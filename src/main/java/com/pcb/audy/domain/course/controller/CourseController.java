@@ -1,6 +1,7 @@
 package com.pcb.audy.domain.course.controller;
 
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
+import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.*;
@@ -40,6 +41,14 @@ public class CourseController {
             @AuthenticationPrincipal PrincipalDetails userDetails) {
         courseDeleteReq.setUserId(userDetails.getUser().getUserId());
         return BasicResponse.success(courseService.deleteCourse(courseDeleteReq));
+    }
+
+    @PostMapping("/invite")
+    public BasicResponse<CourseInviteRes> inviteCourse(
+            @RequestBody CourseInviteReq courseInviteReq,
+            @AuthenticationPrincipal PrincipalDetails userDetails) {
+        courseInviteReq.setUserId(userDetails.getUser().getUserId());
+        return BasicResponse.success(courseService.inviteCourse(courseInviteReq));
     }
 
     @GetMapping("/{courseId}")
