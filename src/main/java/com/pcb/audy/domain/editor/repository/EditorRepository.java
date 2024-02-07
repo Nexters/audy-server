@@ -12,6 +12,6 @@ import java.util.List;
 public interface EditorRepository extends JpaRepository<Editor, EditorId> {
     Editor findByUserAndCourse(User user, Course course);
 
-    List<Editor> findAllByUserAndRole(User user, Role role);
-    List<Editor> findAllByUser(User user);
+    List<Editor> findAllByUserAndRoleOrderByCreateTimestampDesc(User user, Role role);
+    List<Editor> findAllByUserOrderByCreateTimestampDesc(User user);
 }

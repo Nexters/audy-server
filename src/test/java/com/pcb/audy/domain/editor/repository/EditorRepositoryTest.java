@@ -64,7 +64,7 @@ public class EditorRepositoryTest implements EditorTest {
         editorRepository.save(TEST_EDITOR_MEMBER);
 
         // when
-        List<Editor> editorList = editorRepository.findAllByUser(TEST_USER);
+        List<Editor> editorList = editorRepository.findAllByUserOrderByCreateTimestampDesc(TEST_USER);
 
         // then
         assertEquals(2, editorList.size());
@@ -83,8 +83,8 @@ public class EditorRepositoryTest implements EditorTest {
         editorRepository.save(TEST_EDITOR_MEMBER);
 
         // when
-        List<Editor> editorList1 = editorRepository.findAllByUserAndRole(TEST_USER, Role.OWNER);
-        List<Editor> editorList2 = editorRepository.findAllByUserAndRole(TEST_USER, Role.MEMBER);
+        List<Editor> editorList1 = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.OWNER);
+        List<Editor> editorList2 = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.MEMBER);
 
         // then
         assertEquals(1, editorList1.size());

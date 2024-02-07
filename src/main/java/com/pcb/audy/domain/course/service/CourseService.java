@@ -75,21 +75,21 @@ public class CourseService {
     @Transactional(readOnly = true)
     public CourseGetResList getAllCourse(Long userId) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUser(user);
+        List<Editor> editors = editorRepository.findAllByUserOrderByCreateTimestampDesc(user);
         return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
     }
 
     @Transactional(readOnly = true)
     public CourseGetResList getOwnedCourse(Long userId) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUserAndRole(user, Role.OWNER);
+        List<Editor> editors = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER);
         return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
     }
 
     @Transactional(readOnly = true)
     public CourseGetResList getMemberCourse(Long userId) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUserAndRole(user, Role.MEMBER);
+        List<Editor> editors = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER);
         return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
     }
 

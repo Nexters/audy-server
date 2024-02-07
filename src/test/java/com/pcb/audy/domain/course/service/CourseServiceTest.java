@@ -198,14 +198,14 @@ class CourseServiceTest implements PinTest {
         editorList.add(TEST_EDITOR_ADMIN);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUser(any())).thenReturn(editorList);
+        when(editorRepository.findAllByUserOrderByCreateTimestampDesc(any())).thenReturn(editorList);
 
         // when
         CourseGetResList courseGetResList = courseService.getAllCourse(TEST_USER_ID);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUser(any());
+        verify(editorRepository).findAllByUserOrderByCreateTimestampDesc(any());
         assertEquals(2, courseGetResList.getCourseGetResList().size());
     }
 
@@ -217,14 +217,14 @@ class CourseServiceTest implements PinTest {
         editorList.add(TEST_EDITOR_ADMIN);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRole(any(), eq(Role.OWNER))).thenReturn(editorList);
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER))).thenReturn(editorList);
 
         // when
         CourseGetResList courseGetResList = courseService.getOwnedCourse(TEST_USER_ID);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserAndRole(any(), eq(Role.OWNER));
+        verify(editorRepository).findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER));
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
@@ -236,14 +236,14 @@ class CourseServiceTest implements PinTest {
         editorList.add(TEST_EDITOR_MEMBER);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRole(any(), eq(Role.MEMBER))).thenReturn(editorList);
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER))).thenReturn(editorList);
 
         // when
         CourseGetResList courseGetResList = courseService.getMemberCourse(TEST_USER_ID);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserAndRole(any(), eq(Role.MEMBER));
+        verify(editorRepository).findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER));
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
