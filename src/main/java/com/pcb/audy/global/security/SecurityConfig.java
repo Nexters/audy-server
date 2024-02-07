@@ -76,7 +76,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-        return new OAuth2AuthenticationSuccessHandler(jwtUtils, redisProvider, objectMapper);
+        return new OAuth2AuthenticationSuccessHandler(jwtUtils, redisProvider);
     }
 
     @Bean
