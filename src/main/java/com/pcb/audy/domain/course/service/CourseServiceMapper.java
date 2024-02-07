@@ -25,6 +25,7 @@ public interface CourseServiceMapper {
     @Mapping(target = "courseName", expression = "java(editor.getCourse().getCourseName())")
     @Mapping(target = "pinCnt", expression = "java(editor.getCourse().getPinList() != null ? editor.getCourse().getPinList().size() : 0)")
     @Mapping(target = "editorCnt", expression = "java(editor.getCourse().getEditorList() != null ? editor.getCourse().getEditorList().size() : 0)")
+    @Mapping(target = "isOwner", expression = "java(com.pcb.audy.global.meta.Role.OWNER.equals(editor.getRole()))")
     CourseGetRes toCourseGetRes(Editor editor);
 
     List<CourseGetRes> toCourseGetResList(List<Editor> editor);
