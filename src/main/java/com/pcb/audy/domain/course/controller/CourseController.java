@@ -3,9 +3,7 @@ package com.pcb.audy.domain.course.controller;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
-import com.pcb.audy.domain.course.dto.response.CourseDeleteRes;
-import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
-import com.pcb.audy.domain.course.dto.response.CourseUpdateRes;
+import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.service.CourseService;
 import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.response.BasicResponse;
@@ -43,4 +41,25 @@ public class CourseController {
         courseDeleteReq.setUserId(userDetails.getUser().getUserId());
         return BasicResponse.success(courseService.deleteCourse(courseDeleteReq));
     }
+
+    @GetMapping("/{courseId}")
+    public BasicResponse<CourseDetailGetRes> getCourse(@PathVariable Long courseId) {
+        return BasicResponse.success(courseService.getCourse(courseId));
+    }
+
+    @GetMapping("/all")
+    public BasicResponse<CourseGetResList> getAllCourses(@AuthenticationPrincipal PrincipalDetails userDetails){
+        return BasicResponse.success(courseService.getAllCourse(userDetails.getUser().getUserId()));
+    }
+
+    @GetMapping("/owner")
+    public BasicResponse<CourseGetResList> getOwnedCourses(@AuthenticationPrincipal PrincipalDetails userDetails) {
+        return BasicResponse.success(courseService.getOwnedCourse(userDetails.getUser().getUserId()));
+    }
+
+    @GetMapping("/member")
+    public BasicResponse<CourseGetResList> getMemberCourses(@AuthenticationPrincipal PrincipalDetails userDetails) {
+        return BasicResponse.success(courseService.getMemberCourse(userDetails.getUser().getUserId()));
+    }
+
 }
