@@ -16,7 +16,8 @@ public class CourseGetRes {
     private boolean isOwner;
 
     @Builder
-    private CourseGetRes(Long courseId, String courseName, int pinCnt, int editorCnt, boolean isOwner) {
+    private CourseGetRes(
+            Long courseId, String courseName, int pinCnt, int editorCnt, boolean isOwner) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.pinCnt = pinCnt;

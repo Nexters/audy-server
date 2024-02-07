@@ -7,13 +7,10 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.domain.pin.entity.Pin;
-import org.mapstruct.IterableMapping;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.util.List;
 
 @Mapper
 public interface CourseServiceMapper {
@@ -23,15 +20,23 @@ public interface CourseServiceMapper {
 
     @Mapping(target = "courseId", expression = "java(editor.getCourse().getCourseId())")
     @Mapping(target = "courseName", expression = "java(editor.getCourse().getCourseName())")
-    @Mapping(target = "pinCnt", expression = "java(editor.getCourse().getPinList() != null ? editor.getCourse().getPinList().size() : 0)")
-    @Mapping(target = "editorCnt", expression = "java(editor.getCourse().getEditorList() != null ? editor.getCourse().getEditorList().size() : 0)")
-    @Mapping(target = "isOwner", expression = "java(com.pcb.audy.global.meta.Role.OWNER.equals(editor.getRole()))")
+    @Mapping(
+            target = "pinCnt",
+            expression =
+                    "java(editor.getCourse().getPinList() != null ? editor.getCourse().getPinList().size() : 0)")
+    @Mapping(
+            target = "editorCnt",
+            expression =
+                    "java(editor.getCourse().getEditorList() != null ? editor.getCourse().getEditorList().size() : 0)")
+    @Mapping(
+            target = "isOwner",
+            expression = "java(com.pcb.audy.global.meta.Role.OWNER.equals(editor.getRole()))")
     CourseGetRes toCourseGetRes(Editor editor);
 
     List<CourseGetRes> toCourseGetResList(List<Editor> editor);
 
     PinGetRes toPinGetRes(Pin pin);
 
-    @Mapping(target="pinList", source="pinList")
+    @Mapping(target = "pinList", source = "pinList")
     CourseDetailGetRes toCourseDetailGetRes(Course course);
 }

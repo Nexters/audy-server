@@ -14,12 +14,10 @@ import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.EditorValidator;
 import com.pcb.audy.global.validator.UserValidator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,21 +74,29 @@ public class CourseService {
     public CourseGetResList getAllCourse(Long userId) {
         User user = getUserByUserId(userId);
         List<Editor> editors = editorRepository.findAllByUserOrderByCreateTimestampDesc(user);
-        return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
+        return CourseGetResList.builder()
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .build();
     }
 
     @Transactional(readOnly = true)
     public CourseGetResList getOwnedCourse(Long userId) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER);
-        return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
+        List<Editor> editors =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER);
+        return CourseGetResList.builder()
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .build();
     }
 
     @Transactional(readOnly = true)
     public CourseGetResList getMemberCourse(Long userId) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER);
-        return CourseGetResList.builder().courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors)).build();
+        List<Editor> editors =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER);
+        return CourseGetResList.builder()
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .build();
     }
 
     private User getUserByUserId(Long userId) {

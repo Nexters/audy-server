@@ -14,7 +14,6 @@ import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
-import com.pcb.audy.domain.course.dto.response.CourseGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
@@ -24,6 +23,8 @@ import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.test.PinTest;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceTest implements PinTest {
@@ -217,7 +215,8 @@ class CourseServiceTest implements PinTest {
         editorList.add(TEST_EDITOR_ADMIN);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER))).thenReturn(editorList);
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER)))
+                .thenReturn(editorList);
 
         // when
         CourseGetResList courseGetResList = courseService.getOwnedCourse(TEST_USER_ID);
@@ -236,7 +235,8 @@ class CourseServiceTest implements PinTest {
         editorList.add(TEST_EDITOR_MEMBER);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER))).thenReturn(editorList);
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER)))
+                .thenReturn(editorList);
 
         // when
         CourseGetResList courseGetResList = courseService.getMemberCourse(TEST_USER_ID);

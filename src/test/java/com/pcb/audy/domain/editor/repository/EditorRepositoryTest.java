@@ -1,14 +1,16 @@
 package com.pcb.audy.domain.editor.repository;
 
+import static com.pcb.audy.test.UserTest.TEST_USER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
-import com.pcb.audy.test.CourseTest;
 import com.pcb.audy.test.EditorTest;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +18,16 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
-import static com.pcb.audy.test.UserTest.TEST_USER;
-import static com.pcb.audy.test.UserTest.TEST_USER_ID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class EditorRepositoryTest implements EditorTest {
 
-    @Autowired
-    private EditorRepository editorRepository;
+    @Autowired private EditorRepository editorRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+    @Autowired private CourseRepository courseRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     @Test
     @DisplayName("Course와 User로 권한 정보 조회 테스트")
@@ -42,11 +35,8 @@ public class EditorRepositoryTest implements EditorTest {
         // given
         User savedUser = userRepository.save(TEST_USER);
         Course savedCourse = courseRepository.save(TEST_COURSE);
-        editorRepository.save(Editor.builder()
-                .user(savedUser)
-                .course(savedCourse)
-                .role(Role.OWNER)
-                .build());
+        editorRepository.save(
+                Editor.builder().user(savedUser).course(savedCourse).role(Role.OWNER).build());
 
         // when
         Editor editor = editorRepository.findByUserAndCourse(TEST_USER, TEST_COURSE);
@@ -65,16 +55,10 @@ public class EditorRepositoryTest implements EditorTest {
         Course savedCourse1 = courseRepository.save(TEST_COURSE);
         Course savedCourse2 = courseRepository.save(TEST_SECOND_COURSE);
 
-        editorRepository.save(Editor.builder()
-                .user(savedUser)
-                .course(savedCourse1)
-                .role(Role.OWNER)
-                .build());
-        editorRepository.save(Editor.builder()
-                .user(savedUser)
-                .course(savedCourse2)
-                .role(Role.MEMBER)
-                .build());
+        editorRepository.save(
+                Editor.builder().user(savedUser).course(savedCourse1).role(Role.OWNER).build());
+        editorRepository.save(
+                Editor.builder().user(savedUser).course(savedCourse2).role(Role.MEMBER).build());
 
         // when
         List<Editor> editorList = editorRepository.findAllByUserOrderByCreateTimestampDesc(TEST_USER);
@@ -92,20 +76,16 @@ public class EditorRepositoryTest implements EditorTest {
         Course savedCourse1 = courseRepository.save(TEST_COURSE);
         Course savedCourse2 = courseRepository.save(TEST_SECOND_COURSE);
 
-        editorRepository.save(Editor.builder()
-                .user(savedUser)
-                .course(savedCourse1)
-                .role(Role.OWNER)
-                .build());
-        editorRepository.save(Editor.builder()
-                .user(savedUser)
-                .course(savedCourse2)
-                .role(Role.MEMBER)
-                .build());
+        editorRepository.save(
+                Editor.builder().user(savedUser).course(savedCourse1).role(Role.OWNER).build());
+        editorRepository.save(
+                Editor.builder().user(savedUser).course(savedCourse2).role(Role.MEMBER).build());
 
         // when
-        List<Editor> editorList1 = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.OWNER);
-        List<Editor> editorList2 = editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.MEMBER);
+        List<Editor> editorList1 =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.OWNER);
+        List<Editor> editorList2 =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(TEST_USER, Role.MEMBER);
 
         // then
         assertEquals(1, editorList1.size());

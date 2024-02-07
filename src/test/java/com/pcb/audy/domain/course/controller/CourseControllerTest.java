@@ -16,13 +16,12 @@ import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.service.CourseService;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.test.CourseTest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
-import java.util.List;
 
 @WebMvcTest(controllers = {CourseController.class})
 class CourseControllerTest extends BaseMvcTest implements CourseTest {
@@ -93,22 +92,21 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         int testEditorCnt = 1;
         int testPinCnt = 1;
 
-        CourseGetRes courseGetRes = CourseGetRes.builder()
-                .courseId(TEST_COURSE_ID)
-                .courseName(TEST_COURSE_NAME)
-                .editorCnt(testEditorCnt)
-                .pinCnt(testPinCnt)
-                .build();
-        CourseGetResList courseGetResList = CourseGetResList.builder()
-                .courseGetResList(List.of(courseGetRes)).build();
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
 
         when(courseService.getAllCourse(any())).thenReturn(courseGetResList);
 
         this.mockMvc
                 .perform(
-                        get("/v1/courses/all")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .principal(mockPrincipal))
+                        get("/v1/courses/all").contentType(MediaType.APPLICATION_JSON).principal(mockPrincipal))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -120,14 +118,15 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         int testEditorCnt = 1;
         int testPinCnt = 1;
 
-        CourseGetRes courseGetRes = CourseGetRes.builder()
-                .courseId(TEST_COURSE_ID)
-                .courseName(TEST_COURSE_NAME)
-                .editorCnt(testEditorCnt)
-                .pinCnt(testPinCnt)
-                .build();
-        CourseGetResList courseGetResList = CourseGetResList.builder()
-                .courseGetResList(List.of(courseGetRes)).build();
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
 
         when(courseService.getOwnedCourse(any())).thenReturn(courseGetResList);
 
@@ -147,14 +146,15 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         int testEditorCnt = 1;
         int testPinCnt = 1;
 
-        CourseGetRes courseGetRes = CourseGetRes.builder()
-                .courseId(TEST_COURSE_ID)
-                .courseName(TEST_COURSE_NAME)
-                .editorCnt(testEditorCnt)
-                .pinCnt(testPinCnt)
-                .build();
-        CourseGetResList courseGetResList = CourseGetResList.builder()
-                .courseGetResList(List.of(courseGetRes)).build();
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
 
         when(courseService.getMemberCourse(any())).thenReturn(courseGetResList);
 
@@ -171,21 +171,23 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
     @DisplayName("Course 상세 조회")
     void course_상세_조회() throws Exception {
         Long courseId = 1L;
-        PinGetRes pinGetRes = PinGetRes.builder()
-                .pinId(TEST_PIN_ID)
-                .pinName(TEST_PIN_NAME)
-                .originName(TEST_ORIGIN_NAME)
-                .latitude(TEST_LATITUDE)
-                .longitude(TEST_LONGITUDE)
-                .address(TEST_ADDRESS)
-                .sequence(TEST_SEQUENCE)
-                .build();
+        PinGetRes pinGetRes =
+                PinGetRes.builder()
+                        .pinId(TEST_PIN_ID)
+                        .pinName(TEST_PIN_NAME)
+                        .originName(TEST_ORIGIN_NAME)
+                        .latitude(TEST_LATITUDE)
+                        .longitude(TEST_LONGITUDE)
+                        .address(TEST_ADDRESS)
+                        .sequence(TEST_SEQUENCE)
+                        .build();
 
-        CourseDetailGetRes courseDetailGetRes = CourseDetailGetRes.builder()
-                .courseId(TEST_COURSE_ID)
-                .courseName(TEST_COURSE_NAME)
-                .pinList(List.of(pinGetRes))
-                .build();
+        CourseDetailGetRes courseDetailGetRes =
+                CourseDetailGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .pinList(List.of(pinGetRes))
+                        .build();
 
         when(courseService.getCourse(any())).thenReturn(courseDetailGetRes);
 
