@@ -1,9 +1,12 @@
 package com.pcb.audy.domain.course.service;
 
+import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.editor.entity.Editor;
+import com.pcb.audy.domain.pin.dto.response.PinGetRes;
+import com.pcb.audy.domain.pin.entity.Pin;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,4 +28,9 @@ public interface CourseServiceMapper {
     CourseGetRes toCourseGetRes(Editor editor);
 
     List<CourseGetRes> toCourseGetResList(List<Editor> editor);
+
+    PinGetRes toPinGetRes(Pin pin);
+
+    @Mapping(target="pinList", source="pinList")
+    CourseDetailGetRes toCourseDetailGetRes(Course course);
 }

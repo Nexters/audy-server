@@ -67,6 +67,12 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
+    public CourseDetailGetRes getCourse(Long courseId) {
+        Course course = getCourseByCourseId(courseId);
+        return CourseServiceMapper.INSTANCE.toCourseDetailGetRes(course);
+    }
+
+    @Transactional(readOnly = true)
     public CourseGetResList getAllCourse(Long userId) {
         User user = getUserByUserId(userId);
         List<Editor> editors = editorRepository.findAllByUser(user);
