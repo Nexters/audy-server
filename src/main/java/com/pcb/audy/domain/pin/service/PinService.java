@@ -2,8 +2,10 @@ package com.pcb.audy.domain.pin.service;
 
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
+import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.entity.Pin;
@@ -60,6 +62,14 @@ public class PinService {
                 PIN_EXPIRE_TIME);
 
         return new PinNameUpdateRes();
+    }
+
+    public PinDeleteRes deletePin(PinDeleteReq pinDeleteReq) {
+        String key = getKey(pinDeleteReq.getCourseId(), pinDeleteReq.getPinId());
+        Pin pin = (Pin) redisProvider.get(key);
+        PinValidator.validate(pin);
+        redisProvider.delete(key);
+        return new PinDeleteRes();
     }
 
     private String getKey(Long courseId, UUID pinId) {
