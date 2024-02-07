@@ -1,9 +1,8 @@
 package com.pcb.audy.domain.course.dto.response;
 
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
-import lombok.*;
-
 import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
