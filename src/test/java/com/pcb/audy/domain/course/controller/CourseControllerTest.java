@@ -1,6 +1,7 @@
 package com.pcb.audy.domain.course.controller;
 
 import static com.pcb.audy.test.PinTest.*;
+import static com.pcb.audy.test.UserTest.TEST_USER_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.pcb.audy.domain.BaseMvcTest;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
+import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.*;
@@ -194,6 +196,27 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         this.mockMvc
                 .perform(
                         get("/v1/courses/{courseId}", courseId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("초대 링크 생성 테스트")
+    void 초대_링크_생성() throws Exception {
+
+        CourseInviteReq courseInviteReq =
+                CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+
+        CourseInviteRes courseInviteRes = CourseInviteRes.builder().url(TEST_INVITE_URL).build();
+
+        when(courseService.inviteCourse(any())).thenReturn(courseInviteRes);
+
+        this.mockMvc
+                .perform(
+                        post("/v1/courses/invite")
+                                .content(objectMapper.writeValueAsString(courseInviteReq))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .principal(mockPrincipal))
                 .andDo(print())

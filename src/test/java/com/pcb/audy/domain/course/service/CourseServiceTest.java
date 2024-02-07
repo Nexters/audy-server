@@ -11,10 +11,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
+import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
+import com.pcb.audy.domain.course.dto.response.CourseInviteRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
@@ -22,6 +24,7 @@ import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
+import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.test.PinTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,7 @@ class CourseServiceTest implements PinTest {
     @Mock private CourseRepository courseRepository;
     @Mock private UserRepository userRepository;
     @Mock private EditorRepository editorRepository;
+    @Mock private RedisProvider redisProvider;
 
     @Nested
     class course_저장 {
@@ -258,5 +262,24 @@ class CourseServiceTest implements PinTest {
 
         // then
         verify(courseRepository).findByCourseId(any());
+    }
+
+    @Test
+    @DisplayName("초대 링크 생성")
+    void 초대_링크_생성() {
+        // given
+        CourseInviteReq courseInviteReq =
+                CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+        when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+
+        // when
+        CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
+
+        // then
+        verify(userRepository).findByUserId(any());
+        verify(courseRepository).findByCourseId(any());
+        verify(redisProvider).get(any());
     }
 }
