@@ -13,6 +13,8 @@ import static org.mockito.Mockito.*;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.response.CourseGetRes;
+import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
@@ -29,6 +31,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceTest implements PinTest {
@@ -181,5 +186,63 @@ class CourseServiceTest implements PinTest {
             // then
             assertEquals(NOT_ADMIN_COURSE, exception.getResultCode());
         }
+    }
+
+    @Test
+    @DisplayName("course 전체 조회 테스트")
+    void course_전체_조회() {
+        // given
+        List<Editor> editorList = new ArrayList<>();
+        editorList.add(TEST_EDITOR_MEMBER);
+        editorList.add(TEST_EDITOR_ADMIN);
+
+        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+        when(editorRepository.findAllByUser(any())).thenReturn(editorList);
+
+        // when
+        CourseGetResList courseGetResList = courseService.getAllCourse(TEST_USER_ID);
+
+        // then
+        verify(userRepository).findByUserId(any());
+        verify(editorRepository).findAllByUser(any());
+        assertEquals(2, courseGetResList.getCourseGetResList().size());
+    }
+
+    @Test
+    @DisplayName("admin course 조회 테스트")
+    void admin_course_전체_조회() {
+        // given
+        List<Editor> editorList = new ArrayList<>();
+        editorList.add(TEST_EDITOR_ADMIN);
+
+        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+        when(editorRepository.findAllByUserAndRole(any(), eq(Role.OWNER))).thenReturn(editorList);
+
+        // when
+        CourseGetResList courseGetResList = courseService.getOwnedCourse(TEST_USER_ID);
+
+        // then
+        verify(userRepository).findByUserId(any());
+        verify(editorRepository).findAllByUserAndRole(any(), eq(Role.OWNER));
+        assertEquals(1, courseGetResList.getCourseGetResList().size());
+    }
+
+    @Test
+    @DisplayName("member course 조회 테스트")
+    void member_course_전체_조회() {
+        // given
+        List<Editor> editorList = new ArrayList<>();
+        editorList.add(TEST_EDITOR_MEMBER);
+
+        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+        when(editorRepository.findAllByUserAndRole(any(), eq(Role.MEMBER))).thenReturn(editorList);
+
+        // when
+        CourseGetResList courseGetResList = courseService.getMemberCourse(TEST_USER_ID);
+
+        // then
+        verify(userRepository).findByUserId(any());
+        verify(editorRepository).findAllByUserAndRole(any(), eq(Role.MEMBER));
+        assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 }

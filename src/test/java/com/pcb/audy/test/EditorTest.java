@@ -11,5 +11,5 @@ public interface EditorTest extends CourseTest {
             Editor.builder().course(TEST_COURSE).user(TEST_USER).role(Role.OWNER).build();
 
     Editor TEST_EDITOR_MEMBER =
-            Editor.builder().course(TEST_COURSE).user(TEST_USER).role(Role.MEMBER).build();
+            Editor.builder().course(TEST_SECOND_COURSE).user(TEST_USER).role(Role.MEMBER).build();
 }
