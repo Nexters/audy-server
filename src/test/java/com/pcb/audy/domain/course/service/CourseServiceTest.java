@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.entity.Course;
@@ -244,5 +245,19 @@ class CourseServiceTest implements PinTest {
         verify(userRepository).findByUserId(any());
         verify(editorRepository).findAllByUserAndRole(any(), eq(Role.MEMBER));
         assertEquals(1, courseGetResList.getCourseGetResList().size());
+    }
+
+    @Test
+    @DisplayName("course 상세 테스트")
+    void course_상세_조회() {
+        // given
+        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+
+        // when
+        CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+
+        // then
+        verify(courseRepository).findByCourseId(any());
+        assertEquals(TEST_COURSE_ID, courseDetailGetRes.getCourseId());
     }
 }

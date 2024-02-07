@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.course.controller;
 
+import static com.pcb.audy.test.PinTest.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -13,6 +14,7 @@ import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.service.CourseService;
+import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.test.CourseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -159,6 +161,37 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
         this.mockMvc
                 .perform(
                         get("/v1/courses/member")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Course 상세 조회")
+    void course_상세_조회() throws Exception {
+        Long courseId = 1L;
+        PinGetRes pinGetRes = PinGetRes.builder()
+                .pinId(TEST_PIN_ID)
+                .pinName(TEST_PIN_NAME)
+                .originName(TEST_ORIGIN_NAME)
+                .latitude(TEST_LATITUDE)
+                .longitude(TEST_LONGITUDE)
+                .address(TEST_ADDRESS)
+                .sequence(TEST_SEQUENCE)
+                .build();
+
+        CourseDetailGetRes courseDetailGetRes = CourseDetailGetRes.builder()
+                .courseId(TEST_COURSE_ID)
+                .courseName(TEST_COURSE_NAME)
+                .pinList(List.of(pinGetRes))
+                .build();
+
+        when(courseService.getCourse(any())).thenReturn(courseDetailGetRes);
+
+        this.mockMvc
+                .perform(
+                        get("/v1/courses/{courseId}", courseId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .principal(mockPrincipal))
                 .andDo(print())
