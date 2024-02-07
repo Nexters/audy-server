@@ -3,47 +3,59 @@ package com.pcb.audy.global.oauth.handler;
 import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_HEADER;
 import static com.pcb.audy.global.jwt.JwtUtils.KEY_PREFIX;
 import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_HEADER;
-import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.jwt.JwtUtils;
 import com.pcb.audy.global.jwt.tokens.AccessToken;
 import com.pcb.audy.global.jwt.tokens.RefreshToken;
-import com.pcb.audy.global.oauth.service.OAuth2ServiceMapper;
 import com.pcb.audy.global.redis.RedisProvider;
-import com.pcb.audy.global.response.BasicResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
     private final RedisProvider redisProvider;
-    private final ObjectMapper objectMapper;
+
+    private final String IS_COMMITTED = "Response has already been committed. Unable to redirect to ";
+
+    @Value("${redirect-uri}")
+    private String redirectUri;
 
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        AccessToken accessToken = jwtUtils.getAccessToken(principalDetails.getUser().getEmail());
-        RefreshToken refreshToken = jwtUtils.getRefreshToken(principalDetails.getUser().getEmail());
-        registerTokens(response, principalDetails.getUser().getEmail(), accessToken, refreshToken);
-        settingResponse(
-                response,
-                BasicResponse.success(
-                        OAuth2ServiceMapper.INSTANCE.toOAuth2Res(principalDetails.getUser())));
+        String targetUrl = determineTargetUrl(request, response, authentication);
+
+        if (response.isCommitted()) {
+            logger.debug(IS_COMMITTED + targetUrl);
+            return;
+        }
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+    }
+
+    @Override
+    protected String determineTargetUrl(
+            HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        PrincipalDetails user = (PrincipalDetails) authentication.getPrincipal();
+
+        AccessToken accessToken = jwtUtils.getAccessToken(user.getUser().getEmail());
+        RefreshToken refreshToken = jwtUtils.getRefreshToken(user.getUser().getEmail());
+        registerTokens(response, user.getUser().getEmail(), accessToken, refreshToken);
+        return UriComponentsBuilder.fromUriString(redirectUri).build().toString();
     }
 
     private void registerTokens(
@@ -51,15 +63,16 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             String email,
             AccessToken accessToken,
             RefreshToken refreshToken) {
-        response.addHeader(ACCESS_TOKEN_HEADER, TOKEN_TYPE + accessToken.getToken());
-        response.addHeader(REFRESH_TOKEN_HEADER, TOKEN_TYPE + refreshToken.getToken());
+        setCookie(response, ACCESS_TOKEN_HEADER, accessToken.getToken(), accessToken.getExpireTime());
+        setCookie(
+                response, REFRESH_TOKEN_HEADER, refreshToken.getToken(), refreshToken.getExpireTime());
         redisProvider.set(KEY_PREFIX + email, refreshToken.getToken(), refreshToken.getExpireTime());
     }
 
-    private void settingResponse(HttpServletResponse response, BasicResponse<?> res)
-            throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.getWriter().write(objectMapper.writeValueAsString(res));
+    private void setCookie(HttpServletResponse response, String key, String token, Long expireTime) {
+        Cookie cookie = new Cookie(key, token);
+        cookie.setMaxAge(Math.toIntExact(expireTime));
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }
