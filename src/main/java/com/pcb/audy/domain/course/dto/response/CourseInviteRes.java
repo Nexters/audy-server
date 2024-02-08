@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseInviteRes {
 
-    String url;
+    private String url;
 
     @Builder
     private CourseInviteRes(String url) {

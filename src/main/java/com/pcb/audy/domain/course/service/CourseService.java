@@ -34,6 +34,7 @@ public class CourseService {
 
     public static final String INVITE_PREFIX = "invite:";
     public static final String COURSE_PREFIX = "course:";
+    public static final String DOMAIN = "https://audy-gakka.com/invite/";
     public static final int INVITE_EXPIRE_TIME = 72 * 60 * 60 * 1000;
 
     @Transactional
@@ -89,7 +90,8 @@ public class CourseService {
             key = Base64.getEncoder().encodeToString(before.getBytes());
             redisProvider.set(redisKey, key, INVITE_EXPIRE_TIME);
         }
-        return CourseInviteRes.builder().url("https://audy-gakka.com/invite/" + key).build();
+
+        return CourseInviteRes.builder().url(DOMAIN + key).build();
     }
 
     @Transactional(readOnly = true)
