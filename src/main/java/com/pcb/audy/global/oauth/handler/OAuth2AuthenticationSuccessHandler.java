@@ -29,9 +29,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final RedisProvider redisProvider;
 
     private final String IS_COMMITTED = "Response has already been committed. Unable to redirect to ";
+    private final String PREFIX_LOCAL_URL = "http://localhost:8080";
 
-    @Value("${redirect-uri}")
-    private String redirectUri;
+    @Value("${local-redirect-uri}")
+    private String localRedirectUri;
+
+    @Value("${prod-redirect-uri}")
+    private String prodRedirectUri;
 
     @Override
     public void onAuthenticationSuccess(
@@ -55,7 +59,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         AccessToken accessToken = jwtUtils.getAccessToken(user.getUser().getEmail());
         RefreshToken refreshToken = jwtUtils.getRefreshToken(user.getUser().getEmail());
         registerTokens(response, user.getUser().getEmail(), accessToken, refreshToken);
-        return UriComponentsBuilder.fromUriString(redirectUri).build().toString();
+        return UriComponentsBuilder.fromUriString(getRedirectUri(request)).build().toString();
     }
 
     private void registerTokens(
@@ -74,5 +78,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         cookie.setMaxAge(Math.toIntExact(expireTime));
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    private String getRedirectUri(HttpServletRequest request) {
+        if (request.getRequestURL().toString().startsWith(PREFIX_LOCAL_URL)) {
+            return localRedirectUri;
+        }
+        return prodRedirectUri;
     }
 }
