@@ -210,7 +210,8 @@ class CourseServiceTest implements PinTest {
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
 
-        when(editorRepository.findAllByUserOrderByCreateTimestampDesc(any(User.class), any(Pageable.class)))
+        when(editorRepository.findAllByUserOrderByCreateTimestampDesc(
+                        any(User.class), any(Pageable.class)))
                 .thenReturn(editorPage);
 
         // when
@@ -218,7 +219,8 @@ class CourseServiceTest implements PinTest {
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserOrderByCreateTimestampDesc(any(User.class), any(Pageable.class));
+        verify(editorRepository)
+                .findAllByUserOrderByCreateTimestampDesc(any(User.class), any(Pageable.class));
         assertEquals(2, courseGetResList.getCourseGetResList().size());
     }
 
@@ -234,8 +236,8 @@ class CourseServiceTest implements PinTest {
         Page<Editor> editorPage = new PageImpl<>(editorList, pageable, editorList.size());
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository
-                        .findAllByUserAndRoleOrderByCreateTimestampDesc(any(User.class), eq(Role.OWNER), any(Pageable.class)))
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(
+                        any(User.class), eq(Role.OWNER), any(Pageable.class)))
                 .thenReturn(editorPage);
 
         // when
@@ -244,7 +246,8 @@ class CourseServiceTest implements PinTest {
         // then
         verify(userRepository).findByUserId(any());
         verify(editorRepository)
-                .findAllByUserAndRoleOrderByCreateTimestampDesc(any(User.class), eq(Role.OWNER), any(Pageable.class));
+                .findAllByUserAndRoleOrderByCreateTimestampDesc(
+                        any(User.class), eq(Role.OWNER), any(Pageable.class));
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
@@ -260,8 +263,8 @@ class CourseServiceTest implements PinTest {
         Page<Editor> editorPage = new PageImpl<>(editorList, pageable, editorList.size());
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository
-                        .findAllByUserAndRoleOrderByCreateTimestampDesc(any(User.class), eq(Role.MEMBER), any(Pageable.class)))
+        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(
+                        any(User.class), eq(Role.MEMBER), any(Pageable.class)))
                 .thenReturn(editorPage);
 
         // when
@@ -270,7 +273,8 @@ class CourseServiceTest implements PinTest {
         // then
         verify(userRepository).findByUserId(any());
         verify(editorRepository)
-                .findAllByUserAndRoleOrderByCreateTimestampDesc(any(User.class), eq(Role.MEMBER), any(Pageable.class));
+                .findAllByUserAndRoleOrderByCreateTimestampDesc(
+                        any(User.class), eq(Role.MEMBER), any(Pageable.class));
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
