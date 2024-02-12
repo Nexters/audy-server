@@ -1,7 +1,7 @@
 package com.pcb.audy.global.jwt;
 
-import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_HEADER;
-import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_HEADER;
+import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_NAME;
+import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_NAME;
 import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 import static com.pcb.audy.global.response.ResultCode.INVALID_TOKEN;
 
@@ -40,8 +40,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        String accessHeader = request.getHeader(ACCESS_TOKEN_HEADER);
-        String refreshHeader = request.getHeader(REFRESH_TOKEN_HEADER);
+        String accessHeader = request.getHeader(ACCESS_TOKEN_NAME);
+        String refreshHeader = request.getHeader(REFRESH_TOKEN_NAME);
         if (!isExistHeader(accessHeader)) {
             throw new GlobalException(INVALID_TOKEN);
         }
@@ -86,8 +86,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             throw new GlobalException(INVALID_TOKEN);
         }
 
-        jwtUtils.updateAccessToken(response, email);
-        jwtUtils.updateRefreshToken(response, email);
+        jwtUtils.setAccessToken(response, email);
+        jwtUtils.setRefreshToken(response, email);
     }
 
     private static boolean isExistHeader(String header) {

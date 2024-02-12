@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Date;
@@ -25,9 +26,9 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public static final String ACCESS_TOKEN_HEADER = "Authorization";
-    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
-    public static final String TOKEN_TYPE = "Bearer ";
+    public static final String ACCESS_TOKEN_NAME = "Authorization";
+    public static final String REFRESH_TOKEN_NAME = "RefreshToken";
+    public static final String TOKEN_TYPE = "Bearer%20";
     public static final String KEY_PREFIX = "jwt:";
     private final long ACCESS_TOKEN_EXPIRE_TIME = 10 * 60 * 1000L;
     private final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
@@ -39,7 +40,7 @@ public class JwtUtils {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public AccessToken getAccessToken(String email) {
+    private AccessToken getAccessToken(String email) {
         String accessToken =
                 Jwts.builder()
                         .setSubject("accessToken")
@@ -51,7 +52,7 @@ public class JwtUtils {
         return AccessToken.builder().token(accessToken).expireTime(ACCESS_TOKEN_EXPIRE_TIME).build();
     }
 
-    public RefreshToken getRefreshToken(String email) {
+    private RefreshToken getRefreshToken(String email) {
         String refreshToken =
                 Jwts.builder()
                         .setSubject("refreshToken")
@@ -78,14 +79,29 @@ public class JwtUtils {
         }
     }
 
-    public void updateAccessToken(HttpServletResponse response, String email) {
+    public void setAccessToken(HttpServletResponse response, String email) {
         AccessToken accessToken = getAccessToken(email);
-        response.addHeader(ACCESS_TOKEN_HEADER, TOKEN_TYPE + accessToken.getToken());
+        setCookie(
+                response,
+                ACCESS_TOKEN_NAME,
+                TOKEN_TYPE + accessToken.getToken(),
+                accessToken.getExpireTime());
     }
 
-    public void updateRefreshToken(HttpServletResponse response, String email) {
+    public void setRefreshToken(HttpServletResponse response, String email) {
         RefreshToken refreshToken = getRefreshToken(email);
         redisProvider.set(KEY_PREFIX + email, refreshToken.getToken(), refreshToken.getExpireTime());
-        response.addHeader(REFRESH_TOKEN_HEADER, TOKEN_TYPE + refreshToken.getToken());
+        setCookie(
+                response,
+                REFRESH_TOKEN_NAME,
+                TOKEN_TYPE + refreshToken.getToken(),
+                refreshToken.getExpireTime());
+    }
+
+    private void setCookie(HttpServletResponse response, String key, String token, Long expireTime) {
+        Cookie cookie = new Cookie(key, token);
+        cookie.setMaxAge(Math.toIntExact(expireTime));
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }
