@@ -105,7 +105,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public CourseGetResList getAllCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page-1, limit);
         List<Editor> editors =
                 editorRepository.findAllByUserOrderByCreateTimestampDesc(user, pageable).toList();
         return CourseGetResList.builder()
@@ -116,7 +116,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public CourseGetResList getOwnedCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page-1, limit);
         List<Editor> editors =
                 editorRepository
                         .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER, pageable)
@@ -129,7 +129,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public CourseGetResList getMemberCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page-1, limit);
         List<Editor> editors =
                 editorRepository
                         .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER, pageable)

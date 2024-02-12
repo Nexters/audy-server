@@ -77,7 +77,7 @@ public class CourseController {
     @GetMapping("/member")
     public BasicResponse<CourseGetResList> getMemberCourses(
             @AuthenticationPrincipal PrincipalDetails userDetails,
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         return BasicResponse.success(
                 courseService.getMemberCourse(userDetails.getUser().getUserId(), page, limit));
