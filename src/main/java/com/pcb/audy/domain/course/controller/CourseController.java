@@ -58,19 +58,28 @@ public class CourseController {
 
     @GetMapping("/all")
     public BasicResponse<CourseGetResList> getAllCourses(
-            @AuthenticationPrincipal PrincipalDetails userDetails) {
-        return BasicResponse.success(courseService.getAllCourse(userDetails.getUser().getUserId()));
+            @AuthenticationPrincipal PrincipalDetails userDetails,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+        return BasicResponse.success(
+                courseService.getAllCourse(userDetails.getUser().getUserId(), page, limit));
     }
 
     @GetMapping("/owner")
     public BasicResponse<CourseGetResList> getOwnedCourses(
-            @AuthenticationPrincipal PrincipalDetails userDetails) {
-        return BasicResponse.success(courseService.getOwnedCourse(userDetails.getUser().getUserId()));
+            @AuthenticationPrincipal PrincipalDetails userDetails,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+        return BasicResponse.success(
+                courseService.getOwnedCourse(userDetails.getUser().getUserId(), page, limit));
     }
 
     @GetMapping("/member")
     public BasicResponse<CourseGetResList> getMemberCourses(
-            @AuthenticationPrincipal PrincipalDetails userDetails) {
-        return BasicResponse.success(courseService.getMemberCourse(userDetails.getUser().getUserId()));
+            @AuthenticationPrincipal PrincipalDetails userDetails,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+        return BasicResponse.success(
+                courseService.getMemberCourse(userDetails.getUser().getUserId(), page, limit));
     }
 }

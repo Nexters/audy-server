@@ -20,6 +20,8 @@ import java.util.Base64;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,29 +103,37 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public CourseGetResList getAllCourse(Long userId) {
+    public CourseGetResList getAllCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
-        List<Editor> editors = editorRepository.findAllByUserOrderByCreateTimestampDesc(user);
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        List<Editor> editors =
+                editorRepository.findAllByUserOrderByCreateTimestampDesc(user, pageable).toList();
         return CourseGetResList.builder()
                 .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public CourseGetResList getOwnedCourse(Long userId) {
+    public CourseGetResList getOwnedCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
+        Pageable pageable = PageRequest.of(page - 1, limit);
         List<Editor> editors =
-                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER);
+                editorRepository
+                        .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER, pageable)
+                        .toList();
         return CourseGetResList.builder()
                 .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public CourseGetResList getMemberCourse(Long userId) {
+    public CourseGetResList getMemberCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
+        Pageable pageable = PageRequest.of(page - 1, limit);
         List<Editor> editors =
-                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER);
+                editorRepository
+                        .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER, pageable)
+                        .toList();
         return CourseGetResList.builder()
                 .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
                 .build();

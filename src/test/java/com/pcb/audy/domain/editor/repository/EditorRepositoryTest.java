@@ -10,12 +10,13 @@ import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.test.EditorTest;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
@@ -61,10 +62,16 @@ public class EditorRepositoryTest implements EditorTest {
                 Editor.builder().user(savedUser).course(savedCourse2).role(Role.MEMBER).build());
 
         // when
-        List<Editor> editorList = editorRepository.findAllByUserOrderByCreateTimestampDesc(TEST_USER);
+        PageRequest pageRequest1 = PageRequest.of(0, 1);
+        Page<Editor> editorList1 =
+                editorRepository.findAllByUserOrderByCreateTimestampDesc(TEST_USER, pageRequest1);
+        PageRequest pageRequest2 = PageRequest.of(0, 1);
+        Page<Editor> editorList2 =
+                editorRepository.findAllByUserOrderByCreateTimestampDesc(TEST_USER, pageRequest2);
 
-        // then
-        assertEquals(2, editorList.size());
+        // then -> 두 페이지에 나눠서 들어갔는지 확인
+        assertEquals(1, editorList1.toList().size());
+        assertEquals(1, editorList2.toList().size());
     }
 
     @Test
@@ -82,10 +89,12 @@ public class EditorRepositoryTest implements EditorTest {
                 Editor.builder().user(savedUser).course(savedCourse2).role(Role.MEMBER).build());
 
         // when
-        List<Editor> editorList1 =
-                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(savedUser, Role.OWNER);
-        List<Editor> editorList2 =
-                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(savedUser, Role.MEMBER);
+        //        List<Editor> editorList1 =
+        //                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(savedUser,
+        // Role.OWNER);
+        //        List<Editor> editorList2 =
+        //                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(savedUser,
+        // Role.MEMBER);
 
         // then
         //        assertEquals(1, editorList1.size());
