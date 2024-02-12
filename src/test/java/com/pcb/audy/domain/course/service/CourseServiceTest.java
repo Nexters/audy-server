@@ -200,7 +200,7 @@ class CourseServiceTest implements PinTest {
     @DisplayName("course 전체 조회 테스트")
     void course_전체_조회() {
         // given
-        int page = 0;
+        int page = 1;
         int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_MEMBER);
@@ -228,7 +228,7 @@ class CourseServiceTest implements PinTest {
     @DisplayName("admin course 조회 테스트")
     void admin_course_전체_조회() {
         // given
-        int page = 0;
+        int page = 1;
         int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_ADMIN);
@@ -255,7 +255,7 @@ class CourseServiceTest implements PinTest {
     @DisplayName("member course 조회 테스트")
     void member_course_전체_조회() {
         // given
-        int page = 0;
+        int page = 1;
         int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_MEMBER);
