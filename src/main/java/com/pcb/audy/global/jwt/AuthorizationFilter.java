@@ -13,9 +13,11 @@ import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.validator.UserValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
@@ -39,9 +41,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
-        String accessHeader = request.getHeader(ACCESS_TOKEN_NAME);
-        String refreshHeader = request.getHeader(REFRESH_TOKEN_NAME);
+        String accessHeader = getToken(request, ACCESS_TOKEN_NAME);
+        String refreshHeader = getToken(request, REFRESH_TOKEN_NAME);
         if (!isExistHeader(accessHeader)) {
             throw new GlobalException(INVALID_TOKEN);
         }
@@ -59,6 +60,18 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
         setAuthentication(email);
         chain.doFilter(request, response);
+    }
+
+    private String getToken(HttpServletRequest request, String name) {
+        Cookie findCookie =
+                Arrays.stream(request.getCookies())
+                        .filter(cookie -> name.equals(cookie.getName()))
+                        .findFirst()
+                        .orElse(null);
+        if (findCookie == null) {
+            return null;
+        }
+        return findCookie.getValue();
     }
 
     private void setAuthentication(String email) {
