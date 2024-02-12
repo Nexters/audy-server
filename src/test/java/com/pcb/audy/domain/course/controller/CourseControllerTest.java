@@ -3,8 +3,12 @@ package com.pcb.audy.domain.course.controller;
 import static com.pcb.audy.test.PinTest.*;
 import static com.pcb.audy.test.UserTest.TEST_USER_ID;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,88 +92,6 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
     }
 
     @Test
-    @DisplayName("Course 전체 조회 테스트")
-    void course_전체_조회() throws Exception {
-
-        int testEditorCnt = 1;
-        int testPinCnt = 1;
-
-        CourseGetRes courseGetRes =
-                CourseGetRes.builder()
-                        .courseId(TEST_COURSE_ID)
-                        .courseName(TEST_COURSE_NAME)
-                        .editorCnt(testEditorCnt)
-                        .pinCnt(testPinCnt)
-                        .build();
-        CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
-
-        when(courseService.getAllCourse(any())).thenReturn(courseGetResList);
-
-        this.mockMvc
-                .perform(
-                        get("/v1/courses/all").contentType(MediaType.APPLICATION_JSON).principal(mockPrincipal))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("내가 관리자인 Course 전체 조회 테스트")
-    void 관리자_course_전체_조회() throws Exception {
-
-        int testEditorCnt = 1;
-        int testPinCnt = 1;
-
-        CourseGetRes courseGetRes =
-                CourseGetRes.builder()
-                        .courseId(TEST_COURSE_ID)
-                        .courseName(TEST_COURSE_NAME)
-                        .editorCnt(testEditorCnt)
-                        .pinCnt(testPinCnt)
-                        .build();
-        CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
-
-        when(courseService.getOwnedCourse(any())).thenReturn(courseGetResList);
-
-        this.mockMvc
-                .perform(
-                        get("/v1/courses/owner")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .principal(mockPrincipal))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("내가 멤버인 Course 전체 조회 테스트")
-    void 멤버_course_전체_조회() throws Exception {
-
-        int testEditorCnt = 1;
-        int testPinCnt = 1;
-
-        CourseGetRes courseGetRes =
-                CourseGetRes.builder()
-                        .courseId(TEST_COURSE_ID)
-                        .courseName(TEST_COURSE_NAME)
-                        .editorCnt(testEditorCnt)
-                        .pinCnt(testPinCnt)
-                        .build();
-        CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
-
-        when(courseService.getMemberCourse(any())).thenReturn(courseGetResList);
-
-        this.mockMvc
-                .perform(
-                        get("/v1/courses/member")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .principal(mockPrincipal))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("Course 상세 조회")
     void course_상세_조회() throws Exception {
         Long courseId = 1L;
@@ -200,6 +122,117 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                                 .principal(mockPrincipal))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Course 전체 조회 테스트")
+    void course_전체_조회() throws Exception {
+
+        int testEditorCnt = 1;
+        int testPinCnt = 1;
+        int page = 0;
+        int limit = 10;
+
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+
+        when(courseService.getAllCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
+
+        this.mockMvc
+                .perform(
+                        get("/v1/courses/all")
+                                .param("page", String.valueOf(page))
+                                .param("limit", String.valueOf(limit))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "courses/all", // API 문서의 이름 지정
+                                queryParameters( // 요청 파라미터 문서화
+                                        parameterWithName("page").description("불러올 페이지 number"),
+                                        parameterWithName("limit").description("불러올 페이지 갯수"))));
+    }
+
+    @Test
+    @DisplayName("내가 관리자인 Course 전체 조회 테스트")
+    void 관리자_course_전체_조회() throws Exception {
+
+        int testEditorCnt = 1;
+        int testPinCnt = 1;
+        int page = 0;
+        int limit = 10;
+
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+
+        when(courseService.getOwnedCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
+
+        this.mockMvc
+                .perform(
+                        get("/v1/courses/owner")
+                                .param("page", String.valueOf(page))
+                                .param("limit", String.valueOf(limit))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "courses/owner", // API 문서의 이름 지정
+                                queryParameters( // 요청 파라미터 문서화
+                                        parameterWithName("page").description("불러올 페이지 number"),
+                                        parameterWithName("limit").description("불러올 페이지 갯수"))));
+    }
+
+    @Test
+    @DisplayName("내가 멤버인 Course 전체 조회 테스트")
+    void 멤버_course_전체_조회() throws Exception {
+
+        int testEditorCnt = 1;
+        int testPinCnt = 1;
+        int page = 0;
+        int limit = 10;
+
+        CourseGetRes courseGetRes =
+                CourseGetRes.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_COURSE_NAME)
+                        .editorCnt(testEditorCnt)
+                        .pinCnt(testPinCnt)
+                        .build();
+        CourseGetResList courseGetResList =
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+
+        when(courseService.getMemberCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
+
+        this.mockMvc
+                .perform(
+                        get("/v1/courses/member")
+                                .param("page", String.valueOf(page))
+                                .param("limit", String.valueOf(limit))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .principal(mockPrincipal))
+                .andExpect(status().isOk())
+                .andDo(
+                        document(
+                                "courses/owner", // API 문서의 이름 지정
+                                queryParameters( // 요청 파라미터 문서화
+                                        parameterWithName("page").description("불러올 페이지 number"),
+                                        parameterWithName("limit").description("불러올 페이지 갯수"))));
     }
 
     @Test

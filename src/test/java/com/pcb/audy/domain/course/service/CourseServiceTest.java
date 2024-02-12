@@ -36,6 +36,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceTest implements PinTest {
@@ -195,19 +197,24 @@ class CourseServiceTest implements PinTest {
     @DisplayName("course 전체 조회 테스트")
     void course_전체_조회() {
         // given
+        int page = 0;
+        int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_MEMBER);
         editorList.add(TEST_EDITOR_ADMIN);
+        Pageable pageable = PageRequest.of(page, limit);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserOrderByCreateTimestampDesc(any())).thenReturn(editorList);
+
+        when(editorRepository.findAllByUserOrderByCreateTimestampDesc(any(), pageable).toList())
+                .thenReturn(editorList);
 
         // when
-        CourseGetResList courseGetResList = courseService.getAllCourse(TEST_USER_ID);
+        CourseGetResList courseGetResList = courseService.getAllCourse(TEST_USER_ID, page, limit);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserOrderByCreateTimestampDesc(any());
+        verify(editorRepository).findAllByUserOrderByCreateTimestampDesc(any(), pageable);
         assertEquals(2, courseGetResList.getCourseGetResList().size());
     }
 
@@ -215,19 +222,25 @@ class CourseServiceTest implements PinTest {
     @DisplayName("admin course 조회 테스트")
     void admin_course_전체_조회() {
         // given
+        int page = 0;
+        int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_ADMIN);
+        Pageable pageable = PageRequest.of(page, limit);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER)))
+        when(editorRepository
+                        .findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER), pageable)
+                        .toList())
                 .thenReturn(editorList);
 
         // when
-        CourseGetResList courseGetResList = courseService.getOwnedCourse(TEST_USER_ID);
+        CourseGetResList courseGetResList = courseService.getOwnedCourse(TEST_USER_ID, page, limit);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER));
+        verify(editorRepository)
+                .findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.OWNER), pageable);
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
@@ -235,19 +248,25 @@ class CourseServiceTest implements PinTest {
     @DisplayName("member course 조회 테스트")
     void member_course_전체_조회() {
         // given
+        int page = 0;
+        int limit = 10;
         List<Editor> editorList = new ArrayList<>();
         editorList.add(TEST_EDITOR_MEMBER);
+        Pageable pageable = PageRequest.of(page, limit);
 
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER)))
+        when(editorRepository
+                        .findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER), pageable)
+                        .toList())
                 .thenReturn(editorList);
 
         // when
-        CourseGetResList courseGetResList = courseService.getMemberCourse(TEST_USER_ID);
+        CourseGetResList courseGetResList = courseService.getMemberCourse(TEST_USER_ID, page, limit);
 
         // then
         verify(userRepository).findByUserId(any());
-        verify(editorRepository).findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER));
+        verify(editorRepository)
+                .findAllByUserAndRoleOrderByCreateTimestampDesc(any(), eq(Role.MEMBER), pageable);
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
