@@ -1,15 +1,7 @@
 package com.pcb.audy.global.oauth.handler;
 
-import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_HEADER;
-import static com.pcb.audy.global.jwt.JwtUtils.KEY_PREFIX;
-import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_HEADER;
-
 import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.jwt.JwtUtils;
-import com.pcb.audy.global.jwt.tokens.AccessToken;
-import com.pcb.audy.global.jwt.tokens.RefreshToken;
-import com.pcb.audy.global.redis.RedisProvider;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
-    private final RedisProvider redisProvider;
 
     private final String IS_COMMITTED = "Response has already been committed. Unable to redirect to ";
     private final String PREFIX_LOCAL_URL = "http://localhost:8080";
@@ -55,29 +46,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     protected String determineTargetUrl(
             HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         PrincipalDetails user = (PrincipalDetails) authentication.getPrincipal();
-
-        AccessToken accessToken = jwtUtils.getAccessToken(user.getUser().getEmail());
-        RefreshToken refreshToken = jwtUtils.getRefreshToken(user.getUser().getEmail());
-        registerTokens(response, user.getUser().getEmail(), accessToken, refreshToken);
+        registerTokens(response, user.getUser().getEmail());
         return UriComponentsBuilder.fromUriString(getRedirectUri(request)).build().toString();
     }
 
-    private void registerTokens(
-            HttpServletResponse response,
-            String email,
-            AccessToken accessToken,
-            RefreshToken refreshToken) {
-        setCookie(response, ACCESS_TOKEN_HEADER, accessToken.getToken(), accessToken.getExpireTime());
-        setCookie(
-                response, REFRESH_TOKEN_HEADER, refreshToken.getToken(), refreshToken.getExpireTime());
-        redisProvider.set(KEY_PREFIX + email, refreshToken.getToken(), refreshToken.getExpireTime());
-    }
-
-    private void setCookie(HttpServletResponse response, String key, String token, Long expireTime) {
-        Cookie cookie = new Cookie(key, token);
-        cookie.setMaxAge(Math.toIntExact(expireTime));
-        cookie.setPath("/");
-        response.addCookie(cookie);
+    private void registerTokens(HttpServletResponse response, String email) {
+        jwtUtils.setAccessToken(response, email);
+        jwtUtils.setRefreshToken(response, email);
     }
 
     private String getRedirectUri(HttpServletRequest request) {
