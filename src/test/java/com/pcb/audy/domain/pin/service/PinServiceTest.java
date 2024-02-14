@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
@@ -28,7 +27,6 @@ class PinServiceTest implements PinTest {
     @InjectMocks private PinService pinService;
 
     @Mock private RedisProvider redisProvider;
-    @Mock private CourseRepository courseRepository;
 
     @Test
     @DisplayName("pin 저장 테스트")
@@ -44,13 +42,11 @@ class PinServiceTest implements PinTest {
                         .address(TEST_ADDRESS)
                         .sequence(TEST_SEQUENCE)
                         .build();
-        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
 
         // when
         pinService.savePin(pinSaveReq);
 
         // then
-        verify(courseRepository).findByCourseId(any());
         verify(redisProvider).set(any(), any(), anyLong());
     }
 
