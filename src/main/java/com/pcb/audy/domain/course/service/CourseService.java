@@ -17,9 +17,9 @@ import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.EditorValidator;
 import com.pcb.audy.global.validator.UserValidator;
 import java.util.Base64;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -106,10 +106,11 @@ public class CourseService {
     public CourseGetResList getAllCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
         Pageable pageable = PageRequest.of(page - 1, limit);
-        List<Editor> editors =
-                editorRepository.findAllByUserOrderByCreateTimestampDesc(user, pageable).toList();
+        Page<Editor> editors = editorRepository.findAllByUserOrderByCreateTimestampDesc(user, pageable);
+
         return CourseGetResList.builder()
-                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors.getContent()))
+                .isLast(editors.isLast())
                 .build();
     }
 
@@ -117,12 +118,12 @@ public class CourseService {
     public CourseGetResList getOwnedCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
         Pageable pageable = PageRequest.of(page - 1, limit);
-        List<Editor> editors =
-                editorRepository
-                        .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER, pageable)
-                        .toList();
+        Page<Editor> editors =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.OWNER, pageable);
+
         return CourseGetResList.builder()
-                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors.getContent()))
+                .isLast(editors.isLast())
                 .build();
     }
 
@@ -130,12 +131,13 @@ public class CourseService {
     public CourseGetResList getMemberCourse(Long userId, int page, int limit) {
         User user = getUserByUserId(userId);
         Pageable pageable = PageRequest.of(page - 1, limit);
-        List<Editor> editors =
-                editorRepository
-                        .findAllByUserAndRoleOrderByCreateTimestampDesc(user, Role.MEMBER, pageable)
-                        .toList();
+        Page<Editor> editors =
+                editorRepository.findAllByUserAndRoleOrderByCreateTimestampDesc(
+                        user, Role.MEMBER, pageable);
+
         return CourseGetResList.builder()
-                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors))
+                .courseGetResList(CourseServiceMapper.INSTANCE.toCourseGetResList(editors.getContent()))
+                .isLast(editors.isLast())
                 .build();
     }
 
