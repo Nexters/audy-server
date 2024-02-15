@@ -19,7 +19,7 @@ public class SocketHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        String authorization = accessor.getFirstNativeHeader(JwtUtils.ACCESS_TOKEN_HEADER);
+        String authorization = accessor.getFirstNativeHeader(JwtUtils.ACCESS_TOKEN_NAME);
         String token = authorization.replace(JwtUtils.TOKEN_TYPE, "");
 
         if (accessor.getCommand().equals(StompCommand.CONNECT)) {
