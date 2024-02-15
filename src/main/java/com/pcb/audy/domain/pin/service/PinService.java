@@ -1,7 +1,5 @@
 package com.pcb.audy.domain.pin.service;
 
-import com.pcb.audy.domain.course.entity.Course;
-import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
@@ -10,7 +8,6 @@ import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.entity.Pin;
 import com.pcb.audy.global.redis.RedisProvider;
-import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.PinValidator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,27 +17,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PinService {
     private final RedisProvider redisProvider;
-    private final CourseRepository courseRepository;
     private final String SEPARATOR = ":";
 
     // TODO fix TTL
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(PinSaveReq pinSaveReq) {
-        UUID pinId = getPinId();
-        Pin pin =
-                Pin.builder()
-                        .pinId(pinId)
-                        .pinName(pinSaveReq.getPinName())
-                        .originName(pinSaveReq.getOriginName())
-                        .latitude(pinSaveReq.getLatitude())
-                        .longitude(pinSaveReq.getLongitude())
-                        .address(pinSaveReq.getAddress())
-                        .sequence(pinSaveReq.getSequence())
-                        .course(getCourse(pinSaveReq.getCourseId()))
-                        .build();
-        redisProvider.set(getKey(pinSaveReq.getCourseId(), pinId), pin, PIN_EXPIRE_TIME);
-        return PinServiceMapper.INSTANCE.toPinSaveRes(pin);
+        PinSaveRes pinSaveRes = PinServiceMapper.INSTANCE.toPinSaveRes(pinSaveReq);
+        redisProvider.set(
+                getKey(pinSaveReq.getCourseId(), pinSaveRes.getPinId()), pinSaveRes, PIN_EXPIRE_TIME);
+        return pinSaveRes;
     }
 
     public PinNameUpdateRes updatePinName(PinNameUpdateReq pinNameUpdateReq) {
@@ -74,15 +60,5 @@ public class PinService {
 
     private String getKey(Long courseId, UUID pinId) {
         return courseId + SEPARATOR + pinId;
-    }
-
-    private Course getCourse(Long courseId) {
-        Course course = courseRepository.findByCourseId(courseId);
-        CourseValidator.validate(course);
-        return course;
-    }
-
-    private UUID getPinId() {
-        return UUID.randomUUID();
     }
 }
