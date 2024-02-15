@@ -141,7 +141,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                         .pinCnt(testPinCnt)
                         .build();
         CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).isLast(false).build();
 
         when(courseService.getAllCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
 
@@ -178,7 +178,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                         .pinCnt(testPinCnt)
                         .build();
         CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).isLast(false).build();
 
         when(courseService.getOwnedCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
 
@@ -215,7 +215,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                         .pinCnt(testPinCnt)
                         .build();
         CourseGetResList courseGetResList =
-                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).build();
+                CourseGetResList.builder().courseGetResList(List.of(courseGetRes)).isLast(false).build();
 
         when(courseService.getMemberCourse(any(), anyInt(), anyInt())).thenReturn(courseGetResList);
 
