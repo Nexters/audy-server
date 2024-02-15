@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseGetResList {
     private List<CourseGetRes> courseGetResList;
+    private boolean isLast;
 
     @Builder
-    private CourseGetResList(List<CourseGetRes> courseGetResList) {
+    private CourseGetResList(List<CourseGetRes> courseGetResList, boolean isLast) {
         this.courseGetResList = courseGetResList;
+        this.isLast = isLast;
     }
 }
