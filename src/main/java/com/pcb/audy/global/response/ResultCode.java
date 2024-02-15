@@ -21,7 +21,9 @@ public enum ResultCode {
 
     NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다."),
 
-    NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다.");
+    NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다."),
+    VALID_KEY(5001, "올바르지 않은 키입니다."),
+    ALREADY_EXIST_EDITOR(5002, "이미 코스에 포함된 멤버입니다.");
 
     private Integer code;
     private String message;
