@@ -72,6 +72,7 @@ class EditorServiceTest implements EditorTest {
                             });
 
             // then
+            verify(redisProvider).get(any());
             assertThat(exception.getResultCode()).isEqualTo(VALID_KEY);
         }
 
@@ -95,6 +96,10 @@ class EditorServiceTest implements EditorTest {
                             });
 
             // then
+            verify(redisProvider).get(any());
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
             assertThat(exception.getResultCode()).isEqualTo(ALREADY_EXIST_EDITOR);
         }
     }
