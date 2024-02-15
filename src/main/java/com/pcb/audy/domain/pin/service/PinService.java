@@ -3,7 +3,6 @@ package com.pcb.audy.domain.pin.service;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
-import com.pcb.audy.domain.pin.dto.response.PinDataRes;
 import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
@@ -24,10 +23,10 @@ public class PinService {
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(PinSaveReq pinSaveReq) {
-        PinDataRes pinDataRes = PinServiceMapper.INSTANCE.toPinDataRes(pinSaveReq);
+        PinSaveRes pinSaveRes = PinServiceMapper.INSTANCE.toPinSaveRes(pinSaveReq);
         redisProvider.set(
-                getKey(pinSaveReq.getCourseId(), pinDataRes.getPinId()), pinDataRes, PIN_EXPIRE_TIME);
-        return PinServiceMapper.INSTANCE.toPinSaveRes(pinDataRes);
+                getKey(pinSaveReq.getCourseId(), pinSaveRes.getPinId()), pinSaveRes, PIN_EXPIRE_TIME);
+        return pinSaveRes;
     }
 
     public PinNameUpdateRes updatePinName(PinNameUpdateReq pinNameUpdateReq) {
