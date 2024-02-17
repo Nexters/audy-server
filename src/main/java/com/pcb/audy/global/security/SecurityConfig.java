@@ -48,6 +48,8 @@ public class SecurityConfig {
                                 authorizationHttpRequests
                                         .requestMatchers("/oauth2/**")
                                         .permitAll()
+                                        .requestMatchers("/course")
+                                        .permitAll()
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(authorizationFilter(), UsernamePasswordAuthenticationFilter.class)

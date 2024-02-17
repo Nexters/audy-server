@@ -35,7 +35,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     private static final List<RequestMatcher> whiteList =
-            List.of(new AntPathRequestMatcher("/oauth2/**", HttpMethod.POST.name()));
+            List.of(
+                    new AntPathRequestMatcher("/oauth2/**", HttpMethod.POST.name()),
+                    new AntPathRequestMatcher("/course", HttpMethod.GET.name()));
 
     @Override
     protected void doFilterInternal(
