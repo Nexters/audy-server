@@ -26,6 +26,7 @@ import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.test.PinTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ class CourseServiceTest implements PinTest {
     @Mock private UserRepository userRepository;
     @Mock private EditorRepository editorRepository;
     @Mock private RedisProvider redisProvider;
+    @Mock private InviteUtil inviteUtil;
 
     @Nested
     class course_저장 {
@@ -293,13 +295,14 @@ class CourseServiceTest implements PinTest {
 
     @Test
     @DisplayName("초대 링크 생성")
-    void 초대_링크_생성() {
+    void 초대_링크_생성() throws Exception {
         // given
         CourseInviteReq courseInviteReq =
                 CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
         when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
         when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
         when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+        when(redisProvider.hasKey(any())).thenReturn(false);
 
         // when
         CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
@@ -307,6 +310,6 @@ class CourseServiceTest implements PinTest {
         // then
         verify(userRepository).findByUserId(any());
         verify(courseRepository).findByCourseId(any());
-        verify(redisProvider).get(any());
+        verify(redisProvider).set(any(), any(), anyLong());
     }
 }
