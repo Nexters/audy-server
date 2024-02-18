@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -65,6 +66,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request, String name) {
+        if (ArrayUtils.isEmpty(request.getCookies())) {
+            return null;
+        }
+
         Cookie findCookie =
                 Arrays.stream(request.getCookies())
                         .filter(cookie -> name.equals(cookie.getName()))
