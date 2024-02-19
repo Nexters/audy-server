@@ -8,19 +8,20 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtUtils {
+
     private final RedisProvider redisProvider;
 
     @Value("${jwt.secret}")
@@ -99,9 +100,15 @@ public class JwtUtils {
     }
 
     private void setCookie(HttpServletResponse response, String key, String token, Long expireTime) {
-        Cookie cookie = new Cookie(key, token);
-        cookie.setMaxAge(Math.toIntExact(expireTime));
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        ResponseCookie responseCookie =
+                ResponseCookie.from(key, token)
+                        .path("/")
+                        .sameSite("None")
+                        .httpOnly(false)
+                        .secure(true)
+                        .maxAge(Math.toIntExact(expireTime))
+                        .build();
+
+        response.setHeader("Set-Cookie", responseCookie.toString());
     }
 }
