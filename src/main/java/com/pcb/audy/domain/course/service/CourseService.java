@@ -1,9 +1,6 @@
 package com.pcb.audy.domain.course.service;
 
-import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
-import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
-import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
-import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.request.*;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
@@ -13,12 +10,11 @@ import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.EditorValidator;
 import com.pcb.audy.global.validator.UserValidator;
-import java.util.Base64;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +29,10 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final EditorRepository editorRepository;
     private final RedisProvider redisProvider;
+    private final InviteUtil inviteUtil;
 
-    public static final String INVITE_PREFIX = "invite:";
-    public static final String COURSE_PREFIX = "course:";
-    public static final String DOMAIN = "https://audy-gakka.com/invite/";
+    private static final String INVITE_PREFIX = "Invite: ";
+    public static final String INVITE_DOMAIN = "https://audy-gakka.com/invite/";
     public static final int INVITE_EXPIRE_TIME = 72 * 60 * 60 * 1000;
 
     @Transactional
@@ -85,15 +81,19 @@ public class CourseService {
 
         // 링크 생성
         String redisKey = INVITE_PREFIX + courseInviteReq.getCourseId();
-        String key = (String) redisProvider.get(redisKey);
-        if (key == null) {
-            String before =
-                    COURSE_PREFIX + courseInviteReq.getCourseId() + RandomStringUtils.randomAlphabetic(6);
-            key = Base64.getEncoder().encodeToString(before.getBytes());
-            redisProvider.set(redisKey, key, INVITE_EXPIRE_TIME);
+        CourseInviteRedisReq courseInviteRedisReq =
+                CourseInviteRedisReq.builder()
+                        .userId(courseInviteReq.getUserId())
+                        .courseId(courseInviteReq.getCourseId())
+                        .build();
+
+        if (!redisProvider.hasKey(redisKey)) { // 중복 체크 -> 하지 않으면 기존 코드가 사용 불가능하기 때문
+            redisProvider.set(redisKey, courseInviteRedisReq, INVITE_EXPIRE_TIME);
         }
 
-        return CourseInviteRes.builder().url(DOMAIN + key).build();
+        return CourseInviteRes.builder()
+                .url(INVITE_DOMAIN + inviteUtil.encryptCourseInviteReq(courseInviteRedisReq))
+                .build();
     }
 
     @Transactional(readOnly = true)
