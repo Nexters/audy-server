@@ -15,21 +15,25 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.pcb.audy.global.exception.GlobalException;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static com.pcb.audy.global.response.ResultCode.*;
 
 @Component
+@RequiredArgsConstructor
 public class InviteUtil {
 
     @Value("${course-invite-key}")
     private String key;
 
+    private final ObjectMapper objectMapper;
+
     public String encryptCourseInviteReq(CourseInviteRedisReq courseInviteRedisReq) {
         try{
             // 객체를 JSON 문자열로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(courseInviteRedisReq);
 
             // AES 키 생성 및 암호화
@@ -61,7 +65,6 @@ public class InviteUtil {
             String json = new String(decryptedBytes);
 
             // JSON 문자열을 CourseInviteReq 객체로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(json, CourseInviteRedisReq.class);
         } catch (Exception e) {
             throw new GlobalException(FAILED_DECRYPT);

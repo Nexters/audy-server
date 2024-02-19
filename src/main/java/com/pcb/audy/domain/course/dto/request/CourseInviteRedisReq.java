@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseInviteRedisReq {
     private Long courseId;
+    private Long userId;
     @Builder
-    private CourseInviteRedisReq(Long courseId) {
+    private CourseInviteRedisReq(Long userId, Long courseId) {
+        this.userId = userId;
         this.courseId = courseId;
     }
 }
