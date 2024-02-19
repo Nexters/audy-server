@@ -109,6 +109,6 @@ public class JwtUtils {
                         .maxAge(Math.toIntExact(expireTime))
                         .build();
 
-        response.setHeader("Set-Cookie", responseCookie.toString());
+        response.addHeader("Set-Cookie", responseCookie.toString());
     }
 }
