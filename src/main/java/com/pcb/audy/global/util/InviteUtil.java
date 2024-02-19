@@ -1,26 +1,16 @@
 package com.pcb.audy.global.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static com.pcb.audy.global.response.ResultCode.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
-import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
-
 import com.pcb.audy.global.exception.GlobalException;
-import lombok.AllArgsConstructor;
+import java.util.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import static com.pcb.audy.global.response.ResultCode.*;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +22,7 @@ public class InviteUtil {
     private final ObjectMapper objectMapper;
 
     public String encryptCourseInviteReq(CourseInviteRedisReq courseInviteRedisReq) {
-        try{
+        try {
             // 객체를 JSON 문자열로 변환
             String json = objectMapper.writeValueAsString(courseInviteRedisReq);
 
@@ -51,7 +41,7 @@ public class InviteUtil {
     }
 
     public CourseInviteRedisReq decryptCourseInviteReq(String encryptedData) {
-        try{
+        try {
             // Base64 인코딩된 문자열을 바이트 배열로 변환
             byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
 

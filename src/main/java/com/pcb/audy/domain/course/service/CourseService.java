@@ -81,7 +81,11 @@ public class CourseService {
 
         // 링크 생성
         String redisKey = INVITE_PREFIX + courseInviteReq.getCourseId();
-        CourseInviteRedisReq courseInviteRedisReq = CourseInviteRedisReq.builder().userId(courseInviteReq.getUserId()).courseId(courseInviteReq.getCourseId()).build();
+        CourseInviteRedisReq courseInviteRedisReq =
+                CourseInviteRedisReq.builder()
+                        .userId(courseInviteReq.getUserId())
+                        .courseId(courseInviteReq.getCourseId())
+                        .build();
 
         if (!redisProvider.hasKey(redisKey)) { // 중복 체크 -> 하지 않으면 기존 코드가 사용 불가능하기 때문
             redisProvider.set(redisKey, courseInviteRedisReq, INVITE_EXPIRE_TIME);

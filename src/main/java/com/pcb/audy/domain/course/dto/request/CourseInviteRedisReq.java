@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CourseInviteRedisReq {
     private Long courseId;
     private Long userId;
+
     @Builder
     private CourseInviteRedisReq(Long userId, Long courseId) {
         this.userId = userId;
