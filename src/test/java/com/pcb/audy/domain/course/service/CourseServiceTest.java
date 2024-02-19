@@ -293,23 +293,50 @@ class CourseServiceTest implements PinTest {
         verify(courseRepository).findByCourseId(any());
     }
 
-    @Test
-    @DisplayName("초대 링크 생성")
-    void 초대_링크_생성() throws Exception {
-        // given
-        CourseInviteReq courseInviteReq =
-                CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
-        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
-        when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
-        when(redisProvider.hasKey(any())).thenReturn(false);
+    @Nested
+    class course_초대_링크_생성 {
+        @Test
+        @DisplayName("초대 링크 생성")
+        void 초대_링크_최초_생성() throws Exception {
+            // given
+            CourseInviteReq courseInviteReq =
+                    CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+            when(redisProvider.hasKey(any())).thenReturn(false);
 
-        // when
-        CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
+            // when
+            CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
 
-        // then
-        verify(userRepository).findByUserId(any());
-        verify(courseRepository).findByCourseId(any());
-        verify(redisProvider).set(any(), any(), anyLong());
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(redisProvider).hasKey(any());
+            verify(redisProvider).set(any(), any(), anyLong());
+        }
+
+        @Test
+        @DisplayName("초대 링크 중복 생성")
+        void 초대_링크_중복_생성() throws Exception {
+            // given
+            CourseInviteReq courseInviteReq =
+                    CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+            when(redisProvider.hasKey(any())).thenReturn(true);
+
+            // when
+            CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
+
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(redisProvider).hasKey(any());
+            verify(redisProvider, never()).set(any(), any(), anyLong());
+        }
     }
 }
