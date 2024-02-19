@@ -1,9 +1,6 @@
 package com.pcb.audy.domain.course.service;
 
-import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
-import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
-import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
-import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
+import com.pcb.audy.domain.course.dto.request.*;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
@@ -79,19 +76,19 @@ public class CourseService {
     public CourseInviteRes inviteCourse(CourseInviteReq courseInviteReq) throws Exception {
         // 초대 권한 확인
         User user = getUserByUserId(courseInviteReq.getUserId());
-        System.out.println(user.getUserId());
         Course course = getCourseByCourseId(courseInviteReq.getCourseId());
         isAdminUser(user, course);
 
         // 링크 생성
         String redisKey = INVITE_PREFIX + courseInviteReq.getCourseId();
+        CourseInviteRedisReq courseInviteRedisReq = CourseInviteRedisReq.builder().courseId(courseInviteReq.getCourseId()).build();
 
         if (!redisProvider.hasKey(redisKey)) { // 중복 체크 -> 하지 않으면 기존 코드가 사용 불가능하기 때문
-            redisProvider.set(redisKey, courseInviteReq, INVITE_EXPIRE_TIME);
+            redisProvider.set(redisKey, courseInviteRedisReq, INVITE_EXPIRE_TIME);
         }
 
         return CourseInviteRes.builder()
-                .url(INVITE_DOMAIN + inviteUtil.encryptCourseInviteReq(courseInviteReq))
+                .url(INVITE_DOMAIN + inviteUtil.encryptCourseInviteReq(courseInviteRedisReq))
                 .build();
     }
 
