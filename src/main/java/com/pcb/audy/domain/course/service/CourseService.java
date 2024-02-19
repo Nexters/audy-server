@@ -73,7 +73,7 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public CourseInviteRes inviteCourse(CourseInviteReq courseInviteReq) throws Exception {
+    public CourseInviteRes inviteCourse(CourseInviteReq courseInviteReq) {
         // 초대 권한 확인
         User user = getUserByUserId(courseInviteReq.getUserId());
         Course course = getCourseByCourseId(courseInviteReq.getCourseId());

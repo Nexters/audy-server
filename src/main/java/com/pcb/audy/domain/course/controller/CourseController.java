@@ -46,8 +46,7 @@ public class CourseController {
     @PostMapping("/invite")
     public BasicResponse<CourseInviteRes> inviteCourse(
             @RequestBody CourseInviteReq courseInviteReq,
-            @AuthenticationPrincipal PrincipalDetails userDetails)
-            throws Exception {
+            @AuthenticationPrincipal PrincipalDetails userDetails) {
         courseInviteReq.setUserId(userDetails.getUser().getUserId());
         return BasicResponse.success(courseService.inviteCourse(courseInviteReq));
     }
