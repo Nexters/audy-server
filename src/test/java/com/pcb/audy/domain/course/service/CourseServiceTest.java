@@ -18,7 +18,6 @@ import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.dto.response.CourseInviteRes;
-import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
@@ -31,8 +30,6 @@ import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.test.PinTest;
-
-import java.lang.runtime.ObjectMethods;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -288,7 +285,6 @@ class CourseServiceTest implements PinTest {
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
-
     @Nested
     class course_상세_조회 {
 
@@ -305,7 +301,7 @@ class CourseServiceTest implements PinTest {
             // then
             verify(courseRepository).findByCourseId(any());
             verify(redisProvider).getByPattern(any());
-            verify(redisProvider, never()).multiSet(any());
+            verify(redisProvider).multiSet(any());
         }
 
         @Test
@@ -325,7 +321,6 @@ class CourseServiceTest implements PinTest {
             verify(redisProvider).getByPattern(any());
             verify(redisProvider, never()).multiSet(any());
         }
-
     }
 
     @Nested
