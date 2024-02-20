@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
@@ -17,10 +18,12 @@ import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.dto.response.CourseInviteRes;
+import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
+import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
@@ -28,7 +31,10 @@ import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.test.PinTest;
+
+import java.lang.runtime.ObjectMethods;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +57,8 @@ class CourseServiceTest implements PinTest {
     @Mock private EditorRepository editorRepository;
     @Mock private RedisProvider redisProvider;
     @Mock private InviteUtil inviteUtil;
+
+    @Mock private ObjectMapper objectMapper;
 
     @Nested
     class course_저장 {
@@ -280,17 +288,44 @@ class CourseServiceTest implements PinTest {
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
-    @Test
-    @DisplayName("course 상세 테스트")
-    void course_상세_조회() {
-        // given
-        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
 
-        // when
-        CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+    @Nested
+    class course_상세_조회 {
 
-        // then
-        verify(courseRepository).findByCourseId(any());
+        @Test
+        @DisplayName("course 상세 테스트_db")
+        void course_상세_조회_db() {
+            // given
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(redisProvider.getByPattern(any())).thenReturn(List.of());
+
+            // when
+            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+
+            // then
+            verify(courseRepository).findByCourseId(any());
+            verify(redisProvider).getByPattern(any());
+            verify(redisProvider, never()).multiSet(any());
+        }
+
+        @Test
+        @DisplayName("course 상세 테스트_redis")
+        void course_상세_조회_redis() {
+            // given
+            List<PinSaveRes> pinSaveResList = List.of(TEST_PIN_SAVED);
+
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(redisProvider.getByPattern(any())).thenReturn(Collections.singletonList(pinSaveResList));
+
+            // when
+            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+
+            // then
+            verify(courseRepository).findByCourseId(any());
+            verify(redisProvider).getByPattern(any());
+            verify(redisProvider, never()).multiSet(any());
+        }
+
     }
 
     @Nested
