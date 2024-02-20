@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PinSaveReq {
-    private Long courseId;
     private String pinName;
     private String originName;
     private Double latitude;
@@ -18,14 +17,12 @@ public class PinSaveReq {
 
     @Builder
     private PinSaveReq(
-            Long courseId,
             String pinName,
             String originName,
             Double latitude,
             Double longitude,
             String address,
             Integer sequence) {
-        this.courseId = courseId;
         this.pinName = pinName;
         this.originName = originName;
         this.latitude = latitude;

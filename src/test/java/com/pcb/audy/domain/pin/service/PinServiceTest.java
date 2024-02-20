@@ -34,7 +34,6 @@ class PinServiceTest implements PinTest {
         // given
         PinSaveReq pinSaveReq =
                 PinSaveReq.builder()
-                        .courseId(TEST_COURSE_ID)
                         .pinName(TEST_PIN_NAME)
                         .originName(TEST_ORIGIN_NAME)
                         .latitude(TEST_LATITUDE)
@@ -44,7 +43,7 @@ class PinServiceTest implements PinTest {
                         .build();
 
         // when
-        pinService.savePin(pinSaveReq);
+        pinService.savePin(TEST_COURSE_ID, pinSaveReq);
 
         // then
         verify(redisProvider).set(any(), any(), anyLong());
