@@ -22,10 +22,9 @@ public class PinService {
     // TODO fix TTL
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
-    public PinSaveRes savePin(PinSaveReq pinSaveReq) {
-        PinSaveRes pinSaveRes = PinServiceMapper.INSTANCE.toPinSaveRes(pinSaveReq);
-        redisProvider.set(
-                getKey(pinSaveReq.getCourseId(), pinSaveRes.getPinId()), pinSaveRes, PIN_EXPIRE_TIME);
+    public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
+        PinSaveRes pinSaveRes = PinServiceMapper.INSTANCE.toPinSaveRes(pinSaveReq, courseId);
+        redisProvider.set(getKey(courseId, pinSaveRes.getPinId()), pinSaveRes, PIN_EXPIRE_TIME);
         return pinSaveRes;
     }
 
