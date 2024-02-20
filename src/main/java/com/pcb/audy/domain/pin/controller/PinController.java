@@ -13,7 +13,6 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,10 +28,11 @@ public class PinController {
         return BasicResponse.success(pinService.savePin(courseId, pinSaveReq));
     }
 
-    @PatchMapping
+    @MessageMapping("/{courseId}/pin/modification")
+    @SendTo("/sub/{courseId}/pin/modification")
     public BasicResponse<PinNameUpdateRes> updatePinName(
-            @RequestBody PinNameUpdateReq pinNameUpdateReq) {
-        return BasicResponse.success(pinService.updatePinName(pinNameUpdateReq));
+            @DestinationVariable Long courseId, @RequestBody PinNameUpdateReq pinNameUpdateReq) {
+        return BasicResponse.success(pinService.updatePinName(courseId, pinNameUpdateReq));
     }
 
     @DeleteMapping
