@@ -19,9 +19,15 @@ public class PinRedisRes {
     private Integer sequence;
 
     @Builder
-    private PinRedisRes(Long courseId, UUID pinId, String pinName, String originName,
-        Double latitude,
-        Double longitude, String address, Integer sequence) {
+    private PinRedisRes(
+            Long courseId,
+            UUID pinId,
+            String pinName,
+            String originName,
+            Double latitude,
+            Double longitude,
+            String address,
+            Integer sequence) {
         this.courseId = courseId;
         this.pinId = pinId;
         this.pinName = pinName;
