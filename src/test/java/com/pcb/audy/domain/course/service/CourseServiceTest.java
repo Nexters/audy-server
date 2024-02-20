@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
@@ -21,13 +22,16 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
+import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.test.PinTest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -49,6 +53,9 @@ class CourseServiceTest implements PinTest {
     @Mock private UserRepository userRepository;
     @Mock private EditorRepository editorRepository;
     @Mock private RedisProvider redisProvider;
+    @Mock private InviteUtil inviteUtil;
+
+    @Mock private ObjectMapper objectMapper;
 
     @Nested
     class course_저장 {
@@ -278,35 +285,88 @@ class CourseServiceTest implements PinTest {
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
-    @Test
-    @DisplayName("course 상세 테스트")
-    void course_상세_조회() {
-        // given
-        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+    @Nested
+    class course_상세_조회 {
 
-        // when
-        CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+        @Test
+        @DisplayName("course 상세 테스트_db")
+        void course_상세_조회_db() {
+            // given
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(redisProvider.getByPattern(any())).thenReturn(List.of());
 
-        // then
-        verify(courseRepository).findByCourseId(any());
+            // when
+            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+
+            // then
+            verify(courseRepository).findByCourseId(any());
+            verify(redisProvider).getByPattern(any());
+            verify(redisProvider).multiSet(any());
+        }
+
+        @Test
+        @DisplayName("course 상세 테스트_redis")
+        void course_상세_조회_redis() {
+            // given
+            List<PinSaveRes> pinSaveResList = List.of(TEST_PIN_SAVED);
+
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(redisProvider.getByPattern(any())).thenReturn(Collections.singletonList(pinSaveResList));
+
+            // when
+            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+
+            // then
+            verify(courseRepository).findByCourseId(any());
+            verify(redisProvider).getByPattern(any());
+            verify(redisProvider, never()).multiSet(any());
+        }
     }
 
-    @Test
-    @DisplayName("초대 링크 생성")
-    void 초대_링크_생성() {
-        // given
-        CourseInviteReq courseInviteReq =
-                CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
-        when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
-        when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
-        when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+    @Nested
+    class course_초대_링크_생성 {
+        @Test
+        @DisplayName("초대 링크 생성")
+        void 초대_링크_최초_생성() throws Exception {
+            // given
+            CourseInviteReq courseInviteReq =
+                    CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+            when(redisProvider.hasKey(any())).thenReturn(false);
 
-        // when
-        CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
+            // when
+            CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
 
-        // then
-        verify(userRepository).findByUserId(any());
-        verify(courseRepository).findByCourseId(any());
-        verify(redisProvider).get(any());
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(redisProvider).hasKey(any());
+            verify(redisProvider).set(any(), any(), anyLong());
+        }
+
+        @Test
+        @DisplayName("초대 링크 중복 생성")
+        void 초대_링크_중복_생성() throws Exception {
+            // given
+            CourseInviteReq courseInviteReq =
+                    CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+            when(redisProvider.hasKey(any())).thenReturn(true);
+
+            // when
+            CourseInviteRes courseInviteRes = courseService.inviteCourse(courseInviteReq);
+
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(redisProvider).hasKey(any());
+            verify(redisProvider, never()).set(any(), any(), anyLong());
+        }
     }
 }

@@ -21,7 +21,10 @@ public enum ResultCode {
 
     NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다."),
 
-    NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다.");
+    NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다."),
+
+    FAILED_ENCRYPT(6000, "객체 암호화에 실패하였습니다."),
+    FAILED_DECRYPT(6001, "객체 복호화에 실패하였습니다.");
 
     private Integer code;
     private String message;
