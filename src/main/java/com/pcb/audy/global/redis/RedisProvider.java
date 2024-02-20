@@ -1,18 +1,39 @@
 package com.pcb.audy.global.redis;
 
+import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import java.time.Duration;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 @Component
 @RequiredArgsConstructor
 public class RedisProvider {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+    public Set<String> findKeys(String pattern) {
+        return redisTemplate.keys(pattern);
+    }
+
+    public List<Object> getByPattern(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (CollectionUtils.isEmpty(keys)) {
+            return List.of();
+        }
+        return redisTemplate.opsForValue().multiGet(keys);
     }
 
     public void set(String key, Object o, long expireTime) {
@@ -21,6 +42,33 @@ public class RedisProvider {
         }
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
         redisTemplate.opsForValue().set(key, o, Duration.ofMillis(expireTime));
+    }
+
+    public void multiSet(List<PinSaveRes> pinSaveResList) {
+        redisTemplate.executePipelined(
+                (RedisCallback<Object>)
+                        connection -> {
+                            // JSON 직렬화를 위한 설정
+                            RedisSerializer<String> stringSerializer = redisTemplate.getStringSerializer();
+                            RedisSerializer<PinSaveRes> valueSerializer =
+                                    new Jackson2JsonRedisSerializer<>(PinSaveRes.class);
+
+                            pinSaveResList.forEach(
+                                    pinSaveRes -> {
+                                        // courseId와 pinId를 조합하여 키 생성
+                                        String key = pinSaveRes.getCourseId() + ":" + pinSaveRes.getPinId();
+                                        byte[] serializedKey = stringSerializer.serialize(key);
+                                        byte[] serializedValue = valueSerializer.serialize(pinSaveRes);
+
+                                        // Redis에 키-값 쌍 저장
+                                        connection.set(
+                                                serializedKey,
+                                                serializedValue,
+                                                Expiration.milliseconds(PIN_EXPIRE_TIME),
+                                                RedisStringCommands.SetOption.UPSERT);
+                                    });
+                            return null; // 파이프라인 내에서 각 개별 명령의 결과 처리를 무시하겠다
+                        });
     }
 
     public void delete(String key) {

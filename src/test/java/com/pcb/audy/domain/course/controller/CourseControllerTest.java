@@ -110,7 +110,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 CourseDetailGetRes.builder()
                         .courseId(TEST_COURSE_ID)
                         .courseName(TEST_COURSE_NAME)
-                        .pinList(List.of(pinGetRes))
+                        .pinResList(List.of(pinGetRes))
                         .build();
 
         when(courseService.getCourse(any())).thenReturn(courseDetailGetRes);
