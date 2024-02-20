@@ -11,12 +11,12 @@ public class CourseDetailGetRes {
 
     private Long courseId;
     private String courseName;
-    private List<PinGetRes> pinList;
+    private List<PinGetRes> pinResList;
 
     @Builder
-    private CourseDetailGetRes(Long courseId, String courseName, List<PinGetRes> pinList) {
+    private CourseDetailGetRes(Long courseId, String courseName, List<PinGetRes> pinResList) {
         this.courseId = courseId;
         this.courseName = courseName;
-        this.pinList = pinList;
+        this.pinResList = pinResList;
     }
 }
