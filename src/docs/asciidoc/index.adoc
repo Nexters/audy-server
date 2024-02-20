@@ -34,6 +34,11 @@ include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-request.adoc[]
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-response.adoc[]
 
+=== Update Pin Name
+
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-response.adoc[]
+
 == course API
 
 include::{snippets}/course-controller-test/course_저장/auto-section.adoc[]
