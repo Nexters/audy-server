@@ -1,0 +1,13 @@
+[source,http,options="nowrap"]
+----
+SUBSCRIBE /sub/{courseId}/pin/removal
+EX /sub/1/pin/removal
+Content-Type: application/json
+{
+  "code" : 0,
+  "message" : "실행에 성공했습니다.",
+  "data" : {
+    "pinId" : "10b24e0e-7d7f-49ab-858d-14097f47ee8a"
+  }
+}
+----
