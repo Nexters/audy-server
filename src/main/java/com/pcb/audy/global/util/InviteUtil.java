@@ -51,7 +51,7 @@ public class InviteUtil {
             byte[] decryptedBytes = cipher.doFinal(decodedBytes);
 
             // 복호화된 데이터를 JSON 문자열로 변환
-            String json = decryptedBytes.toString();
+            String json = new String(decryptedBytes);
 
             // JSON 문자열을 CourseInviteReq 객체로 변환
             return objectMapper.readValue(json, CourseInviteRedisReq.class);

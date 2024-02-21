@@ -16,4 +16,12 @@ public class CourseInviteRedisReq {
         this.userId = userId;
         this.courseId = courseId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CourseInviteRedisReq)) return false;
+        CourseInviteRedisReq courseInviteRedisReq = (CourseInviteRedisReq) o;
+        return courseInviteRedisReq.getUserId().equals(this.userId)
+                && courseInviteRedisReq.getCourseId().equals(this.courseId);
+    }
 }

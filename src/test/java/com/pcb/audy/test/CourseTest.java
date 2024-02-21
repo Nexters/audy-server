@@ -1,5 +1,8 @@
 package com.pcb.audy.test;
 
+import static com.pcb.audy.test.UserTest.TEST_USER_ID;
+
+import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
 import com.pcb.audy.domain.course.entity.Course;
 
 public interface CourseTest {
@@ -18,4 +21,7 @@ public interface CourseTest {
 
     Course TEST_SECOND_COURSE =
             Course.builder().courseId(TEST_SECOND_COURSE_ID).courseName(TEST_SECOND_COURSE_NAME).build();
+
+    CourseInviteRedisReq TEST_COURSE_INVITE_REDIS_REQ =
+            CourseInviteRedisReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
 }

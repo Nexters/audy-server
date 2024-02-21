@@ -57,4 +57,5 @@ include::{snippets}/course-controller-test/멤버_course_전체_조회/auto-sect
 
 == editor API
 
+include::{snippets}/editor-controller-test/editor_저장/auto-section.adoc[]
 include::{snippets}/editor-controller-test/editor_역할_수정/auto-section.adoc[]
