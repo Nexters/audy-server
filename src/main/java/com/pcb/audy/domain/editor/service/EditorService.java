@@ -4,10 +4,10 @@ import static com.pcb.audy.global.meta.Role.MEMBER;
 
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
-import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
-import com.pcb.audy.domain.editor.dto.response.EditorSaveRes;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
+import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
 import com.pcb.audy.domain.editor.dto.response.EditorRoleUpdateRes;
+import com.pcb.audy.domain.editor.dto.response.EditorSaveRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.user.entity.User;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class EditorService {
-  
+
     private final RedisProvider redisProvider;
     private final EditorRepository editorRepository;
     private final UserRepository userRepository;
@@ -47,7 +47,7 @@ public class EditorService {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
         EditorValidator.checkAlreadyExist(editor);
     }
-  
+
     @Transactional
     public EditorRoleUpdateRes updateRoleEditor(EditorRoleUpdateReq editorRoleUpdateReq) {
         User user = getUserByUserId(editorRoleUpdateReq.getUserId());

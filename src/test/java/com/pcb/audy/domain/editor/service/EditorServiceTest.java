@@ -1,21 +1,23 @@
 package com.pcb.audy.domain.editor.service;
 
-import static com.pcb.audy.global.response.ResultCode.ALREADY_EXIST_EDITOR;
-import static com.pcb.audy.global.response.ResultCode.VALID_KEY;
 import static com.pcb.audy.global.meta.Role.MEMBER;
+import static com.pcb.audy.global.response.ResultCode.ALREADY_EXIST_EDITOR;
 import static com.pcb.audy.global.response.ResultCode.NOT_ADMIN_COURSE;
+import static com.pcb.audy.global.response.ResultCode.VALID_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.pcb.audy.domain.course.repository.CourseRepository;
-import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
-import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
+import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
+import com.pcb.audy.domain.editor.repository.EditorRepository;
+import com.pcb.audy.domain.user.repository.UserRepository;
+import com.pcb.audy.global.exception.GlobalException;
+import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.test.EditorTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -106,8 +108,8 @@ class EditorServiceTest implements EditorTest {
             assertThat(exception.getResultCode()).isEqualTo(ALREADY_EXIST_EDITOR);
         }
     }
-  
-  @Nested
+
+    @Nested
     class editor_역할_수정 {
         @Test
         @DisplayName("editor 역할 수정 테스트")
