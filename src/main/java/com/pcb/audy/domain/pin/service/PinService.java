@@ -49,12 +49,12 @@ public class PinService {
         return PinServiceMapper.INSTANCE.toPinNameUpdateRes(updatedPin);
     }
 
-    public PinDeleteRes deletePin(PinDeleteReq pinDeleteReq) {
-        //        String key = getKey(pinDeleteReq.getCourseId(), pinDeleteReq.getPinId());
-        //        Pin pin = (Pin) redisProvider.get(key);
-        //                PinValidator.validate(pin);
-        //        redisProvider.delete(key);
-        return new PinDeleteRes();
+    public PinDeleteRes deletePin(Long courseId, PinDeleteReq pinDeleteReq) {
+        String key = getKey(courseId, pinDeleteReq.getPinId());
+        PinRedisRes pinRedisRes = objectMapper.convertValue(redisProvider.get(key), PinRedisRes.class);
+        PinValidator.validate(pinRedisRes);
+        redisProvider.delete(key);
+        return PinServiceMapper.INSTANCE.toPinDeleteRes(pinRedisRes);
     }
 
     private String getKey(Long courseId, UUID pinId) {

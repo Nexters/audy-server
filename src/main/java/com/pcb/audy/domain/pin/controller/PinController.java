@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,8 +34,10 @@ public class PinController {
         return BasicResponse.success(pinService.updatePinName(courseId, pinNameUpdateReq));
     }
 
-    @DeleteMapping
-    public BasicResponse<PinDeleteRes> deletePin(@RequestBody PinDeleteReq pinDeleteReq) {
-        return BasicResponse.success(pinService.deletePin(pinDeleteReq));
+    @MessageMapping("/{courseId}/pin/removal")
+    @SendTo("/sub/{courseId}/pin/removal")
+    public BasicResponse<PinDeleteRes> deletePin(
+            @DestinationVariable Long courseId, @RequestBody PinDeleteReq pinDeleteReq) {
+        return BasicResponse.success(pinService.deletePin(courseId, pinDeleteReq));
     }
 }
