@@ -11,12 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EditorSaveReq {
     private Long userId;
-    private Long courseId;
     private String key;
 
     @Builder
-    private EditorSaveReq(Long courseId, String key) {
-        this.courseId = courseId;
+    private EditorSaveReq(String key) {
         this.key = key;
     }
 }

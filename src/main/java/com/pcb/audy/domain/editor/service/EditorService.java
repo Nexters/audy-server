@@ -2,6 +2,8 @@ package com.pcb.audy.domain.editor.service;
 
 import static com.pcb.audy.global.meta.Role.MEMBER;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
@@ -13,6 +15,7 @@ import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.EditorValidator;
 import com.pcb.audy.global.validator.UserValidator;
@@ -28,17 +31,31 @@ public class EditorService {
     private final EditorRepository editorRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final InviteUtil inviteUtil;
+    private final ObjectMapper objectMapper;
 
-    private static final String INVITE_PREFIX = "invite:";
+    private static final String INVITE_PREFIX = "Invite: ";
 
     @Transactional
     public EditorSaveRes saveEditor(EditorSaveReq editorSaveReq) {
-        EditorValidator.validateKey(
-                editorSaveReq.getKey(),
-                (String) redisProvider.get(INVITE_PREFIX + editorSaveReq.getCourseId()));
+
+        String key = editorSaveReq.getKey();
+        CourseInviteRedisReq courseInviteRedisReq = inviteUtil.decryptCourseInviteReq(key);
+
+        // 초대 객체가 Redis에 있는 지 확인
+        CourseInviteRedisReq findByKey =
+                objectMapper.convertValue(
+                        redisProvider.get(INVITE_PREFIX + courseInviteRedisReq.getCourseId()),
+                        CourseInviteRedisReq.class);
+        EditorValidator.validateObject(courseInviteRedisReq, findByKey);
+
+        // 초대 링크 상의 course가 유효한 지 검증
+        Course course = getCourseByCourseId(courseInviteRedisReq.getCourseId());
+
+        // 유저에 Editor 추가 가능한 지 검증
         User user = getUserByUserId(editorSaveReq.getUserId());
-        Course course = getCourseByCourseId(editorSaveReq.getCourseId());
         checkAlreadyExistEditor(user, course);
+
         editorRepository.save(Editor.builder().user(user).course(course).role(MEMBER).build());
         return new EditorSaveRes();
     }
