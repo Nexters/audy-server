@@ -3,8 +3,8 @@ package com.pcb.audy.domain.editor.controller;
 import static com.pcb.audy.global.meta.Role.MEMBER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,9 +28,8 @@ class EditorControllerTest extends BaseMvcTest implements EditorTest {
     @Test
     @DisplayName("editor 저장 테스트")
     void editor_저장() throws Exception {
-        EditorSaveReq editorSaveReq =
-                EditorSaveReq.builder().courseId(TEST_COURSE_ID).key(TEST_KEY).build();
-        EditorSaveRes editorSaveRes = new EditorSaveRes();
+        EditorSaveReq editorSaveReq = EditorSaveReq.builder().key(TEST_KEY).build();
+        EditorSaveRes editorSaveRes = EditorSaveRes.builder().courseId(TEST_COURSE_ID).build();
         when(editorService.saveEditor(any())).thenReturn(editorSaveRes);
         this.mockMvc
                 .perform(
