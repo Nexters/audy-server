@@ -1,0 +1,15 @@
+[source,http,options="nowrap"]
+----
+SEND /pub/{courseId}/pin/addition
+EX /pub/1/pin/addition
+Content-Type: application/json
+{
+    "courseId": 1,
+    "pinName": "pinName",
+    "originName": "originName",
+    "latitude": 1.0,
+    "longitude": 1.1,
+    "address": "address",
+    "sequence": 1
+}
+----

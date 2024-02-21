@@ -9,12 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PinDeleteReq {
-    private Long courseId;
     private UUID pinId;
 
     @Builder
-    private PinDeleteReq(Long courseId, UUID pinId) {
-        this.courseId = courseId;
+    private PinDeleteReq(UUID pinId) {
         this.pinId = pinId;
     }
 }

@@ -1,6 +1,9 @@
 package com.pcb.audy.domain.pin.service;
 
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
+import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
+import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,5 +14,11 @@ public interface PinServiceMapper {
     PinServiceMapper INSTANCE = Mappers.getMapper(PinServiceMapper.class);
 
     @Mapping(target = "pinId", expression = "java(java.util.UUID.randomUUID())")
-    PinSaveRes toPinSaveRes(PinSaveReq pinSaveReq);
+    PinRedisRes toPinRedisRes(PinSaveReq pinSaveReq, Long courseId);
+
+    PinSaveRes toPinSaveRes(PinRedisRes pinRedisRes);
+
+    PinNameUpdateRes toPinNameUpdateRes(PinRedisRes pinRedisRes);
+
+    PinDeleteRes toPinDeleteRes(PinRedisRes pinRedisRes);
 }

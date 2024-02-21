@@ -99,7 +99,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 PinGetRes.builder()
                         .pinId(TEST_PIN_ID)
                         .pinName(TEST_PIN_NAME)
-                        .originName(TEST_ORIGIN_NAME)
+                        .originName(TEST_PIN_ORIGIN_NAME)
                         .latitude(TEST_LATITUDE)
                         .longitude(TEST_LONGITUDE)
                         .address(TEST_ADDRESS)
@@ -110,7 +110,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 CourseDetailGetRes.builder()
                         .courseId(TEST_COURSE_ID)
                         .courseName(TEST_COURSE_NAME)
-                        .pinList(List.of(pinGetRes))
+                        .pinResList(List.of(pinGetRes))
                         .build();
 
         when(courseService.getCourse(any())).thenReturn(courseDetailGetRes);

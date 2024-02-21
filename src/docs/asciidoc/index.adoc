@@ -29,9 +29,20 @@ include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
 
 == pin API
 
-include::{snippets}/pin-controller-test/pin_저장/auto-section.adoc[]
-include::{snippets}/pin-controller-test/pin_이름_수정/auto-section.adoc[]
-include::{snippets}/pin-controller-test/pin_삭제/auto-section.adoc[]
+=== Save Pin
+
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-response.adoc[]
+
+=== Update Pin Name
+
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-response.adoc[]
+
+=== Delete Pin
+
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-delete-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-delete-response.adoc[]
 
 == course API
 

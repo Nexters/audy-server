@@ -1,0 +1,20 @@
+[source,http,options="nowrap"]
+----
+SUBSCRIBE /sub/{courseId}/pin/addition
+EX /sub/1/pin/addition
+Content-Type: application/json
+{
+  "code" : 0,
+  "message" : "실행에 성공했습니다.",
+  "data" : {
+    "courseId" : 1,
+    "pinId" : "10b24e0e-7d7f-49ab-858d-14097f47ee8a",
+    "pinName" : "pinName",
+    "originName" : "originName",
+    "latitude" : 1.0,
+    "longitude" : 1.0,
+    "address" : "address",
+    "sequence" : 1
+  }
+}
+----

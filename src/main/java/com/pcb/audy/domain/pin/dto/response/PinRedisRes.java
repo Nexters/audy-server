@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PinNameUpdateRes {
+public class PinRedisRes {
     private Long courseId;
     private UUID pinId;
     private String pinName;
@@ -19,7 +19,7 @@ public class PinNameUpdateRes {
     private Integer sequence;
 
     @Builder
-    private PinNameUpdateRes(
+    private PinRedisRes(
             Long courseId,
             UUID pinId,
             String pinName,

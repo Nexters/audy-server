@@ -5,12 +5,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
+import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.test.PinTest;
@@ -27,6 +31,7 @@ class PinServiceTest implements PinTest {
     @InjectMocks private PinService pinService;
 
     @Mock private RedisProvider redisProvider;
+    @Mock private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("pin 저장 테스트")
@@ -34,9 +39,8 @@ class PinServiceTest implements PinTest {
         // given
         PinSaveReq pinSaveReq =
                 PinSaveReq.builder()
-                        .courseId(TEST_COURSE_ID)
                         .pinName(TEST_PIN_NAME)
-                        .originName(TEST_ORIGIN_NAME)
+                        .originName(TEST_PIN_ORIGIN_NAME)
                         .latitude(TEST_LATITUDE)
                         .longitude(TEST_LONGITUDE)
                         .address(TEST_ADDRESS)
@@ -44,7 +48,7 @@ class PinServiceTest implements PinTest {
                         .build();
 
         // when
-        pinService.savePin(pinSaveReq);
+        pinService.savePin(TEST_COURSE_ID, pinSaveReq);
 
         // then
         verify(redisProvider).set(any(), any(), anyLong());
@@ -55,19 +59,29 @@ class PinServiceTest implements PinTest {
     void pin_이름_수정() {
         // given
         PinNameUpdateReq pinNameUpdateReq =
-                PinNameUpdateReq.builder()
+                PinNameUpdateReq.builder().pinId(TEST_PIN_ID).pinName(TEST_UPDATED_PIN_NAME).build();
+        PinRedisRes pinRedisRes =
+                PinRedisRes.builder()
                         .courseId(TEST_COURSE_ID)
                         .pinId(TEST_PIN_ID)
                         .pinName(TEST_UPDATED_PIN_NAME)
+                        .originName(TEST_PIN_ORIGIN_NAME)
+                        .latitude(TEST_LATITUDE)
+                        .longitude(TEST_LONGITUDE)
+                        .address(TEST_ADDRESS)
+                        .sequence(TEST_SEQUENCE)
                         .build();
         when(redisProvider.get(any())).thenReturn(TEST_PIN);
+        when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(pinRedisRes);
 
         // when
-        pinService.updatePinName(pinNameUpdateReq);
+        PinNameUpdateRes pinNameUpdateRes = pinService.updatePinName(TEST_COURSE_ID, pinNameUpdateReq);
 
         // then
         verify(redisProvider).get(any());
+        verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
         verify(redisProvider).set(any(), any(), anyLong());
+        assertThat(pinNameUpdateRes.getPinName()).isEqualTo(TEST_UPDATED_PIN_NAME);
     }
 
     @Nested
@@ -76,15 +90,27 @@ class PinServiceTest implements PinTest {
         @DisplayName("pin 삭제 성공 테스트")
         void pin_삭제_성공() {
             // given
-            PinDeleteReq pinDeleteReq =
-                    PinDeleteReq.builder().courseId(TEST_COURSE_ID).pinId(TEST_PIN_ID).build();
+            PinDeleteReq pinDeleteReq = PinDeleteReq.builder().pinId(TEST_PIN_ID).build();
+            PinRedisRes pinRedisRes =
+                    PinRedisRes.builder()
+                            .courseId(TEST_COURSE_ID)
+                            .pinId(TEST_PIN_ID)
+                            .pinName(TEST_UPDATED_PIN_NAME)
+                            .originName(TEST_PIN_ORIGIN_NAME)
+                            .latitude(TEST_LATITUDE)
+                            .longitude(TEST_LONGITUDE)
+                            .address(TEST_ADDRESS)
+                            .sequence(TEST_SEQUENCE)
+                            .build();
             when(redisProvider.get(any())).thenReturn(TEST_PIN);
+            when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(pinRedisRes);
 
             // when
-            pinService.deletePin(pinDeleteReq);
+            pinService.deletePin(TEST_COURSE_ID, pinDeleteReq);
 
             // then
             verify(redisProvider).get(any());
+            verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
             verify(redisProvider).delete(any());
         }
 
@@ -92,19 +118,21 @@ class PinServiceTest implements PinTest {
         @DisplayName("pin 삭제 실패 테스트")
         void pin_삭제_실패() {
             // given
-            PinDeleteReq pinDeleteReq =
-                    PinDeleteReq.builder().courseId(TEST_COURSE_ID).pinId(TEST_PIN_ID).build();
+            PinDeleteReq pinDeleteReq = PinDeleteReq.builder().pinId(TEST_PIN_ID).build();
             when(redisProvider.get(any())).thenReturn(null);
+            when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(null);
 
             // when
             GlobalException exception =
                     assertThrows(
                             GlobalException.class,
                             () -> {
-                                pinService.deletePin(pinDeleteReq);
+                                pinService.deletePin(TEST_COURSE_ID, pinDeleteReq);
                             });
 
             // then
+            verify(redisProvider).get(any());
+            verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
             assertThat(exception.getResultCode()).isEqualTo(NOT_FOUND_PIN);
         }
     }
