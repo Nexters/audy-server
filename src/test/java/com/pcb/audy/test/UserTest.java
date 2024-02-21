@@ -13,9 +13,22 @@ public interface UserTest {
     String TEST_USER_EMAIL = "username@gmail.com";
     String TEST_USER_IMAGE_URL = "imageUrl";
 
+    Long TEST_ANOTHER_USER_ID = 2L;
+
     User TEST_USER =
             User.builder()
                     .userId(TEST_USER_ID)
+                    .oauthId(TEST_OAUTH_ID)
+                    .email(TEST_USER_EMAIL)
+                    .username(TEST_USER_NAME)
+                    .authority(USER)
+                    .social(KAKAO)
+                    .imageUrl(TEST_USER_IMAGE_URL)
+                    .build();
+
+    User TEST_ANOTHER_USER =
+            User.builder()
+                    .userId(TEST_ANOTHER_USER_ID)
                     .oauthId(TEST_OAUTH_ID)
                     .email(TEST_USER_EMAIL)
                     .username(TEST_USER_NAME)
