@@ -47,7 +47,7 @@ public class EditorService {
                 objectMapper.convertValue(
                         redisProvider.get(INVITE_PREFIX + courseInviteRedisReq.getCourseId()),
                         CourseInviteRedisReq.class);
-        EditorValidator.validateObject(courseInviteRedisReq, findByKey);
+        EditorValidator.checkValidateObject(courseInviteRedisReq, findByKey);
 
         // 초대 링크 상의 course가 유효한 지 검증
         Course course = getCourseByCourseId(courseInviteRedisReq.getCourseId());

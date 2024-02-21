@@ -7,12 +7,8 @@ import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.response.ResultCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-@Component
-@RequiredArgsConstructor
 public class EditorValidator {
 
     public static void validate(Editor editor) {
@@ -37,6 +33,13 @@ public class EditorValidator {
         }
     }
 
+    public static void checkValidateObject(
+            CourseInviteRedisReq courseInviteRedisReq, CourseInviteRedisReq findByKey) {
+        if (!isEqualObject(courseInviteRedisReq, findByKey)) {
+            throw new GlobalException(ResultCode.NOT_VALID_KEY);
+        }
+    }
+
     private static boolean isExistKey(String key) {
         return StringUtils.hasText(key);
     }
@@ -49,14 +52,8 @@ public class EditorValidator {
         return Role.OWNER.equals(editor.getRole());
     }
 
-    private static boolean isMatchedKey(String key, String findKey) {
-        return key.equals(findKey);
-    }
-
-    public static void validateObject(
+    private static boolean isEqualObject(
             CourseInviteRedisReq courseInviteRedisReq, CourseInviteRedisReq findByKey) {
-        if (!courseInviteRedisReq.equals(findByKey)) {
-            throw new GlobalException(ResultCode.NOT_VALID_KEY);
-        }
+        return courseInviteRedisReq.equals(findByKey);
     }
 }
