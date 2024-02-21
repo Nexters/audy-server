@@ -99,7 +99,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 PinGetRes.builder()
                         .pinId(TEST_PIN_ID)
                         .pinName(TEST_PIN_NAME)
-                        .originName(TEST_ORIGIN_NAME)
+                        .originName(TEST_PIN_ORIGIN_NAME)
                         .latitude(TEST_LATITUDE)
                         .longitude(TEST_LONGITUDE)
                         .address(TEST_ADDRESS)

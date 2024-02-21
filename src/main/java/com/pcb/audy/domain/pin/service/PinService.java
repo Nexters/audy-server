@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.pin.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
@@ -7,7 +8,6 @@ import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
-import com.pcb.audy.domain.pin.entity.Pin;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.validator.PinValidator;
 import java.util.UUID;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PinService {
     private final RedisProvider redisProvider;
+    private final ObjectMapper objectMapper;
     private final String SEPARATOR = ":";
 
     // TODO fix TTL
@@ -29,13 +30,13 @@ public class PinService {
         return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
     }
 
-    public PinNameUpdateRes updatePinName(PinNameUpdateReq pinNameUpdateReq) {
-        String key = getKey(pinNameUpdateReq.getCourseId(), pinNameUpdateReq.getPinId());
-        Pin prevPin = (Pin) redisProvider.get(key);
+    public PinNameUpdateRes updatePinName(Long courseId, PinNameUpdateReq pinNameUpdateReq) {
+        String key = getKey(courseId, pinNameUpdateReq.getPinId());
+        PinRedisRes prevPin = objectMapper.convertValue(redisProvider.get(key), PinRedisRes.class);
         PinValidator.validate(prevPin);
-        redisProvider.set(
-                key,
-                Pin.builder()
+        PinRedisRes updatedPin =
+                PinRedisRes.builder()
+                        .courseId(prevPin.getCourseId())
                         .pinId(pinNameUpdateReq.getPinId())
                         .pinName(pinNameUpdateReq.getPinName())
                         .originName(prevPin.getOriginName())
@@ -43,18 +44,16 @@ public class PinService {
                         .longitude(prevPin.getLongitude())
                         .address(prevPin.getAddress())
                         .sequence(prevPin.getSequence())
-                        .course(prevPin.getCourse())
-                        .build(),
-                PIN_EXPIRE_TIME);
-
-        return new PinNameUpdateRes();
+                        .build();
+        redisProvider.set(key, updatedPin, PIN_EXPIRE_TIME);
+        return PinServiceMapper.INSTANCE.toPinNameUpdateRes(updatedPin);
     }
 
     public PinDeleteRes deletePin(PinDeleteReq pinDeleteReq) {
-        String key = getKey(pinDeleteReq.getCourseId(), pinDeleteReq.getPinId());
-        Pin pin = (Pin) redisProvider.get(key);
-        PinValidator.validate(pin);
-        redisProvider.delete(key);
+        //        String key = getKey(pinDeleteReq.getCourseId(), pinDeleteReq.getPinId());
+        //        Pin pin = (Pin) redisProvider.get(key);
+        //                PinValidator.validate(pin);
+        //        redisProvider.delete(key);
         return new PinDeleteRes();
     }
 
