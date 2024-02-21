@@ -1,6 +1,8 @@
 package com.pcb.audy.domain.pin.service;
 
+import static com.pcb.audy.global.response.ResultCode.NOT_FOUND_PIN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -8,10 +10,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
+import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.test.PinTest;
 import org.junit.jupiter.api.DisplayName;
@@ -82,42 +86,54 @@ class PinServiceTest implements PinTest {
 
     @Nested
     class pin_삭제 {
-        //        @Test
-        //        @DisplayName("pin 삭제 성공 테스트")
-        //        void pin_삭제_성공() {
-        //            // given
-        //            PinDeleteReq pinDeleteReq =
-        //
-        // PinDeleteReq.builder().courseId(TEST_COURSE_ID).pinId(TEST_PIN_ID).build();
-        //            when(redisProvider.get(any())).thenReturn(TEST_PIN);
-        //
-        //            // when
-        //            pinService.deletePin(pinDeleteReq);
-        //
-        //            // then
-        //            verify(redisProvider).get(any());
-        //            verify(redisProvider).delete(any());
-        //        }
-        //
-        //        @Test
-        //        @DisplayName("pin 삭제 실패 테스트")
-        //        void pin_삭제_실패() {
-        //            // given
-        //            PinDeleteReq pinDeleteReq =
-        //
-        // PinDeleteReq.builder().courseId(TEST_COURSE_ID).pinId(TEST_PIN_ID).build();
-        //            when(redisProvider.get(any())).thenReturn(null);
-        //
-        //            // when
-        //            GlobalException exception =
-        //                    assertThrows(
-        //                            GlobalException.class,
-        //                            () -> {
-        //                                pinService.deletePin(pinDeleteReq);
-        //                            });
-        //
-        //            // then
-        //            assertThat(exception.getResultCode()).isEqualTo(NOT_FOUND_PIN);
-        //        }
+        @Test
+        @DisplayName("pin 삭제 성공 테스트")
+        void pin_삭제_성공() {
+            // given
+            PinDeleteReq pinDeleteReq = PinDeleteReq.builder().pinId(TEST_PIN_ID).build();
+            PinRedisRes pinRedisRes =
+                    PinRedisRes.builder()
+                            .courseId(TEST_COURSE_ID)
+                            .pinId(TEST_PIN_ID)
+                            .pinName(TEST_UPDATED_PIN_NAME)
+                            .originName(TEST_PIN_ORIGIN_NAME)
+                            .latitude(TEST_LATITUDE)
+                            .longitude(TEST_LONGITUDE)
+                            .address(TEST_ADDRESS)
+                            .sequence(TEST_SEQUENCE)
+                            .build();
+            when(redisProvider.get(any())).thenReturn(TEST_PIN);
+            when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(pinRedisRes);
+
+            // when
+            pinService.deletePin(TEST_COURSE_ID, pinDeleteReq);
+
+            // then
+            verify(redisProvider).get(any());
+            verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
+            verify(redisProvider).delete(any());
+        }
+
+        @Test
+        @DisplayName("pin 삭제 실패 테스트")
+        void pin_삭제_실패() {
+            // given
+            PinDeleteReq pinDeleteReq = PinDeleteReq.builder().pinId(TEST_PIN_ID).build();
+            when(redisProvider.get(any())).thenReturn(null);
+            when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(null);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                pinService.deletePin(TEST_COURSE_ID, pinDeleteReq);
+                            });
+
+            // then
+            verify(redisProvider).get(any());
+            verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
+            assertThat(exception.getResultCode()).isEqualTo(NOT_FOUND_PIN);
+        }
     }
 }

@@ -39,6 +39,11 @@ include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-response.
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-request.adoc[]
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-response.adoc[]
 
+=== Delete Pin
+
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-delete-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-delete-response.adoc[]
+
 == course API
 
 include::{snippets}/course-controller-test/course_저장/auto-section.adoc[]

@@ -1,6 +1,7 @@
 package com.pcb.audy.domain.pin.service;
 
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
+import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
@@ -18,4 +19,6 @@ public interface PinServiceMapper {
     PinSaveRes toPinSaveRes(PinRedisRes pinRedisRes);
 
     PinNameUpdateRes toPinNameUpdateRes(PinRedisRes pinRedisRes);
+
+    PinDeleteRes toPinDeleteRes(PinRedisRes pinRedisRes);
 }

@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+SEND /pub/{courseId}/pin/removal
+EX /pub/1/pin/removal
+Content-Type: application/json
+{
+    "pinId": "10b24e0e-7d7f-49ab-858d-14097f47ee8a"
+}
+----
