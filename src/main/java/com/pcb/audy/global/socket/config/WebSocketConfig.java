@@ -1,11 +1,14 @@
 package com.pcb.audy.global.socket.config;
 
+import com.pcb.audy.global.socket.handler.CustomHandshakeInterceptor;
 import com.pcb.audy.global.socket.handler.SocketHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -16,7 +19,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/course").setAllowedOriginPatterns("*").withSockJS();
+        registry
+                .addEndpoint("/course")
+                .setAllowedOriginPatterns("*")
+                .addInterceptors(customHandshakeInterceptor())
+                .withSockJS();
     }
 
     @Override
@@ -28,5 +35,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(socketHandler);
+    }
+
+    @Bean
+    public HandshakeInterceptor customHandshakeInterceptor() {
+        return new CustomHandshakeInterceptor();
     }
 }
