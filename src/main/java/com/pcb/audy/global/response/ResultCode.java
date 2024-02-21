@@ -23,7 +23,7 @@ public enum ResultCode {
 
     NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다."),
     VALID_KEY(5001, "올바르지 않은 키입니다."),
-    ALREADY_EXIST_EDITOR(5002, "이미 코스에 포함된 멤버입니다.");
+    ALREADY_EXIST_EDITOR(5002, "이미 코스에 포함된 멤버입니다."),
 
     FAILED_ENCRYPT(6000, "객체 암호화에 실패하였습니다."),
     FAILED_DECRYPT(6001, "객체 복호화에 실패하였습니다.");
