@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.pin.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
+import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.test.PinTest;
@@ -69,12 +71,13 @@ class PinServiceTest implements PinTest {
         when(objectMapper.convertValue(any(), eq(PinRedisRes.class))).thenReturn(pinRedisRes);
 
         // when
-        pinService.updatePinName(TEST_COURSE_ID, pinNameUpdateReq);
+        PinNameUpdateRes pinNameUpdateRes = pinService.updatePinName(TEST_COURSE_ID, pinNameUpdateReq);
 
         // then
         verify(redisProvider).get(any());
         verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
         verify(redisProvider).set(any(), any(), anyLong());
+        assertThat(pinNameUpdateRes.getPinName()).isEqualTo(TEST_UPDATED_PIN_NAME);
     }
 
     @Nested
