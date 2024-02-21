@@ -6,6 +6,8 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
 import com.pcb.audy.domain.editor.dto.response.EditorSaveRes;
+import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
+import com.pcb.audy.domain.editor.dto.response.EditorRoleUpdateRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.user.entity.User;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class EditorService {
+  
     private final RedisProvider redisProvider;
     private final EditorRepository editorRepository;
     private final UserRepository userRepository;
@@ -44,6 +47,23 @@ public class EditorService {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
         EditorValidator.checkAlreadyExist(editor);
     }
+  
+    @Transactional
+    public EditorRoleUpdateRes updateRoleEditor(EditorRoleUpdateReq editorRoleUpdateReq) {
+        User user = getUserByUserId(editorRoleUpdateReq.getUserId());
+        Course course = getCourseByCourseId(editorRoleUpdateReq.getCourseId());
+        Editor editor = getEditor(user, course);
+        EditorValidator.checkIsAdminUser(editor);
+
+        User selectedUser = getUserByUserId(editorRoleUpdateReq.getSelectedUserId());
+        editorRepository.save(
+                Editor.builder()
+                        .user(selectedUser)
+                        .course(course)
+                        .role(editorRoleUpdateReq.getRole())
+                        .build());
+        return new EditorRoleUpdateRes();
+    }
 
     private User getUserByUserId(Long userId) {
         User user = userRepository.findByUserId(userId);
@@ -55,5 +75,11 @@ public class EditorService {
         Course course = courseRepository.findByCourseId(courseId);
         CourseValidator.validate(course);
         return course;
+    }
+
+    private Editor getEditor(User user, Course course) {
+        Editor editor = editorRepository.findByUserAndCourse(user, course);
+        EditorValidator.validate(editor);
+        return editor;
     }
 }
