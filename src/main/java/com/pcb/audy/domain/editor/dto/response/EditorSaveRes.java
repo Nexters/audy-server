@@ -1,6 +1,17 @@
 package com.pcb.audy.domain.editor.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@JsonIgnoreProperties
-public class EditorSaveRes {}
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class EditorSaveRes {
+    private Long courseId;
+
+    @Builder
+    private EditorSaveRes(Long courseId) {
+        this.courseId = courseId;
+    }
+}

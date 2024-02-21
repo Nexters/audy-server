@@ -56,8 +56,9 @@ public class EditorService {
         User user = getUserByUserId(editorSaveReq.getUserId());
         checkAlreadyExistEditor(user, course);
 
-        editorRepository.save(Editor.builder().user(user).course(course).role(MEMBER).build());
-        return new EditorSaveRes();
+        Editor savedEditor =
+                editorRepository.save(Editor.builder().user(user).course(course).role(MEMBER).build());
+        return EditorServiceMapper.INSTANCE.toEditorSaveRes(savedEditor);
     }
 
     private void checkAlreadyExistEditor(User user, Course course) {
