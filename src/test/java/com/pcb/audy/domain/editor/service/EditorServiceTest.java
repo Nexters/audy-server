@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.editor.dto.request.EditorDeleteReq;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
 import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
@@ -176,6 +177,97 @@ class EditorServiceTest implements EditorTest {
             verify(courseRepository).findByCourseId(any());
             verify(editorRepository).findByUserAndCourse(any(), any());
             assertThat(exception.getResultCode()).isEqualTo(NOT_ADMIN_COURSE);
+        }
+    }
+
+    @Nested
+    class editor_역할_삭제 {
+        @Test
+        @DisplayName("editor 역할 삭제 테스트")
+        void editor_역할_삭제() {
+            // given
+            EditorDeleteReq editorDeleteReq =
+                    EditorDeleteReq.builder()
+                            .userId(TEST_USER_ID)
+                            .selectedUserId(TEST_ANOTHER_USER_ID)
+                            .build();
+
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER).thenReturn(TEST_ANOTHER_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any()))
+                    .thenReturn(TEST_EDITOR_ADMIN)
+                    .thenReturn(TEST_EDITOR_MEMBER);
+
+            // when
+            editorService.deleteEditor(editorDeleteReq);
+
+            // then
+            verify(userRepository, times(2)).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository, times(2)).findByUserAndCourse(any(), any());
+            verify(editorRepository).delete(any());
+        }
+
+        @Test
+        @DisplayName("editor 역할 수정 실패 테스트 - 관리자가 아닌 사람이 삭제하려고 할 때")
+        void editor_MEMBER가_역할_수정_실패() {
+            // given
+            EditorDeleteReq editorDeleteReq =
+                    EditorDeleteReq.builder()
+                            .userId(TEST_USER_ID)
+                            .selectedUserId(TEST_ANOTHER_USER_ID)
+                            .build();
+
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER).thenReturn(TEST_ANOTHER_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any()))
+                    .thenReturn(TEST_EDITOR_MEMBER)
+                    .thenReturn(TEST_EDITOR_MEMBER);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                editorService.deleteEditor(editorDeleteReq);
+                            });
+
+            // then
+            verify(userRepository, times(2)).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository, times(2)).findByUserAndCourse(any(), any());
+            assertThat(exception.getResultCode()).isEqualTo(NOT_ADMIN_COURSE);
+        }
+
+        @Test
+        @DisplayName("editor 역할 수정 실패 테스트 - 삭제 대상이 admin인 경우")
+        void editor_처리대상이_ADMIN_역할_수정_실패() {
+            // given
+            EditorDeleteReq editorDeleteReq =
+                    EditorDeleteReq.builder()
+                            .userId(TEST_USER_ID)
+                            .selectedUserId(TEST_ANOTHER_USER_ID)
+                            .build();
+
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER).thenReturn(TEST_ANOTHER_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any()))
+                    .thenReturn(TEST_EDITOR_ADMIN)
+                    .thenReturn(TEST_EDITOR_ADMIN);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                editorService.deleteEditor(editorDeleteReq);
+                            });
+
+            // then
+            verify(userRepository, times(2)).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository, times(2)).findByUserAndCourse(any(), any());
+            assertThat(exception.getResultCode()).isEqualTo(NOT_MEMBER_COURSE);
         }
     }
 }
