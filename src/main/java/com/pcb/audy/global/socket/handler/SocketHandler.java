@@ -29,8 +29,8 @@ public class SocketHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (StompCommand.CONNECT.equals(accessor.getCommand())
+                || StompCommand.SEND.equals(accessor.getCommand())) {
             Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
             if (!CollectionUtils.isEmpty(sessionAttributes)) {
                 String accessCookie =
