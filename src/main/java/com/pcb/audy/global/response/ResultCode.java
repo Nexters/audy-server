@@ -18,13 +18,13 @@ public enum ResultCode {
 
     NOT_FOUND_COURSE(3000, "코스를 찾을 수 없습니다."),
     NOT_ADMIN_COURSE(3001, "해당 코스에 변경 권한이 없습니다."),
-    NOT_MEMBER_COURSE(3001, "해당 코스의 관리자를 내보낼 수 없습니다."),
 
     NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다."),
 
     NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다."),
     NOT_VALID_KEY(5001, "유효기간이 만료된 링크입니다."),
     ALREADY_EXIST_EDITOR(5002, "이미 코스에 포함된 멤버입니다."),
+    FAILED_DELETE_EDITOR(5003, "해당 유저를 코스에서 내보낼 수 없습니다."),
 
     FAILED_ENCRYPT(6000, "객체 암호화에 실패하였습니다."),
     FAILED_DECRYPT(6001, "객체 복호화에 실패하였습니다.");

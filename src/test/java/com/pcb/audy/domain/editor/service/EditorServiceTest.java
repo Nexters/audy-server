@@ -209,7 +209,7 @@ class EditorServiceTest implements EditorTest {
         }
 
         @Test
-        @DisplayName("editor 역할 수정 실패 테스트 - 관리자가 아닌 사람이 삭제하려고 할 때")
+        @DisplayName("editor 역할 수정 실패 테스트 - 관리자가 아닌 사람이 타인을 삭제하려고 할 때")
         void editor_MEMBER가_역할_수정_실패() {
             // given
             EditorDeleteReq editorDeleteReq =
@@ -222,7 +222,7 @@ class EditorServiceTest implements EditorTest {
             when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
             when(editorRepository.findByUserAndCourse(any(), any()))
                     .thenReturn(TEST_EDITOR_MEMBER)
-                    .thenReturn(TEST_EDITOR_MEMBER);
+                    .thenReturn(TEST_ANOTHER_EDITOR_MEMBER);
 
             // when
             GlobalException exception =
@@ -236,7 +236,7 @@ class EditorServiceTest implements EditorTest {
             verify(userRepository, times(2)).findByUserId(any());
             verify(courseRepository).findByCourseId(any());
             verify(editorRepository, times(2)).findByUserAndCourse(any(), any());
-            assertThat(exception.getResultCode()).isEqualTo(NOT_ADMIN_COURSE);
+            assertThat(exception.getResultCode()).isEqualTo(FAILED_DELETE_EDITOR);
         }
 
         @Test
@@ -267,7 +267,7 @@ class EditorServiceTest implements EditorTest {
             verify(userRepository, times(2)).findByUserId(any());
             verify(courseRepository).findByCourseId(any());
             verify(editorRepository, times(2)).findByUserAndCourse(any(), any());
-            assertThat(exception.getResultCode()).isEqualTo(NOT_MEMBER_COURSE);
+            assertThat(exception.getResultCode()).isEqualTo(FAILED_DELETE_EDITOR);
         }
     }
 }

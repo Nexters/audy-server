@@ -27,13 +27,9 @@ public class EditorValidator {
         }
     }
 
-    public static void checkIsMemberUser(Editor editor) {
-        if (!isExistEditor(editor)) {
-            throw new GlobalException(NOT_FOUND_EDITOR);
-        }
-
-        if (!isMemberEditor(editor)) {
-            throw new GlobalException(NOT_MEMBER_COURSE);
+    public static void checkCanDelete(Editor source, Editor target) {
+        if (isAdminEditor(target) || (!isEqualUser(source, target) && !isAdminEditor(source))) {
+            throw new GlobalException(FAILED_DELETE_EDITOR);
         }
     }
 
@@ -69,5 +65,9 @@ public class EditorValidator {
     private static boolean isEqualObject(
             CourseInviteRedisReq courseInviteRedisReq, CourseInviteRedisReq findByKey) {
         return courseInviteRedisReq.equals(findByKey);
+    }
+
+    private static boolean isEqualUser(Editor source, Editor target) {
+        return source.getUser().getUserId() == target.getUser().getUserId();
     }
 }

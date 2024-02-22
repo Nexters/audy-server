@@ -81,14 +81,13 @@ public class EditorService {
     }
 
     public EditorDeleteRes deleteEditor(EditorDeleteReq editorDeleteReq) {
-        User admin = getUserByUserId(editorDeleteReq.getUserId());
-        User member = getUserByUserId(editorDeleteReq.getSelectedUserId());
+        User source = getUserByUserId(editorDeleteReq.getUserId());
+        User target = getUserByUserId(editorDeleteReq.getSelectedUserId());
         Course course = getCourseByCourseId(editorDeleteReq.getCourseId());
 
-        Editor adminEditor = getEditor(admin, course);
-        Editor targetEditor = getEditor(member, course);
-        EditorValidator.checkIsAdminUser(adminEditor);
-        EditorValidator.checkIsMemberUser(targetEditor);
+        Editor sourceEditor = getEditor(source, course);
+        Editor targetEditor = getEditor(target, course);
+        EditorValidator.checkCanDelete(sourceEditor, targetEditor);
 
         editorRepository.delete(targetEditor);
         return new EditorDeleteRes();

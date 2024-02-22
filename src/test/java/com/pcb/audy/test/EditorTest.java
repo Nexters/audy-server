@@ -12,4 +12,7 @@ public interface EditorTest extends CourseTest, UserTest {
 
     Editor TEST_EDITOR_MEMBER =
             Editor.builder().course(TEST_SECOND_COURSE).user(TEST_USER).role(Role.MEMBER).build();
+
+    Editor TEST_ANOTHER_EDITOR_MEMBER =
+            Editor.builder().course(TEST_SECOND_COURSE).user(TEST_ANOTHER_USER).role(Role.MEMBER).build();
 }
