@@ -27,6 +27,12 @@ public class EditorValidator {
         }
     }
 
+    public static void checkCanDelete(Editor source, Editor target) {
+        if (isAdminEditor(target) || (!isEqualUser(source, target) && !isAdminEditor(source))) {
+            throw new GlobalException(FAILED_DELETE_EDITOR);
+        }
+    }
+
     public static void checkAlreadyExist(Editor editor) {
         if (isExistEditor(editor)) {
             throw new GlobalException(ALREADY_EXIST_EDITOR);
@@ -52,8 +58,16 @@ public class EditorValidator {
         return Role.OWNER.equals(editor.getRole());
     }
 
+    private static boolean isMemberEditor(Editor editor) {
+        return Role.MEMBER.equals(editor.getRole());
+    }
+
     private static boolean isEqualObject(
             CourseInviteRedisReq courseInviteRedisReq, CourseInviteRedisReq findByKey) {
         return courseInviteRedisReq.equals(findByKey);
+    }
+
+    private static boolean isEqualUser(Editor source, Editor target) {
+        return source.getUser().getUserId() == target.getUser().getUserId();
     }
 }

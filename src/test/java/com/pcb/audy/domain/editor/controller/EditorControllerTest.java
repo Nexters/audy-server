@@ -3,14 +3,17 @@ package com.pcb.audy.domain.editor.controller;
 import static com.pcb.audy.global.meta.Role.MEMBER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.pcb.audy.domain.BaseMvcTest;
+import com.pcb.audy.domain.editor.dto.request.EditorDeleteReq;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
 import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
+import com.pcb.audy.domain.editor.dto.response.EditorDeleteRes;
 import com.pcb.audy.domain.editor.dto.response.EditorRoleUpdateRes;
 import com.pcb.audy.domain.editor.dto.response.EditorSaveRes;
 import com.pcb.audy.domain.editor.service.EditorService;
@@ -57,6 +60,27 @@ class EditorControllerTest extends BaseMvcTest implements EditorTest {
                         patch("/v1/editors")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(editorRoleUpdateReq))
+                                .principal(this.mockPrincipal))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("editor 역할 삭제 테스트")
+    void editor_역할_삭제() throws Exception {
+        EditorDeleteReq editorDeleteReq =
+                EditorDeleteReq.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .selectedUserId(TEST_ANOTHER_USER_ID)
+                        .build();
+        EditorDeleteRes editorDeleteRes = new EditorDeleteRes();
+
+        when(editorService.deleteEditor(any())).thenReturn(editorDeleteRes);
+        this.mockMvc
+                .perform(
+                        delete("/v1/editors")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(editorDeleteReq))
                                 .principal(this.mockPrincipal))
                 .andDo(print())
                 .andExpect(status().isOk());
