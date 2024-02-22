@@ -27,6 +27,16 @@ public class EditorValidator {
         }
     }
 
+    public static void checkIsMemberUser(Editor editor) {
+        if (!isExistEditor(editor)) {
+            throw new GlobalException(NOT_FOUND_EDITOR);
+        }
+
+        if (!isMemberEditor(editor)) {
+            throw new GlobalException(NOT_MEMBER_COURSE);
+        }
+    }
+
     public static void checkAlreadyExist(Editor editor) {
         if (isExistEditor(editor)) {
             throw new GlobalException(ALREADY_EXIST_EDITOR);
@@ -50,6 +60,10 @@ public class EditorValidator {
 
     private static boolean isAdminEditor(Editor editor) {
         return Role.OWNER.equals(editor.getRole());
+    }
+
+    private static boolean isMemberEditor(Editor editor) {
+        return Role.MEMBER.equals(editor.getRole());
     }
 
     private static boolean isEqualObject(

@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.editor.dto.request.EditorDeleteReq;
 import com.pcb.audy.domain.editor.dto.request.EditorRoleUpdateReq;
 import com.pcb.audy.domain.editor.dto.request.EditorSaveReq;
+import com.pcb.audy.domain.editor.dto.response.EditorDeleteRes;
 import com.pcb.audy.domain.editor.dto.response.EditorRoleUpdateRes;
 import com.pcb.audy.domain.editor.dto.response.EditorSaveRes;
 import com.pcb.audy.domain.editor.entity.Editor;
@@ -61,11 +63,6 @@ public class EditorService {
         return EditorServiceMapper.INSTANCE.toEditorSaveRes(savedEditor);
     }
 
-    private void checkAlreadyExistEditor(User user, Course course) {
-        Editor editor = editorRepository.findByUserAndCourse(user, course);
-        EditorValidator.checkAlreadyExist(editor);
-    }
-
     @Transactional
     public EditorRoleUpdateRes updateRoleEditor(EditorRoleUpdateReq editorRoleUpdateReq) {
         User user = getUserByUserId(editorRoleUpdateReq.getUserId());
@@ -81,6 +78,20 @@ public class EditorService {
                         .role(editorRoleUpdateReq.getRole())
                         .build());
         return new EditorRoleUpdateRes();
+    }
+
+    public EditorDeleteRes deleteEditor(EditorDeleteReq editorDeleteReq) {
+        User admin = getUserByUserId(editorDeleteReq.getUserId());
+        User member = getUserByUserId(editorDeleteReq.getSelectedUserId());
+        Course course = getCourseByCourseId(editorDeleteReq.getCourseId());
+
+        Editor adminEditor = getEditor(admin, course);
+        Editor targetEditor = getEditor(member, course);
+        EditorValidator.checkIsAdminUser(adminEditor);
+        EditorValidator.checkIsMemberUser(targetEditor);
+
+        editorRepository.delete(targetEditor);
+        return new EditorDeleteRes();
     }
 
     private User getUserByUserId(Long userId) {
@@ -99,5 +110,10 @@ public class EditorService {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
         EditorValidator.validate(editor);
         return editor;
+    }
+
+    private void checkAlreadyExistEditor(User user, Course course) {
+        Editor editor = editorRepository.findByUserAndCourse(user, course);
+        EditorValidator.checkAlreadyExist(editor);
     }
 }
