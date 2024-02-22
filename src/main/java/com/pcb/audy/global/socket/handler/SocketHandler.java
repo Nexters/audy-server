@@ -3,6 +3,8 @@ package com.pcb.audy.global.socket.handler;
 import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_NAME;
 import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_NAME;
 import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
+import static org.springframework.messaging.simp.stomp.StompCommand.CONNECT;
+import static org.springframework.messaging.simp.stomp.StompCommand.SEND;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.global.jwt.JwtUtils;
@@ -29,8 +31,7 @@ public class SocketHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        if (StompCommand.CONNECT.equals(accessor.getCommand())
-                || StompCommand.SEND.equals(accessor.getCommand())) {
+        if (isNeedTokenValidate(accessor.getCommand())) {
             Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
             if (!CollectionUtils.isEmpty(sessionAttributes)) {
                 String accessCookie =
@@ -53,5 +54,9 @@ public class SocketHandler implements ChannelInterceptor {
         }
 
         return message;
+    }
+
+    private boolean isNeedTokenValidate(StompCommand stompCommand) {
+        return CONNECT.equals(stompCommand) || SEND.equals(stompCommand);
     }
 }
