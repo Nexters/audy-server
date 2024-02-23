@@ -1,15 +1,18 @@
 package com.pcb.audy.test;
 
-import static com.pcb.audy.test.UserTest.TEST_USER;
-
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.global.meta.Role;
 
-public interface EditorTest extends CourseTest {
+public interface EditorTest extends CourseTest, UserTest {
+    String TEST_KEY = "key";
+    String TEST_ANOTHER_KEY = "anotherKey";
 
     Editor TEST_EDITOR_ADMIN =
             Editor.builder().course(TEST_COURSE).user(TEST_USER).role(Role.OWNER).build();
 
     Editor TEST_EDITOR_MEMBER =
             Editor.builder().course(TEST_SECOND_COURSE).user(TEST_USER).role(Role.MEMBER).build();
+
+    Editor TEST_ANOTHER_EDITOR_MEMBER =
+            Editor.builder().course(TEST_SECOND_COURSE).user(TEST_ANOTHER_USER).role(Role.MEMBER).build();
 }
