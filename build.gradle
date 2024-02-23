@@ -59,6 +59,8 @@ dependencies {
 	testImplementation 'com.h2database:h2:2.1.214'
 	compileOnly('com.h2database:h2:2.1.214')
 
+	implementation 'com.github.pravin-raha:lexorank4j:0.1.0'
+
 
 }
 

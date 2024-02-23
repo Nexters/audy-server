@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.pin.dto.response;
 
+import com.github.pravin.raha.lexorank4j.LexoRank;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PinRedisRes {
+public class PinRedisRes implements Comparable<PinRedisRes> {
     private Long courseId;
     private UUID pinId;
     private String pinName;
@@ -36,5 +37,12 @@ public class PinRedisRes {
         this.longitude = longitude;
         this.address = address;
         this.sequence = sequence;
+    }
+
+    @Override
+    public int compareTo(PinRedisRes other) {
+        LexoRank thisRank = LexoRank.parse(this.sequence);
+        LexoRank otherRank = LexoRank.parse(other.sequence);
+        return thisRank.compareTo(otherRank);
     }
 }
