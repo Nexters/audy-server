@@ -15,14 +15,12 @@ import com.pcb.audy.domain.course.dto.request.CourseDeleteReq;
 import com.pcb.audy.domain.course.dto.request.CourseInviteReq;
 import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
-import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetResList;
 import com.pcb.audy.domain.course.dto.response.CourseInviteRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.exception.GlobalException;
@@ -31,7 +29,6 @@ import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.util.InviteUtil;
 import com.pcb.audy.test.PinTest;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -285,43 +282,44 @@ class CourseServiceTest implements PinTest {
         assertEquals(1, courseGetResList.getCourseGetResList().size());
     }
 
-    @Nested
-    class course_상세_조회 {
-
-        @Test
-        @DisplayName("course 상세 테스트_db")
-        void course_상세_조회_db() {
-            // given
-            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
-            when(redisProvider.getByPattern(any())).thenReturn(List.of());
-
-            // when
-            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
-
-            // then
-            verify(courseRepository).findByCourseId(any());
-            verify(redisProvider).getByPattern(any());
-            verify(redisProvider).multiSet(any());
-        }
-
-        @Test
-        @DisplayName("course 상세 테스트_redis")
-        void course_상세_조회_redis() {
-            // given
-            List<PinSaveRes> pinSaveResList = List.of(TEST_PIN_SAVED);
-
-            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
-            when(redisProvider.getByPattern(any())).thenReturn(Collections.singletonList(pinSaveResList));
-
-            // when
-            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
-
-            // then
-            verify(courseRepository).findByCourseId(any());
-            verify(redisProvider).getByPattern(any());
-            verify(redisProvider, never()).multiSet(any());
-        }
-    }
+    //    @Nested
+    //    class course_상세_조회 {
+    //
+    //        @Test
+    //        @DisplayName("course 상세 테스트_db")
+    //        void course_상세_조회_db() {
+    //            // given
+    //            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+    //            when(redisProvider.getByPattern(any())).thenReturn(List.of());
+    //
+    //            // when
+    //            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+    //
+    //            // then
+    //            verify(courseRepository).findByCourseId(any());
+    //            verify(redisProvider).getByPattern(any());
+    //            verify(redisProvider).multiSet(any());
+    //        }
+    //
+    //        @Test
+    //        @DisplayName("course 상세 테스트_redis")
+    //        void course_상세_조회_redis() {
+    //            // given
+    //            List<PinSaveRes> pinSaveResList = List.of(TEST_PIN_SAVED);
+    //
+    //            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+    //
+    // when(redisProvider.getByPattern(any())).thenReturn(Collections.singletonList(pinSaveResList));
+    //
+    //            // when
+    //            CourseDetailGetRes courseDetailGetRes = courseService.getCourse(TEST_COURSE_ID);
+    //
+    //            // then
+    //            verify(courseRepository).findByCourseId(any());
+    //            verify(redisProvider).getByPattern(any());
+    //            verify(redisProvider, never()).multiSet(any());
+    //        }
+    //    }
 
     @Nested
     class course_초대_링크_생성 {

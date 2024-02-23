@@ -6,6 +6,7 @@ import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.entity.Pin;
 import java.util.List;
@@ -41,9 +42,9 @@ public interface CourseServiceMapper {
     List<PinSaveRes> toPinGetRes(List<Pin> pin);
 
     @Mapping(target = "courseId", expression = "java(pin.getCourse().getCourseId())")
-    PinSaveRes toPinSaveRes(Pin pin);
+    PinRedisRes toPinRedisRes(Pin pin);
 
-    List<PinSaveRes> toPinSaveResList(List<Pin> pinList);
+    List<PinRedisRes> toPinRedisResList(List<Pin> pinList);
 
-    CourseDetailGetRes toCourseDetailGetRes(Course course, List<PinSaveRes> pinResList);
+    CourseDetailGetRes toCourseDetailGetRes(Course course, List<PinRedisRes> pinResList);
 }
