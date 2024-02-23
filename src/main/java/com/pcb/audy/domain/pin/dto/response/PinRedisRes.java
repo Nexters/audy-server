@@ -16,7 +16,7 @@ public class PinRedisRes {
     private Double latitude;
     private Double longitude;
     private String address;
-    private Integer sequence;
+    private String sequence;
 
     @Builder
     private PinRedisRes(
@@ -27,7 +27,7 @@ public class PinRedisRes {
             Double latitude,
             Double longitude,
             String address,
-            Integer sequence) {
+            String sequence) {
         this.courseId = courseId;
         this.pinId = pinId;
         this.pinName = pinName;

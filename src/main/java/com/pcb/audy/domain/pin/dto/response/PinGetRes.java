@@ -15,7 +15,7 @@ public class PinGetRes {
     private Double latitude;
     private Double longitude;
     private String address;
-    private Integer sequence;
+    private String sequence;
 
     @Builder
     private PinGetRes(
@@ -25,7 +25,7 @@ public class PinGetRes {
             Double latitude,
             Double longitude,
             String address,
-            Integer sequence) {
+            String sequence) {
         this.pinId = pinId;
         this.pinName = pinName;
         this.originName = originName;

@@ -11,7 +11,7 @@ public interface PinTest extends CourseTest {
     Double TEST_LATITUDE = 1.0;
     Double TEST_LONGITUDE = 1.0;
     String TEST_ADDRESS = "address";
-    Integer TEST_SEQUENCE = 1;
+    String TEST_SEQUENCE = "0|100000:";
 
     String TEST_UPDATED_PIN_NAME = "updatedPinName";
 
