@@ -14,7 +14,9 @@ public interface PinServiceMapper {
     PinServiceMapper INSTANCE = Mappers.getMapper(PinServiceMapper.class);
 
     @Mapping(target = "pinId", expression = "java(java.util.UUID.randomUUID())")
-    PinRedisRes toPinRedisRes(PinSaveReq pinSaveReq, Long courseId);
+    @Mapping(target = "courseId", source = "courseId")
+    @Mapping(target = "sequence", source = "sequence")
+    PinRedisRes toPinRedisRes(PinSaveReq pinSaveReq, Long courseId, String sequence);
 
     PinSaveRes toPinSaveRes(PinRedisRes pinRedisRes);
 

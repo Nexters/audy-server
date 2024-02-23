@@ -22,7 +22,7 @@ public class LexoRankUtil {
 
         if (pinRedisResList.isEmpty()) { // 빈 course에 최초 input
             return LexoRank.min().genNext().toString();
-        } else if (order == 0) { // 가장 처음으로 이동
+        } else if (pinRedisResList.size() != 1 && order == 0) { // 가장 처음으로 이동
             LexoRank nowRank = LexoRank.parse(pinRedisResList.get(0).getSequence());
             return nowRank.genPrev().toString();
         } else if (order == pinRedisResList.size() - 1) { // 가장 마지막에 추가

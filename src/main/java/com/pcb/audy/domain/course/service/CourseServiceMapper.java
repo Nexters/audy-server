@@ -41,9 +41,6 @@ public interface CourseServiceMapper {
 
     List<PinSaveRes> toPinGetRes(List<Pin> pin);
 
-    @Mapping(target = "courseId", expression = "java(pin.getCourse().getCourseId())")
-    PinRedisRes toPinRedisRes(Pin pin);
-
     List<PinRedisRes> toPinRedisResList(List<Pin> pinList);
 
     CourseDetailGetRes toCourseDetailGetRes(Course course, List<PinRedisRes> pinResList);

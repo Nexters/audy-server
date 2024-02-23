@@ -9,6 +9,7 @@ import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.LexoRankUtil;
 import com.pcb.audy.global.validator.PinValidator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,18 @@ import org.springframework.stereotype.Service;
 public class PinService {
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
+    private final LexoRankUtil lexoRankUtil;
     private final String SEPARATOR = ":";
 
     // TODO fix TTL
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
-        PinRedisRes pinRedisRes = PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId);
+        int size = redisProvider.findKeys(courseId + ":*").size();
+        String sequence = lexoRankUtil.getLexoRank(courseId, size - 1);
+
+        PinRedisRes pinRedisRes =
+                PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
         redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
     }
