@@ -10,6 +10,9 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +49,7 @@ public class JwtUtils {
                 Jwts.builder()
                         .setSubject("accessToken")
                         .claim("email", email)
-                        .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                        .setExpiration(new Date(getCurrentTimestamp() + ACCESS_TOKEN_EXPIRE_TIME))
                         .signWith(key, SignatureAlgorithm.HS256)
                         .compact();
 
@@ -58,7 +61,7 @@ public class JwtUtils {
                 Jwts.builder()
                         .setSubject("refreshToken")
                         .claim("email", email)
-                        .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
+                        .setExpiration(new Date(getCurrentTimestamp() + REFRESH_TOKEN_EXPIRE_TIME))
                         .signWith(key, SignatureAlgorithm.HS256)
                         .compact();
 
@@ -110,5 +113,10 @@ public class JwtUtils {
                         .build();
 
         response.addHeader("Set-Cookie", responseCookie.toString());
+    }
+
+    private long getCurrentTimestamp() {
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
+        return timestamp.toInstant().atZone(ZoneId.of("Asia/Seoul")).toEpochSecond();
     }
 }
