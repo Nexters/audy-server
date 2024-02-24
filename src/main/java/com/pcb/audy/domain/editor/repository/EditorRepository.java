@@ -16,4 +16,6 @@ public interface EditorRepository extends JpaRepository<Editor, EditorId> {
             User user, Role role, Pageable pageable);
 
     Page<Editor> findAllByUserOrderByCreateTimestampDesc(User user, Pageable pageable);
+
+    Long countByCourse(Course course);
 }

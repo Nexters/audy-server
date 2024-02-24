@@ -46,6 +46,12 @@ public class EditorValidator {
         }
     }
 
+    public static void checkIsExceedEditorLimit(Long editorCnt) {
+        if (isExceed(editorCnt)) {
+            throw new GlobalException(EXCEED_EDITOR_LIMIT);
+        }
+    }
+
     private static boolean isExistKey(String key) {
         return StringUtils.hasText(key);
     }
@@ -69,5 +75,9 @@ public class EditorValidator {
 
     private static boolean isEqualUser(Editor source, Editor target) {
         return source.getUser().getUserId() == target.getUser().getUserId();
+    }
+
+    private static boolean isExceed(Long editorCnt) {
+        return editorCnt >= 5;
     }
 }

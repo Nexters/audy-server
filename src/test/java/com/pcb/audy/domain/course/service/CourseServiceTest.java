@@ -1,11 +1,11 @@
 package com.pcb.audy.domain.course.service;
 
-import static com.pcb.audy.global.response.ResultCode.NOT_ADMIN_COURSE;
-import static com.pcb.audy.global.response.ResultCode.NOT_FOUND_USER;
+import static com.pcb.audy.global.response.ResultCode.*;
 import static com.pcb.audy.test.EditorTest.TEST_EDITOR_ADMIN;
 import static com.pcb.audy.test.EditorTest.TEST_EDITOR_MEMBER;
 import static com.pcb.audy.test.UserTest.TEST_USER;
 import static com.pcb.audy.test.UserTest.TEST_USER_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -365,6 +365,33 @@ class CourseServiceTest implements PinTest {
             verify(editorRepository).findByUserAndCourse(any(), any());
             verify(redisProvider).hasKey(any());
             verify(redisProvider, never()).set(any(), any(), anyLong());
+        }
+
+        @Test
+        @DisplayName("5명 이상 초대된 링크 검증")
+        void 초대_링크_인원수_검증() throws Exception {
+            // given
+            CourseInviteReq courseInviteReq =
+                    CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(TEST_EDITOR_ADMIN);
+            when(editorRepository.countByCourse(any())).thenReturn(5L);
+
+            // when
+            GlobalException exception =
+                    assertThrows(
+                            GlobalException.class,
+                            () -> {
+                                courseService.inviteCourse(courseInviteReq);
+                            });
+
+            // then
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(editorRepository).countByCourse(any());
+            assertThat(exception.getResultCode()).isEqualTo(EXCEED_EDITOR_LIMIT);
         }
     }
 }

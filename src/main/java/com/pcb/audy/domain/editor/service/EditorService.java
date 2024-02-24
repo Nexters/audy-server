@@ -45,10 +45,9 @@ public class EditorService {
         CourseInviteRedisReq courseInviteRedisReq = inviteUtil.decryptCourseInviteReq(key);
 
         // 초대 객체가 Redis에 있는 지 확인
+        String redisKey = INVITE_PREFIX + courseInviteRedisReq.getCourseId();
         CourseInviteRedisReq findByKey =
-                objectMapper.convertValue(
-                        redisProvider.get(INVITE_PREFIX + courseInviteRedisReq.getCourseId()),
-                        CourseInviteRedisReq.class);
+                objectMapper.convertValue(redisProvider.get(redisKey), CourseInviteRedisReq.class);
         EditorValidator.checkValidateObject(courseInviteRedisReq, findByKey);
 
         // 초대 링크 상의 course가 유효한 지 검증
@@ -60,6 +59,11 @@ public class EditorService {
 
         Editor savedEditor =
                 editorRepository.save(Editor.builder().user(user).course(course).role(MEMBER).build());
+
+        // Editor가 5명이 되었으면 redis 객체 삭제
+        if (isExceedEditorLimit(course)) {
+            redisProvider.delete(redisKey);
+        }
         return EditorServiceMapper.INSTANCE.toEditorSaveRes(savedEditor);
     }
 
@@ -114,5 +118,15 @@ public class EditorService {
     private void checkAlreadyExistEditor(User user, Course course) {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
         EditorValidator.checkAlreadyExist(editor);
+    }
+
+    private boolean isExceedEditorLimit(Course course) {
+        Long editorCnt = editorRepository.countByCourse(course);
+        try {
+            EditorValidator.checkIsExceedEditorLimit(editorCnt);
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 }

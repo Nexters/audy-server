@@ -85,6 +85,7 @@ public class CourseService {
         User user = getUserByUserId(courseInviteReq.getUserId());
         Course course = getCourseByCourseId(courseInviteReq.getCourseId());
         isAdminUser(user, course);
+        isExceedEditorLimit(course);
 
         // 링크 생성
         String redisKey = INVITE_PREFIX + courseInviteReq.getCourseId();
@@ -171,5 +172,10 @@ public class CourseService {
     private void isAdminUser(User user, Course course) {
         Editor editor = editorRepository.findByUserAndCourse(user, course);
         EditorValidator.checkIsAdminUser(editor);
+    }
+
+    private void isExceedEditorLimit(Course course) {
+        Long editorCnt = editorRepository.countByCourse(course);
+        EditorValidator.checkIsExceedEditorLimit(editorCnt);
     }
 }
