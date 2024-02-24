@@ -116,7 +116,6 @@ public class JwtUtils {
     }
 
     private long getCurrentTimestamp() {
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        return timestamp.toInstant().atZone(ZoneId.of("Asia/Seoul")).toEpochSecond();
+        return System.currentTimeMillis();
     }
 }
