@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pravin.raha.lexorank4j.LexoRank;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.global.redis.RedisProvider;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -45,10 +42,15 @@ public class LexoRankUtil {
         String pattern = courseId + ":*";
         List<Object> redisData = redisProvider.getByPattern(pattern);
 
+        if (redisData == null) {
+            return List.of();
+        }
+
         List<PinRedisRes> pinResList =
-                Optional.ofNullable(redisData).orElseGet(ArrayList::new).stream()
-                        .map(pin -> objectMapper.convertValue(pin, PinRedisRes.class))
-                        .collect(Collectors.toList());
+                new java.util.ArrayList<>(
+                        redisData.stream()
+                                .map(pin -> objectMapper.convertValue(pin, PinRedisRes.class))
+                                .toList());
 
         Collections.sort(pinResList);
         return pinResList;
