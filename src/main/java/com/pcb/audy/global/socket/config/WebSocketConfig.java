@@ -1,12 +1,12 @@
 package com.pcb.audy.global.socket.config;
 
+import com.pcb.audy.global.jwt.JwtUtils;
+import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.socket.handler.CustomHandshakeInterceptor;
 import com.pcb.audy.global.socket.handler.SocketErrorHandler;
-import com.pcb.audy.global.socket.handler.SocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -16,13 +16,14 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final SocketHandler socketHandler;
     private final SocketErrorHandler socketErrorHandler;
+    private final RedisProvider redisProvider;
+    private final JwtUtils jwtUtils;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-                .addEndpoint("/course")
+                .addEndpoint("/course/{courseId}")
                 .setAllowedOriginPatterns("*")
                 .addInterceptors(customHandshakeInterceptor())
                 .withSockJS();
@@ -35,13 +36,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/pub"); // 클라이언트에서 보낸 메시지 받기
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(socketHandler);
-    }
-
     @Bean
     public HandshakeInterceptor customHandshakeInterceptor() {
-        return new CustomHandshakeInterceptor();
+        return new CustomHandshakeInterceptor(redisProvider, jwtUtils);
     }
 }
