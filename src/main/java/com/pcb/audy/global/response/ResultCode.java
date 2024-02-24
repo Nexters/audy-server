@@ -25,6 +25,7 @@ public enum ResultCode {
     NOT_VALID_KEY(5001, "유효기간이 만료된 링크입니다."),
     ALREADY_EXIST_EDITOR(5002, "이미 코스에 포함된 멤버입니다."),
     FAILED_DELETE_EDITOR(5003, "해당 유저를 코스에서 내보낼 수 없습니다."),
+    EXCEED_EDITOR_LIMIT(5004, "초대할 수 있는 최대 유저 수를 넘었습니다."),
 
     FAILED_ENCRYPT(6000, "객체 암호화에 실패하였습니다."),
     FAILED_DECRYPT(6001, "객체 복호화에 실패하였습니다.");
