@@ -122,6 +122,33 @@ class EditorServiceTest implements EditorTest {
             verify(editorRepository).findByUserAndCourse(any(), any());
             assertThat(exception.getResultCode()).isEqualTo(ALREADY_EXIST_EDITOR);
         }
+
+        @Test
+        @DisplayName("editor 저장 실패 테스트 (5명 초과)")
+        void editor_5명_초과시_redis삭제() {
+            // given
+            EditorSaveReq editorSaveReq = EditorSaveReq.builder().key(TEST_KEY).build();
+
+            when(inviteUtil.decryptCourseInviteReq(any())).thenReturn(TEST_COURSE_INVITE_REDIS_REQ);
+            when(redisProvider.get(any())).thenReturn(TEST_COURSE_INVITE_REDIS_REQ);
+            when(objectMapper.convertValue(any(), eq(CourseInviteRedisReq.class)))
+                    .thenReturn(TEST_COURSE_INVITE_REDIS_REQ);
+            when(userRepository.findByUserId(any())).thenReturn(TEST_USER);
+            when(courseRepository.findByCourseId(any())).thenReturn(TEST_COURSE);
+
+            when(editorRepository.findByUserAndCourse(any(), any())).thenReturn(null);
+            when(editorRepository.countByCourse(any())).thenReturn(5L);
+
+            // when
+            editorService.saveEditor(editorSaveReq);
+
+            // then
+            verify(redisProvider).get(any());
+            verify(userRepository).findByUserId(any());
+            verify(courseRepository).findByCourseId(any());
+            verify(editorRepository).findByUserAndCourse(any(), any());
+            verify(redisProvider).delete(any());
+        }
     }
 
     @Nested
