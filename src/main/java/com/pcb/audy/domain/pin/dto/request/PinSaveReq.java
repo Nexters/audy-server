@@ -13,7 +13,7 @@ public class PinSaveReq {
     private Double latitude;
     private Double longitude;
     private String address;
-    private Integer sequence;
+    private String sequence;
 
     @Builder
     private PinSaveReq(
@@ -22,7 +22,7 @@ public class PinSaveReq {
             Double latitude,
             Double longitude,
             String address,
-            Integer sequence) {
+            String sequence) {
         this.pinName = pinName;
         this.originName = originName;
         this.latitude = latitude;

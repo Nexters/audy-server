@@ -34,6 +34,10 @@ include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-request.adoc[]
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-save-response.adoc[]
 
+=== Update Pin Order
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-order-update-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-order-update-response.adoc[]
+
 === Update Pin Name
 
 include::{snippets}/../../src/docs/custom-snippets/socket/pin/pin-name-update-request.adoc[]

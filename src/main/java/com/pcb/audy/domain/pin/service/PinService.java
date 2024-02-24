@@ -3,12 +3,11 @@ package com.pcb.audy.domain.pin.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
+import com.pcb.audy.domain.pin.dto.request.PinOrderUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
-import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
-import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
-import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
+import com.pcb.audy.domain.pin.dto.response.*;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.LexoRankUtil;
 import com.pcb.audy.global.validator.PinValidator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +18,42 @@ import org.springframework.stereotype.Service;
 public class PinService {
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
+    private final LexoRankUtil lexoRankUtil;
     private final String SEPARATOR = ":";
 
     // TODO fix TTL
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
-        PinRedisRes pinRedisRes = PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId);
+
+        int size = redisProvider.getByPattern(courseId + ":*").size();
+        String sequence = lexoRankUtil.getLexoRank(courseId, size);
+
+        PinRedisRes pinRedisRes =
+                PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
         redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
+    }
+
+    public PinOrderUpdateRes updatePinOrder(Long courseId, PinOrderUpdateReq pinOrderUpdateReq) {
+        String key = getKey(courseId, pinOrderUpdateReq.getPinId());
+        String sequence = lexoRankUtil.getLexoRank(courseId, pinOrderUpdateReq.getOrder());
+
+        PinRedisRes pinRedisRes = objectMapper.convertValue(redisProvider.get(key), PinRedisRes.class);
+        PinRedisRes updatedPinRedisRes =
+                PinRedisRes.builder()
+                        .courseId(pinRedisRes.getCourseId())
+                        .pinId(pinRedisRes.getPinId())
+                        .pinName(pinRedisRes.getPinName())
+                        .originName(pinRedisRes.getOriginName())
+                        .latitude(pinRedisRes.getLatitude())
+                        .longitude(pinRedisRes.getLongitude())
+                        .address(pinRedisRes.getAddress())
+                        .sequence(sequence)
+                        .build();
+
+        redisProvider.set(key, updatedPinRedisRes, PIN_EXPIRE_TIME);
+        return PinServiceMapper.INSTANCE.toPinOrderUpdateRes(pinOrderUpdateReq);
     }
 
     public PinNameUpdateRes updatePinName(Long courseId, PinNameUpdateReq pinNameUpdateReq) {
