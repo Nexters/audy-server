@@ -48,7 +48,7 @@ public class SecurityConfig {
                                 authorizationHttpRequests
                                         .requestMatchers("/oauth2/**")
                                         .permitAll()
-                                        .requestMatchers("/course")
+                                        .requestMatchers("/course/**")
                                         .permitAll()
                                         .anyRequest()
                                         .authenticated())
