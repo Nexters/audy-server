@@ -3,7 +3,9 @@ package com.pcb.audy.global.redis;
 import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -23,6 +26,7 @@ class RedisProviderTest implements RedisTest {
 
     @Mock private RedisTemplate<String, Object> redisTemplate;
     @Mock private ValueOperations<String, Object> valueOperations;
+    @Mock private ListOperations<String, Object> listOperations;
 
     @Test
     @DisplayName("데이터 저장 테스트")
@@ -81,5 +85,25 @@ class RedisProviderTest implements RedisTest {
         // then
         verify(redisTemplate).hasKey(any());
         assertThat(result).isEqualTo(TRUE);
+    }
+
+    // TODO add save list
+    @Test
+    @DisplayName("데이터 list에 저장 테스트")
+    void 데이터_list_저장() {
+        // given
+        when(redisTemplate.opsForList()).thenReturn(listOperations);
+        when(listOperations.size(any())).thenReturn(0L);
+        when(listOperations.remove(any(), anyLong(), any())).thenReturn(1L);
+
+        // when
+        redisProvider.setValues(TEST_KEY, TEST_VALUE, TEST_EXPIRE_TIME);
+
+        // then
+        verify(redisTemplate, times(3)).opsForList();
+        verify(listOperations).size(any());
+        verify(listOperations).remove(any(), anyLong(), any());
+        verify(listOperations).rightPush(any(), any());
+        verify(redisTemplate).expire(any(), anyLong(), any());
     }
 }
