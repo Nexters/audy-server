@@ -4,6 +4,7 @@ import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
@@ -65,6 +66,17 @@ public class RedisProvider {
                                     });
                             return null; // 파이프라인 내에서 각 개별 명령의 결과 처리를 무시하겠다
                         });
+    }
+
+    public void setValues(String key, Object o, long expireTime) {
+        Long len = redisTemplate.opsForList().size(key);
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
+        redisTemplate.opsForList().remove(key, 1L, o);
+        redisTemplate.opsForList().rightPush(key, o);
+
+        if (len == 0) {
+            redisTemplate.expire(key, expireTime, TimeUnit.MILLISECONDS);
+        }
     }
 
     public void delete(String key) {
