@@ -10,6 +10,7 @@ import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.validator.TokenValidator;
 import com.pcb.audy.global.validator.UserValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,23 +47,18 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        String accessHeader = getToken(request, ACCESS_TOKEN_NAME);
-        String refreshHeader = getToken(request, REFRESH_TOKEN_NAME);
+        String accessCookie = getToken(request, ACCESS_TOKEN_NAME);
+        String refreshCookie = getToken(request, REFRESH_TOKEN_NAME);
 
-        log.info("accessHeader: " + accessHeader);
-        log.info("refreshHeader: " + refreshHeader);
-        if (!isExistHeader(accessHeader)) {
-            throw new GlobalException(INVALID_TOKEN);
-        }
+        log.info("accessHeader: " + accessCookie);
+        log.info("refreshHeader: " + refreshCookie);
+        TokenValidator.validate(accessCookie);
 
-        String accessToken = accessHeader.replace(TOKEN_TYPE, "");
+        String accessToken = accessCookie.replace(TOKEN_TYPE, "");
         String email = jwtUtils.getEmail(accessToken);
         if (email == null) {
-            if (!isExistHeader(refreshHeader)) {
-                throw new GlobalException(INVALID_TOKEN);
-            }
-
-            String refreshToken = refreshHeader.replace(TOKEN_TYPE, "");
+            TokenValidator.validate(refreshCookie);
+            String refreshToken = refreshCookie.replace(TOKEN_TYPE, "");
             email = getNewToken(response, refreshToken);
         }
 
@@ -113,10 +109,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
         jwtUtils.setAccessToken(response, email);
         jwtUtils.setRefreshToken(response, email);
-    }
-
-    private static boolean isExistHeader(String header) {
-        return header != null && header.startsWith(TOKEN_TYPE);
     }
 
     @Override
