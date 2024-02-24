@@ -1,5 +1,7 @@
 package com.pcb.audy.global.socket.config;
 
+import com.pcb.audy.global.jwt.JwtUtils;
+import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.socket.handler.CustomHandshakeInterceptor;
 import com.pcb.audy.global.socket.handler.SocketErrorHandler;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final SocketErrorHandler socketErrorHandler;
+    private final RedisProvider redisProvider;
+    private final JwtUtils jwtUtils;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -34,6 +38,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public HandshakeInterceptor customHandshakeInterceptor() {
-        return new CustomHandshakeInterceptor();
+        return new CustomHandshakeInterceptor(redisProvider, jwtUtils);
     }
 }

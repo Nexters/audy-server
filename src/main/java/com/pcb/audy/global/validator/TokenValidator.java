@@ -4,10 +4,17 @@ import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 import static com.pcb.audy.global.response.ResultCode.INVALID_TOKEN;
 
 import com.pcb.audy.global.exception.GlobalException;
+import jakarta.servlet.http.Cookie;
 
 public class TokenValidator {
     public static void validate(String cookie) {
-        if (!isExistCookie(cookie)) {
+        if (!isValidCookie(cookie)) {
+            throw new GlobalException(INVALID_TOKEN);
+        }
+    }
+
+    public static void validate(Cookie cookie) {
+        if (!isValidCookie(cookie)) {
             throw new GlobalException(INVALID_TOKEN);
         }
     }
@@ -22,7 +29,11 @@ public class TokenValidator {
         return email != null;
     }
 
-    private static boolean isExistCookie(String cookie) {
+    private static boolean isValidCookie(Cookie cookie) {
+        return cookie != null && cookie.getValue().startsWith(TOKEN_TYPE);
+    }
+
+    private static boolean isValidCookie(String cookie) {
         return cookie != null && cookie.startsWith(TOKEN_TYPE);
     }
 }
