@@ -1,7 +1,7 @@
 [source,http,options="nowrap"]
 ----
 SUBSCRIBE /sub/{courseId}/pin/modification/sequence
-EX /sub/1/pin/modification
+EX /sub/1/pin/modification/sequence
 Content-Type: application/json
 {
   "code" : 0,
