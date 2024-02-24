@@ -26,7 +26,7 @@ public class Pin extends BaseEntity {
     private Double latitude;
     private Double longitude;
     private String address;
-    private Integer sequence;
+    private String sequence;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")
@@ -40,7 +40,7 @@ public class Pin extends BaseEntity {
             Double latitude,
             Double longitude,
             String address,
-            Integer sequence,
+            String sequence,
             Course course) {
         this.pinId = pinId;
         this.pinName = pinName;

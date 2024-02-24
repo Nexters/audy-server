@@ -1,10 +1,10 @@
 [source,http,options="nowrap"]
 ----
-SEND /pub/{courseId}/pin/modification/name
-EX /pub/1/pin/modification/name
+SEND /pub/{courseId}/pin/modification/sequence
+EX /pub/1/pin/modification/sequence
 Content-Type: application/json
 {
     "pinId": "10b24e0e-7d7f-49ab-858d-14097f47ee8a",
-    "pinName": "updatedPinName"
+    "order": 0
 }
 ----

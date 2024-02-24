@@ -2,9 +2,11 @@ package com.pcb.audy.domain.pin.controller;
 
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
+import com.pcb.audy.domain.pin.dto.request.PinOrderUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
 import com.pcb.audy.domain.pin.dto.response.PinDeleteRes;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
+import com.pcb.audy.domain.pin.dto.response.PinOrderUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.service.PinService;
 import com.pcb.audy.global.response.BasicResponse;
@@ -21,6 +23,12 @@ public class PinHttpController {
     public BasicResponse<PinSaveRes> savePin(
             @PathVariable("courseId") Long courseId, @RequestBody PinSaveReq pinSaveReq) {
         return BasicResponse.success(pinService.savePin(courseId, pinSaveReq));
+    }
+
+    @PatchMapping("/{courseId}/order")
+    public BasicResponse<PinOrderUpdateRes> updatePinOrder(
+            @PathVariable("courseId") Long courseId, @RequestBody PinOrderUpdateReq pinOrderUpdateReq) {
+        return BasicResponse.success(pinService.updatePinOrder(courseId, pinOrderUpdateReq));
     }
 
     @PatchMapping("/{courseId}/name")

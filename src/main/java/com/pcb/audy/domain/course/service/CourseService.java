@@ -7,23 +7,24 @@ import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.util.InviteUtil;
+import com.pcb.audy.global.util.LexoRankUtil;
 import com.pcb.audy.global.validator.CourseValidator;
 import com.pcb.audy.global.validator.EditorValidator;
 import com.pcb.audy.global.validator.UserValidator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class CourseService {
     private final EditorRepository editorRepository;
     private final RedisProvider redisProvider;
     private final InviteUtil inviteUtil;
+    private final LexoRankUtil lexoUtil;
     private final ObjectMapper objectMapper;
 
     private static final String INVITE_PREFIX = "Invite: ";
@@ -106,21 +108,12 @@ public class CourseService {
         Course course = getCourseByCourseId(courseId);
 
         // Redis에서 Pin 조회
-        String pattern = courseId + ":*";
-        List<Object> redisData = redisProvider.getByPattern(pattern);
-
-        List<PinSaveRes> pinResList;
-        if (!redisData.isEmpty()) { // Redis에 데이터가 있는 경우
-            pinResList =
-                    redisData.stream()
-                            .map(pin -> objectMapper.convertValue(pin, PinSaveRes.class))
-                            .collect(Collectors.toList());
-        } else {
+        List<PinRedisRes> pinResList = lexoUtil.sortByLexoRank(courseId);
+        if (CollectionUtils.isEmpty(pinResList)) {
             // Redis에 데이터가 없는 경우, DB에서 가져오기 + Redis에 캐싱
-            pinResList = CourseServiceMapper.INSTANCE.toPinSaveResList(course.getPinList());
+            pinResList = CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList());
             redisProvider.multiSet(pinResList);
         }
-
         return CourseServiceMapper.INSTANCE.toCourseDetailGetRes(course, pinResList);
     }
 

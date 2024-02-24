@@ -1,6 +1,6 @@
 package com.pcb.audy.global.redis;
 
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import java.time.Duration;
 import java.util.List;
 import java.util.Set;
@@ -24,10 +24,6 @@ public class RedisProvider {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public Set<String> findKeys(String pattern) {
-        return redisTemplate.keys(pattern);
-    }
-
     public List<Object> getByPattern(String pattern) {
         Set<String> keys = redisTemplate.keys(pattern);
         if (CollectionUtils.isEmpty(keys)) {
@@ -44,21 +40,21 @@ public class RedisProvider {
         redisTemplate.opsForValue().set(key, o, Duration.ofMillis(expireTime));
     }
 
-    public void multiSet(List<PinSaveRes> pinSaveResList) {
+    public void multiSet(List<PinRedisRes> pinSaveResList) {
         redisTemplate.executePipelined(
                 (RedisCallback<Object>)
                         connection -> {
                             // JSON 직렬화를 위한 설정
                             RedisSerializer<String> stringSerializer = redisTemplate.getStringSerializer();
-                            RedisSerializer<PinSaveRes> valueSerializer =
-                                    new Jackson2JsonRedisSerializer<>(PinSaveRes.class);
+                            RedisSerializer<PinRedisRes> valueSerializer =
+                                    new Jackson2JsonRedisSerializer<>(PinRedisRes.class);
 
                             pinSaveResList.forEach(
-                                    pinSaveRes -> {
+                                    pinRedisRes -> {
                                         // courseId와 pinId를 조합하여 키 생성
-                                        String key = pinSaveRes.getCourseId() + ":" + pinSaveRes.getPinId();
+                                        String key = pinRedisRes.getCourseId() + ":" + pinRedisRes.getPinId();
                                         byte[] serializedKey = stringSerializer.serialize(key);
-                                        byte[] serializedValue = valueSerializer.serialize(pinSaveRes);
+                                        byte[] serializedValue = valueSerializer.serialize(pinRedisRes);
 
                                         // Redis에 키-값 쌍 저장
                                         connection.set(

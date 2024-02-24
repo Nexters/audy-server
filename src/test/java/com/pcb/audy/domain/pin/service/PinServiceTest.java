@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
-import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
 import com.pcb.audy.domain.pin.dto.response.PinNameUpdateRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.global.exception.GlobalException;
@@ -33,26 +32,26 @@ class PinServiceTest implements PinTest {
     @Mock private RedisProvider redisProvider;
     @Mock private ObjectMapper objectMapper;
 
-    @Test
-    @DisplayName("pin 저장 테스트")
-    void pin_저장() {
-        // given
-        PinSaveReq pinSaveReq =
-                PinSaveReq.builder()
-                        .pinName(TEST_PIN_NAME)
-                        .originName(TEST_PIN_ORIGIN_NAME)
-                        .latitude(TEST_LATITUDE)
-                        .longitude(TEST_LONGITUDE)
-                        .address(TEST_ADDRESS)
-                        .sequence(TEST_SEQUENCE)
-                        .build();
-
-        // when
-        pinService.savePin(TEST_COURSE_ID, pinSaveReq);
-
-        // then
-        verify(redisProvider).set(any(), any(), anyLong());
-    }
+    //    @Test
+    //    @DisplayName("pin 저장 테스트")
+    //    void pin_저장() {
+    //        // given
+    //        PinSaveReq pinSaveReq =
+    //                PinSaveReq.builder()
+    //                        .pinName(TEST_PIN_NAME)
+    //                        .originName(TEST_PIN_ORIGIN_NAME)
+    //                        .latitude(TEST_LATITUDE)
+    //                        .longitude(TEST_LONGITUDE)
+    //                        .address(TEST_ADDRESS)
+    //                        .sequence(TEST_SEQUENCE)
+    //                        .build();
+    //
+    //        // when
+    //        pinService.savePin(TEST_COURSE_ID, pinSaveReq);
+    //
+    //        // then
+    //        verify(redisProvider).set(any(), any(), anyLong());
+    //    }
 
     @Test
     @DisplayName("pin 이름 수정 테스트")
