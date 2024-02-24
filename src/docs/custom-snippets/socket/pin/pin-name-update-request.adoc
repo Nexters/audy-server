@@ -1,6 +1,6 @@
 [source,http,options="nowrap"]
 ----
-SEND /pub/{courseId}/pin/modification
+SEND /pub/{courseId}/pin/modification/name
 EX /pub/1/pin/modification
 Content-Type: application/json
 {
