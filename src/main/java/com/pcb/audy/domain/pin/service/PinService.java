@@ -25,8 +25,9 @@ public class PinService {
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
-        int size = redisProvider.findKeys(courseId + ":*").size();
-        String sequence = lexoRankUtil.getLexoRank(courseId, size - 1);
+
+        int size = redisProvider.getByPattern(courseId + ":*").size();
+        String sequence = lexoRankUtil.getLexoRank(courseId, size);
 
         PinRedisRes pinRedisRes =
                 PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);

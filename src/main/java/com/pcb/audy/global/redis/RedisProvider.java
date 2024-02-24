@@ -24,10 +24,6 @@ public class RedisProvider {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public Set<String> findKeys(String pattern) {
-        return redisTemplate.keys(pattern);
-    }
-
     public List<Object> getByPattern(String pattern) {
         Set<String> keys = redisTemplate.keys(pattern);
         if (CollectionUtils.isEmpty(keys)) {

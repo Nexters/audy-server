@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +109,7 @@ public class CourseService {
 
         // Redis에서 Pin 조회
         List<PinRedisRes> pinResList = lexoUtil.sortByLexoRank(courseId);
-        if (pinResList.isEmpty()) {
+        if (CollectionUtils.isEmpty(pinResList)) {
             // Redis에 데이터가 없는 경우, DB에서 가져오기 + Redis에 캐싱
             pinResList = CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList());
             redisProvider.multiSet(pinResList);
