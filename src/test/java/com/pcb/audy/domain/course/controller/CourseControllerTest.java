@@ -1,7 +1,6 @@
 package com.pcb.audy.domain.course.controller;
 
 import static com.pcb.audy.test.PinTest.*;
-import static com.pcb.audy.test.UserTest.TEST_USER_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -57,7 +56,10 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
     void course_이름_수정() throws Exception {
 
         CourseUpdateReq courseUpdateReq =
-                CourseUpdateReq.builder().courseName(TEST_UPDATED_COURSE_NAME).build();
+                CourseUpdateReq.builder()
+                        .courseId(TEST_COURSE_ID)
+                        .courseName(TEST_UPDATED_COURSE_NAME)
+                        .build();
 
         CourseUpdateRes courseUpdateRes = new CourseUpdateRes();
         when(courseService.updateCourseName(any())).thenReturn(courseUpdateRes);
@@ -239,8 +241,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
     @DisplayName("초대 링크 생성 테스트")
     void 초대_링크_생성() throws Exception {
 
-        CourseInviteReq courseInviteReq =
-                CourseInviteReq.builder().courseId(TEST_COURSE_ID).userId(TEST_USER_ID).build();
+        CourseInviteReq courseInviteReq = CourseInviteReq.builder().courseId(TEST_COURSE_ID).build();
 
         CourseInviteRes courseInviteRes = CourseInviteRes.builder().url(TEST_INVITE_URL).build();
 
