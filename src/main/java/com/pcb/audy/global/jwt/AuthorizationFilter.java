@@ -1,6 +1,7 @@
 package com.pcb.audy.global.jwt;
 
 import static com.pcb.audy.global.jwt.JwtUtils.ACCESS_TOKEN_NAME;
+import static com.pcb.audy.global.jwt.JwtUtils.KEY_PREFIX;
 import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_NAME;
 import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 import static com.pcb.audy.global.response.ResultCode.INVALID_TOKEN;
@@ -103,7 +104,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void updateTokens(HttpServletResponse response, String email) {
-        if (!redisProvider.hasKey(email)) {
+        if (!redisProvider.hasKey(KEY_PREFIX + email)) {
             throw new GlobalException(INVALID_TOKEN);
         }
 
