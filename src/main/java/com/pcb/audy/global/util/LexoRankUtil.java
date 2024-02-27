@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pravin.raha.lexorank4j.LexoRank;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.global.redis.RedisProvider;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -48,17 +48,18 @@ public class LexoRankUtil {
         }
 
         List<PinRedisRes> pinResList = new ArrayList<>();
-        for (Object data : redisData) {
-            if (data instanceof byte[]) {
-                try {
-                    String json = new String((byte[]) data, StandardCharsets.UTF_8);
-                    PinRedisRes pin = objectMapper.readValue(json, PinRedisRes.class);
-                    pinResList.add(pin);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        for (Object pin : redisData) {
+            System.out.println(pin.toString());
+            PinRedisRes pinRedisRes = objectMapper.convertValue(pin, PinRedisRes.class);
+            System.out.println(pinRedisRes.toString());
+            System.out.println(pinRedisRes.getPinId());
+            pinResList.add(pinRedisRes);
+            System.out.println("---------------");
         }
+
+        System.out.println("add finsihed");
+        Collections.sort(pinResList);
+        System.out.println("sorting finished");
         return pinResList;
     }
 }
