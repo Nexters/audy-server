@@ -11,8 +11,10 @@ import com.pcb.audy.global.util.LexoRankUtil;
 import com.pcb.audy.global.validator.PinValidator;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PinService {
@@ -25,10 +27,14 @@ public class PinService {
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
+        log.info("savePin 진입");
         int size = redisProvider.getByPattern(courseId + ":*").size();
+        log.info(String.valueOf(size));
         isExceedPinLimit(size);
+        log.info("limit check");
 
         String sequence = lexoRankUtil.getLexoRank(courseId, size);
+        log.info("get rank check");
         PinRedisRes pinRedisRes =
                 PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
         redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
