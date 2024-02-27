@@ -37,7 +37,7 @@ public class RedisProvider {
         if (hasKey(key)) {
             delete(key);
         }
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
         redisTemplate.opsForValue().set(key, o, Duration.ofMillis(expireTime));
     }
 
