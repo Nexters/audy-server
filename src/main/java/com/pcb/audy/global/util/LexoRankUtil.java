@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LexoRankUtil {
@@ -49,17 +51,17 @@ public class LexoRankUtil {
 
         List<PinRedisRes> pinResList = new ArrayList<>();
         for (Object pin : redisData) {
-            System.out.println(pin.toString());
+            log.info(pin.toString());
             PinRedisRes pinRedisRes = objectMapper.convertValue(pin, PinRedisRes.class);
-            System.out.println(pinRedisRes.toString());
-            System.out.println(pinRedisRes.getPinId());
+            log.info(pinRedisRes.toString());
+            log.info(String.valueOf(pinRedisRes.getPinId()));
             pinResList.add(pinRedisRes);
-            System.out.println("---------------");
+            log.info("---------------");
         }
 
-        System.out.println("add finsihed");
+        log.info("add finished");
         Collections.sort(pinResList);
-        System.out.println("sorting finished");
+        log.info("sorting finished");
         return pinResList;
     }
 }
