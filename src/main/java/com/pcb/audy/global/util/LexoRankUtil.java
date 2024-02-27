@@ -43,10 +43,13 @@ public class LexoRankUtil {
 
     public List<PinRedisRes> sortByLexoRank(Long courseId) {
         String pattern = courseId + ":*";
+        log.info(pattern);
         List<Object> redisData = redisProvider.getByPattern(pattern);
 
         if (redisData == null) {
             return List.of();
+        } else {
+            log.info(String.valueOf(redisData.size()));
         }
 
         List<PinRedisRes> pinResList = new ArrayList<>();
