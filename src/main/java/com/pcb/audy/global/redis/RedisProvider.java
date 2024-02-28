@@ -25,6 +25,15 @@ public class RedisProvider {
         return redisTemplate.opsForValue().get(key);
     }
 
+    public List<Object> getValues(String key) {
+        Long len = redisTemplate.opsForList().size(key);
+        if (len == 0) {
+            return List.of();
+        }
+
+        return redisTemplate.opsForList().range(key, 0, len - 1);
+    }
+
     public List<Object> getByPattern(String pattern) {
         Set<String> keys = redisTemplate.keys(pattern);
         if (CollectionUtils.isEmpty(keys)) {
@@ -70,7 +79,7 @@ public class RedisProvider {
 
     public void setValues(String key, Object o, long expireTime) {
         Long len = redisTemplate.opsForList().size(key);
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
         redisTemplate.opsForList().remove(key, 1L, o);
         redisTemplate.opsForList().rightPush(key, o);
 
