@@ -27,6 +27,7 @@ public class PinService {
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
+        PinValidator.validateName(pinSaveReq.getPinName());
         int size = redisProvider.getByPattern(courseId + ":*").size();
         isExceedPinLimit(size);
 
@@ -59,6 +60,7 @@ public class PinService {
     }
 
     public PinNameUpdateRes updatePinName(Long courseId, PinNameUpdateReq pinNameUpdateReq) {
+        PinValidator.validateName(pinNameUpdateReq.getPinName());
         String key = getKey(courseId, pinNameUpdateReq.getPinId());
         PinRedisRes prevPin = objectMapper.convertValue(redisProvider.get(key), PinRedisRes.class);
         PinValidator.validate(prevPin);
