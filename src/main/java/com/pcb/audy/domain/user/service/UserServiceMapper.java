@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.user.service;
 
+import com.pcb.audy.domain.user.dto.response.SocketUserGetRes;
 import com.pcb.audy.domain.user.dto.response.UserGetRes;
 import com.pcb.audy.domain.user.entity.User;
 import java.util.List;
@@ -12,5 +13,5 @@ public interface UserServiceMapper {
 
     UserGetRes toUserGetRes(User user);
 
-    List<UserGetRes> toUserGetResList(List<User> users);
+    List<SocketUserGetRes> toUserGetResList(List<User> users);
 }

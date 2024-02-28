@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserGetResList {
-    private List<UserGetRes> users;
+    private List<SocketUserGetRes> users;
     private int total;
 
     @Builder
-    private UserGetResList(List<UserGetRes> users, int total) {
+    private UserGetResList(List<SocketUserGetRes> users, int total) {
         this.users = users;
         this.total = total;
     }

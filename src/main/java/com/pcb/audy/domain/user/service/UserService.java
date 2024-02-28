@@ -1,6 +1,7 @@
 package com.pcb.audy.domain.user.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pcb.audy.domain.user.dto.response.SocketUserGetRes;
 import com.pcb.audy.domain.user.dto.response.UserGetRes;
 import com.pcb.audy.domain.user.dto.response.UserGetResList;
 import com.pcb.audy.domain.user.entity.User;
@@ -29,7 +30,7 @@ public class UserService {
     public UserGetResList getUsers(Long courseId) {
         String key = COURSE_PREFIX + courseId;
 
-        List<UserGetRes> users =
+        List<SocketUserGetRes> users =
                 UserServiceMapper.INSTANCE.toUserGetResList(
                         redisProvider.getValues(key).stream()
                                 .map(user -> objectMapper.convertValue(user, User.class))
