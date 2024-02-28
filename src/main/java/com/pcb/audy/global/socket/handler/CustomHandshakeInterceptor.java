@@ -5,7 +5,6 @@ import static com.pcb.audy.global.jwt.JwtUtils.REFRESH_TOKEN_NAME;
 import static com.pcb.audy.global.jwt.JwtUtils.TOKEN_TYPE;
 
 import com.pcb.audy.global.jwt.JwtUtils;
-import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.validator.TokenValidator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +21,7 @@ import org.springframework.web.util.WebUtils;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomHandshakeInterceptor implements HandshakeInterceptor {
-    private final RedisProvider redisProvider;
     private final JwtUtils jwtUtils;
-    private final String SOCKET_PREFIX = "socket:";
 
     @Override
     public boolean beforeHandshake(
@@ -35,11 +32,16 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest servletServerRequest) {
             HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
             String email = getEmail(servletRequest, ACCESS_TOKEN_NAME);
+            String courseId = servletRequest.getRequestURI().replace("/course/", "");
             if (email == null) {
                 email = getEmail(servletRequest, REFRESH_TOKEN_NAME);
                 TokenValidator.validateEmail(email);
             }
+
+            attributes.put("email", email);
+            attributes.put("courseId", courseId);
         }
+
         return true;
     }
 
@@ -48,16 +50,7 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
             ServerHttpRequest request,
             ServerHttpResponse response,
             WebSocketHandler wsHandler,
-            Exception exception) {
-        if (request instanceof ServletServerHttpRequest servletServerRequest) {
-            HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
-            if (servletRequest.getRequestURI() != null) {
-                String email = getEmail(servletRequest, REFRESH_TOKEN_NAME);
-                String courseId = servletRequest.getRequestURI().replace("/course/", "");
-                redisProvider.setValues(SOCKET_PREFIX + courseId, email, Integer.MAX_VALUE);
-            }
-        }
-    }
+            Exception exception) {}
 
     private String getEmail(HttpServletRequest request, String tokenName) {
         Cookie cookie = WebUtils.getCookie(request, tokenName);
