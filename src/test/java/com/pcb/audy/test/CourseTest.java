@@ -9,7 +9,7 @@ public interface CourseTest {
 
     Long TEST_COURSE_ID = 1L;
     String TEST_COURSE_NAME = "course";
-    String TEST_UPDATED_COURSE_NAME = "updatedName";
+    String TEST_UPDATED_COURSE_NAME = "updateName";
 
     Long TEST_SECOND_COURSE_ID = 2L;
     String TEST_SECOND_COURSE_NAME = "course2";
