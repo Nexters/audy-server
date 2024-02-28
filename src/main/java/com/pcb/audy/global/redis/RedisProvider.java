@@ -79,7 +79,7 @@ public class RedisProvider {
 
     public void setValues(String key, Object o, long expireTime) {
         Long len = redisTemplate.opsForList().size(key);
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(o.getClass()));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
         redisTemplate.opsForList().remove(key, 1L, o);
         redisTemplate.opsForList().rightPush(key, o);
 
