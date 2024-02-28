@@ -45,6 +45,7 @@ public class CourseService {
 
     @Transactional
     public CourseSaveRes saveCourse(CourseSaveReq commentSaveReq) {
+        CourseValidator.validateName(commentSaveReq.getCourseName());
         User user = getUserByUserId(commentSaveReq.getUserId());
         Course savedCourse =
                 courseRepository.save(Course.builder().courseName(commentSaveReq.getCourseName()).build());
@@ -56,6 +57,7 @@ public class CourseService {
 
     @Transactional
     public CourseUpdateRes updateCourseName(CourseUpdateReq courseUpdateReq) {
+        CourseValidator.validateName(courseUpdateReq.getCourseName());
         User user = getUserByUserId(courseUpdateReq.getUserId());
         Course course = getCourseByCourseId(courseUpdateReq.getCourseId());
 
