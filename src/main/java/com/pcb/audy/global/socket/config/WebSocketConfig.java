@@ -35,8 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addEndpoint("/course/{courseId}")
                 .setAllowedOriginPatterns("*")
                 .addInterceptors(customHandshakeInterceptor())
-                .setHandshakeHandler(customPrincipalHandshakeHandler())
-                .withSockJS();
+                .setHandshakeHandler(customPrincipalHandshakeHandler());
         registry.setErrorHandler(socketErrorHandler);
     }
 
