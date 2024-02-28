@@ -19,7 +19,6 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
     private final String SOCKET_PREFIX = "socket:";
-    private final String SEPAR = ":";
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -30,8 +29,7 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
             SocketPrincipal socketPrincipal =
                     objectMapper.convertValue(accessor.getUser(), SocketPrincipal.class);
             String courseId = objectMapper.convertValue(keys.get("courseId"), String.class);
-            redisProvider.setValues(
-                    getKey(courseId, accessor.getSessionId()), socketPrincipal.getUser(), Integer.MAX_VALUE);
+            redisProvider.setValues(getKey(courseId), socketPrincipal.getUser(), Integer.MAX_VALUE);
         }
 
         return message;
@@ -40,7 +38,7 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
     @Override
     public void postSend(Message<?> message, MessageChannel channel, boolean sent) {}
 
-    private String getKey(String courseId, String session) {
-        return SOCKET_PREFIX + courseId + SEPAR + session;
+    private String getKey(String courseId) {
+        return SOCKET_PREFIX + courseId;
     }
 }
