@@ -5,6 +5,7 @@ import com.pcb.audy.domain.course.dto.request.*;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
@@ -115,7 +116,18 @@ public class CourseService {
             pinResList = CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList());
             redisProvider.multiSet(pinResList);
         }
-        return CourseServiceMapper.INSTANCE.toCourseDetailGetRes(course, pinResList);
+
+        List<EditorGetRes> editorGetResList =
+                CourseServiceMapper.INSTANCE.toEditorGetResList(course.getEditorList());
+
+        return CourseDetailGetRes.builder()
+                .courseId(course.getCourseId())
+                .courseName(course.getCourseName())
+                .editorCnt(editorGetResList.size())
+                .pinCnt(pinResList.size())
+                .editorGetResList(editorGetResList)
+                .pinResList(pinResList)
+                .build();
     }
 
     @Transactional(readOnly = true)
