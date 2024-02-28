@@ -19,7 +19,7 @@ import com.pcb.audy.domain.course.dto.request.CourseSaveReq;
 import com.pcb.audy.domain.course.dto.request.CourseUpdateReq;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.service.CourseService;
-import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
+import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.test.CourseTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -97,8 +97,8 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
     @DisplayName("Course 상세 조회")
     void course_상세_조회() throws Exception {
         Long courseId = 1L;
-        PinRedisRes pinRedisRes =
-                PinRedisRes.builder()
+        PinGetRes pinGetRes =
+                PinGetRes.builder()
                         .pinId(TEST_PIN_ID)
                         .pinName(TEST_PIN_NAME)
                         .originName(TEST_PIN_ORIGIN_NAME)
@@ -112,7 +112,7 @@ class CourseControllerTest extends BaseMvcTest implements CourseTest {
                 CourseDetailGetRes.builder()
                         .courseId(TEST_COURSE_ID)
                         .courseName(TEST_COURSE_NAME)
-                        .pinResList(List.of(pinRedisRes))
+                        .pinResList(List.of(pinGetRes))
                         .build();
 
         when(courseService.getCourse(any())).thenReturn(courseDetailGetRes);
