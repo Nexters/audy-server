@@ -1,17 +1,15 @@
 package com.pcb.audy.domain.course.service;
 
-import com.pcb.audy.domain.course.dto.response.CourseDetailGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseGetRes;
 import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
+import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.entity.Pin;
 import java.util.List;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -37,11 +35,14 @@ public interface CourseServiceMapper {
 
     List<CourseGetRes> toCourseGetResList(List<Editor> editor);
 
-    PinGetRes redisToPinGetRes(PinSaveRes pin);
+    @Mapping(target = "userId", expression = "java(editor.getUser().getUserId())")
+    @Mapping(target = "userName", expression = "java(editor.getUser().getUsername())")
+    @Mapping(target = "imageUrl", expression = "java(editor.getUser().getImageUrl())")
+    EditorGetRes toEditorGetRes(Editor editor);
 
-    List<PinSaveRes> toPinGetRes(List<Pin> pin);
+    List<EditorGetRes> toEditorGetResList(List<Editor> editor);
 
     List<PinRedisRes> toPinRedisResList(List<Pin> pinList);
 
-    CourseDetailGetRes toCourseDetailGetRes(Course course, List<PinRedisRes> pinResList);
+    List<PinGetRes> toPinGetResList(List<Pin> pinList);
 }

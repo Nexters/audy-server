@@ -1,5 +1,6 @@
 package com.pcb.audy.domain.course.dto.response;
 
+import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import java.util.List;
 import lombok.*;
@@ -11,12 +12,24 @@ public class CourseDetailGetRes {
 
     private Long courseId;
     private String courseName;
+    private int pinCnt;
+    private int editorCnt;
+    private List<EditorGetRes> editorGetResList;
     private List<PinGetRes> pinResList;
 
     @Builder
-    private CourseDetailGetRes(Long courseId, String courseName, List<PinGetRes> pinResList) {
+    private CourseDetailGetRes(
+            Long courseId,
+            String courseName,
+            int pinCnt,
+            int editorCnt,
+            List<EditorGetRes> editorGetResList,
+            List<PinGetRes> pinResList) {
         this.courseId = courseId;
         this.courseName = courseName;
+        this.pinCnt = pinCnt;
+        this.editorCnt = editorCnt;
+        this.editorGetResList = editorGetResList;
         this.pinResList = pinResList;
     }
 }

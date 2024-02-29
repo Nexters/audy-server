@@ -5,9 +5,10 @@ import com.pcb.audy.domain.course.dto.request.*;
 import com.pcb.audy.domain.course.dto.response.*;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.course.repository.CourseRepository;
+import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
-import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
+import com.pcb.audy.domain.pin.dto.response.PinGetRes;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
@@ -44,6 +45,7 @@ public class CourseService {
 
     @Transactional
     public CourseSaveRes saveCourse(CourseSaveReq commentSaveReq) {
+        CourseValidator.validateName(commentSaveReq.getCourseName());
         User user = getUserByUserId(commentSaveReq.getUserId());
         Course savedCourse =
                 courseRepository.save(Course.builder().courseName(commentSaveReq.getCourseName()).build());
@@ -55,6 +57,7 @@ public class CourseService {
 
     @Transactional
     public CourseUpdateRes updateCourseName(CourseUpdateReq courseUpdateReq) {
+        CourseValidator.validateName(courseUpdateReq.getCourseName());
         User user = getUserByUserId(courseUpdateReq.getUserId());
         Course course = getCourseByCourseId(courseUpdateReq.getCourseId());
 
@@ -109,13 +112,24 @@ public class CourseService {
         Course course = getCourseByCourseId(courseId);
 
         // Redis에서 Pin 조회
-        List<PinRedisRes> pinResList = lexoUtil.sortByLexoRank(courseId);
+        List<PinGetRes> pinResList = lexoUtil.sortByLexoRank(courseId);
         if (CollectionUtils.isEmpty(pinResList)) {
             // Redis에 데이터가 없는 경우, DB에서 가져오기 + Redis에 캐싱
-            pinResList = CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList());
-            redisProvider.multiSet(pinResList);
+            pinResList = CourseServiceMapper.INSTANCE.toPinGetResList(course.getPinList());
+            redisProvider.multiSet(CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList()));
         }
-        return CourseServiceMapper.INSTANCE.toCourseDetailGetRes(course, pinResList);
+
+        List<EditorGetRes> editorGetResList =
+                CourseServiceMapper.INSTANCE.toEditorGetResList(course.getEditorList());
+
+        return CourseDetailGetRes.builder()
+                .courseId(course.getCourseId())
+                .courseName(course.getCourseName())
+                .editorCnt(editorGetResList.size())
+                .pinCnt(pinResList.size())
+                .editorGetResList(editorGetResList)
+                .pinResList(pinResList)
+                .build();
     }
 
     @Transactional(readOnly = true)

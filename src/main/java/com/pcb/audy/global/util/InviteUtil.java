@@ -5,6 +5,8 @@ import static com.pcb.audy.global.response.ResultCode.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.course.dto.request.CourseInviteRedisReq;
 import com.pcb.audy.global.exception.GlobalException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -34,8 +36,11 @@ public class InviteUtil {
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
             byte[] encryptedBytes = cipher.doFinal(json.getBytes());
 
-            // 암호화된 데이터를 Base64 문자열로 변환
-            return Base64.getEncoder().encodeToString(encryptedBytes);
+            // 암호화된 데이터를 Base64 문자열로 변환 (필요한 경우)
+            String base64Encoded = Base64.getEncoder().encodeToString(encryptedBytes);
+
+            // Base64 인코딩 문자열을 URL 인코딩
+            return URLEncoder.encode(base64Encoded, "UTF-8");
         } catch (Exception e) {
             throw new GlobalException(FAILED_ENCRYPT);
         }
@@ -43,8 +48,10 @@ public class InviteUtil {
 
     public CourseInviteRedisReq decryptCourseInviteReq(String encryptedData) {
         try {
+            String decodedData = URLDecoder.decode(encryptedData, "UTF-8");
+
             // Base64 인코딩된 문자열을 바이트 배열로 변환
-            byte[] decodedBytes = Base64.getDecoder().decode(encryptedData);
+            byte[] decodedBytes = Base64.getDecoder().decode(decodedData);
 
             // AES 복호화
             Cipher cipher = Cipher.getInstance("AES");

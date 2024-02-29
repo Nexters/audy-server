@@ -18,9 +18,11 @@ public enum ResultCode {
 
     NOT_FOUND_COURSE(3000, "코스를 찾을 수 없습니다."),
     NOT_ADMIN_COURSE(3001, "해당 코스에 변경 권한이 없습니다."),
+    VALID_COURSE_NAME(3002, "코스 이름은 10글자 이하로 작성해야 합니다."),
 
     NOT_FOUND_PIN(4000, "핀을 찾을 수 없습니다."),
     EXCEED_PIN_LIMIT(4001, "한 코스 당 15개의 핀만 등록 가능합니다."),
+    VALID_PIN_NAME(4002, "장소 이름은 10글자 이하로 작성해야 합니다."),
 
     NOT_FOUND_EDITOR(5000, "에디터를 찾을 수 없습니다."),
     NOT_VALID_KEY(5001, "유효기간이 만료된 링크입니다."),

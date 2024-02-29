@@ -27,14 +27,11 @@ public class PinService {
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
-        log.info("savePin 진입");
+        PinValidator.validateName(pinSaveReq.getPinName());
         int size = redisProvider.getByPattern(courseId + ":*").size();
-        log.info(String.valueOf(size));
         isExceedPinLimit(size);
-        log.info("limit check");
 
         String sequence = lexoRankUtil.getLexoRank(courseId, size);
-        log.info("get rank check");
         PinRedisRes pinRedisRes =
                 PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
         redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
@@ -63,6 +60,7 @@ public class PinService {
     }
 
     public PinNameUpdateRes updatePinName(Long courseId, PinNameUpdateReq pinNameUpdateReq) {
+        PinValidator.validateName(pinNameUpdateReq.getPinName());
         String key = getKey(courseId, pinNameUpdateReq.getPinId());
         PinRedisRes prevPin = objectMapper.convertValue(redisProvider.get(key), PinRedisRes.class);
         PinValidator.validate(prevPin);

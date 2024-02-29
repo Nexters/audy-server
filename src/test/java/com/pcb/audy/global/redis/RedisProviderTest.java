@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.pcb.audy.test.RedisTest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +63,25 @@ class RedisProviderTest implements RedisTest {
     }
 
     @Test
+    @DisplayName("데이터 list 조회 테스트")
+    void 데이터_list_조회() {
+        // given
+        when(redisTemplate.opsForList()).thenReturn(listOperations);
+        when(listOperations.size(any())).thenReturn(1L);
+        when(listOperations.range(any(), anyLong(), anyLong())).thenReturn(List.of(TEST_VALUE));
+
+        // when
+        List<Object> values = redisProvider.getValues(TEST_KEY);
+
+        // then
+        verify(redisTemplate, times(2)).opsForList();
+        verify(listOperations).size(any());
+        verify(listOperations).range(any(), anyLong(), anyLong());
+        assertThat(values.size()).isEqualTo(1);
+        assertThat(values.get(0)).isEqualTo(TEST_VALUE);
+    }
+
+    @Test
     @DisplayName("데이터 삭제 테스트")
     void 데이터_삭제() {
         // given
@@ -87,7 +107,6 @@ class RedisProviderTest implements RedisTest {
         assertThat(result).isEqualTo(TRUE);
     }
 
-    // TODO add save list
     @Test
     @DisplayName("데이터 list에 저장 테스트")
     void 데이터_list_저장() {

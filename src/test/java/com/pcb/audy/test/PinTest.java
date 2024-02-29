@@ -13,7 +13,7 @@ public interface PinTest extends CourseTest {
     String TEST_ADDRESS = "address";
     String TEST_SEQUENCE = "0|100000:";
 
-    String TEST_UPDATED_PIN_NAME = "updatedPinName";
+    String TEST_UPDATED_PIN_NAME = "updatedPin";
 
     Pin TEST_PIN =
             Pin.builder()

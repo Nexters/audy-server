@@ -52,7 +52,7 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}")
-    public BasicResponse<CourseDetailGetRes> getCourse(@PathVariable Long courseId) {
+    public BasicResponse<CourseDetailGetRes> getCourse(@PathVariable("courseId") Long courseId) {
         return BasicResponse.success(courseService.getCourse(courseId));
     }
 

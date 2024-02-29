@@ -1,6 +1,7 @@
 package com.pcb.audy.domain.user.controller;
 
 import com.pcb.audy.domain.user.dto.response.UserGetRes;
+import com.pcb.audy.domain.user.dto.response.UserGetResList;
 import com.pcb.audy.domain.user.service.UserService;
 import com.pcb.audy.global.auth.PrincipalDetails;
 import com.pcb.audy.global.response.BasicResponse;
@@ -26,5 +27,10 @@ public class UserController {
         }
 
         return BasicResponse.success(userService.getUser(userId));
+    }
+
+    @GetMapping("/course")
+    public BasicResponse<UserGetResList> getCourseUser(@RequestParam Long courseId) {
+        return BasicResponse.success(userService.getUsers(courseId));
     }
 }
