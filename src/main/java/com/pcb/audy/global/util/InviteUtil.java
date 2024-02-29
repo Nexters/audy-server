@@ -9,9 +9,11 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InviteUtil {
@@ -56,6 +58,7 @@ public class InviteUtil {
             // JSON 문자열을 CourseInviteReq 객체로 변환
             return objectMapper.readValue(json, CourseInviteRedisReq.class);
         } catch (Exception e) {
+            log.error("exception msg", e);
             throw new GlobalException(FAILED_DECRYPT);
         }
     }
