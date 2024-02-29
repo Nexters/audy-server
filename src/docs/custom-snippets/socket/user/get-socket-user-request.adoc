@@ -1,0 +1,5 @@
+[source,http,options="nowrap"]
+----
+SEND /pub/{courseId}/user
+EX /pub/1/user
+----

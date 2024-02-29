@@ -1,0 +1,18 @@
+[source,http,options="nowrap"]
+----
+SUBSCRIBE /sub/{courseId}/user
+EX /sub/1/user
+Content-Type: application/json
+{
+  "code" : 0,
+  "message" : "실행에 성공했습니다.",
+  "data" : {
+    "total" : 1,
+    "users" : [
+        {
+            "userId": 1
+        }
+    ]
+  }
+}
+----

@@ -26,7 +26,11 @@ include::{snippets}/sample-controller-test/샘플_전체_조회/auto-section.ado
 == user API
 
 include::{snippets}/user-controller-test/유저_조회/auto-section.adoc[]
-include::{snippets}/user-controller-test/코스_동시_접속_유저_조회/auto-section.adoc[]
+
+=== Get socket users API
+
+include::{snippets}/../../src/docs/custom-snippets/socket/user/get-socket-user-request.adoc[]
+include::{snippets}/../../src/docs/custom-snippets/socket/user/get-socket-user-response.adoc[]
 
 == pin API
 
