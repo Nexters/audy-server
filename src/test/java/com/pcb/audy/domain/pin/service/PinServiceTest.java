@@ -79,7 +79,7 @@ class PinServiceTest implements PinTest {
         // then
         verify(redisProvider).get(any());
         verify(objectMapper).convertValue(any(), eq(PinRedisRes.class));
-        verify(redisProvider).set(any(), any(), anyLong());
+        verify(redisProvider).setPin(any(), any(), anyLong());
         assertThat(pinNameUpdateRes.getPinName()).isEqualTo(TEST_UPDATED_PIN_NAME);
     }
 

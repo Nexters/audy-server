@@ -34,7 +34,7 @@ public class PinService {
         String sequence = lexoRankUtil.getLexoRank(courseId, size);
         PinRedisRes pinRedisRes =
                 PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
-        redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
+        redisProvider.setPin(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
     }
 
@@ -55,7 +55,7 @@ public class PinService {
                         .sequence(sequence)
                         .build();
 
-        redisProvider.set(key, updatedPinRedisRes, PIN_EXPIRE_TIME);
+        redisProvider.setPin(key, updatedPinRedisRes, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinOrderUpdateRes(pinOrderUpdateReq);
     }
 
@@ -75,7 +75,7 @@ public class PinService {
                         .address(prevPin.getAddress())
                         .sequence(prevPin.getSequence())
                         .build();
-        redisProvider.set(key, updatedPin, PIN_EXPIRE_TIME);
+        redisProvider.setPin(key, updatedPin, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinNameUpdateRes(updatedPin);
     }
 
