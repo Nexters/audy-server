@@ -1,10 +1,10 @@
 package com.pcb.audy.global.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pravin.raha.lexorank4j.LexoRank;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
+import com.pcb.audy.domain.pin.service.PinServiceMapper;
 import com.pcb.audy.global.redis.RedisProvider;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.util.CollectionUtils;
 public class LexoRankUtil {
 
     private final RedisProvider redisProvider;
-    private final ObjectMapper objectMapper;
 
     public String getLexoRank(Long courseId, int order) {
         // 어떤 코스에(courseId), 몇 번째 순서에(order), 어떤 핀을 넣을 것인가(target)
@@ -43,19 +42,12 @@ public class LexoRankUtil {
 
     public List<PinGetRes> sortByLexoRank(Long courseId) {
         String pattern = courseId + ":*";
-        List<Object> redisData = redisProvider.getByPattern(pattern);
+        List<PinRedisRes> redisData = redisProvider.getPinsByPattern(pattern);
 
         if (redisData == null) {
             return List.of();
         }
-
-        List<PinGetRes> pinResList = new ArrayList<>();
-        for (Object pin : redisData) {
-            PinGetRes pinRedisRes = objectMapper.convertValue(pin, PinGetRes.class);
-            pinResList.add(pinRedisRes);
-        }
-
-        Collections.sort(pinResList);
-        return pinResList;
+        Collections.sort(redisData);
+        return PinServiceMapper.INSTANCE.toPinGetResList(redisData);
     }
 }

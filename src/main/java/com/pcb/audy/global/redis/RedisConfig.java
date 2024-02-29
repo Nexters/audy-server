@@ -1,5 +1,6 @@
 package com.pcb.audy.global.redis;
 
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,5 +30,15 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, PinRedisRes> pinRedisTemplate(
+            RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, PinRedisRes> pinRedisTemplate = new RedisTemplate<>();
+        pinRedisTemplate.setConnectionFactory(connectionFactory);
+        pinRedisTemplate.setKeySerializer(new StringRedisSerializer());
+        pinRedisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(PinRedisRes.class));
+        return pinRedisTemplate;
     }
 }

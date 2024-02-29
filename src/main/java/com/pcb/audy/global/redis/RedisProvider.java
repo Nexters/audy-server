@@ -19,7 +19,24 @@ import org.springframework.util.CollectionUtils;
 @RequiredArgsConstructor
 public class RedisProvider {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, PinRedisRes> redisPinTemplate;
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
+
+    public List<PinRedisRes> getPinsByPattern(String pattern) {
+        Set<String> keys = redisPinTemplate.keys(pattern);
+        if (CollectionUtils.isEmpty(keys)) {
+            return List.of();
+        }
+        return redisPinTemplate.opsForValue().multiGet(keys);
+    }
+
+    public void setPin(String key, PinRedisRes o, long expireTime) {
+        if (hasKey(key)) {
+            delete(key);
+        }
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(PinRedisRes.class));
+        redisTemplate.opsForValue().set(key, o, Duration.ofMillis(expireTime));
+    }
 
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
