@@ -8,6 +8,7 @@ import com.pcb.audy.global.socket.handler.CustomChannelInterceptor;
 import com.pcb.audy.global.socket.handler.CustomHandshakeInterceptor;
 import com.pcb.audy.global.socket.handler.CustomPrincipalHandshakeHandler;
 import com.pcb.audy.global.socket.handler.SocketErrorHandler;
+import com.pcb.audy.global.util.PinUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final RedisProvider redisProvider;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
+    private final PinUtil pinUtil;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -57,7 +59,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Bean
     public ChannelInterceptor customChannelInterceptor() {
-        return new CustomChannelInterceptor(redisProvider, objectMapper);
+        return new CustomChannelInterceptor(redisProvider, objectMapper, pinUtil);
     }
 
     @Bean
