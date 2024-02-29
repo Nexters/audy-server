@@ -44,7 +44,7 @@ public class LexoRankUtil {
         String pattern = courseId + ":*";
         List<PinRedisRes> redisData = redisProvider.getPinsByPattern(pattern);
 
-        if (redisData == null) {
+        if (CollectionUtils.isEmpty(redisData)) {
             return List.of();
         }
         Collections.sort(redisData);
