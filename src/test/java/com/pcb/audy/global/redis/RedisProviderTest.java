@@ -94,6 +94,20 @@ class RedisProviderTest implements RedisTest {
     }
 
     @Test
+    @DisplayName("list 데이터 삭제 테스트")
+    void list_데이터_삭제() {
+        // given
+        when(redisTemplate.opsForList()).thenReturn(listOperations);
+
+        // when
+        redisProvider.deleteValue(TEST_KEY, TEST_VALUE);
+
+        // then
+        verify(redisTemplate).opsForList();
+        verify(listOperations).remove(any(), anyLong(), any());
+    }
+
+    @Test
     @DisplayName("데이터 존재 확인 테스트")
     void 데이터_존재_확인() {
         // given
