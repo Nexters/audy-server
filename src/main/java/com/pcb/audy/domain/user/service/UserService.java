@@ -31,10 +31,13 @@ public class UserService {
         String key = COURSE_PREFIX + courseId;
 
         List<SocketUserGetRes> users =
-                UserServiceMapper.INSTANCE.toUserGetResList(
-                        redisProvider.getValues(key).stream()
-                                .map(user -> objectMapper.convertValue(user, User.class))
-                                .toList());
+                redisProvider.getValues(key).stream()
+                        .map(
+                                user ->
+                                        SocketUserGetRes.builder()
+                                                .userId(objectMapper.convertValue(user, Long.class))
+                                                .build())
+                        .toList();
 
         return UserGetResList.builder().users(users).total(users.size()).build();
     }

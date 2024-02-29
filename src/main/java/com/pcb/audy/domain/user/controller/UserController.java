@@ -31,6 +31,7 @@ public class UserController {
 
     @GetMapping("/course")
     public BasicResponse<UserGetResList> getCourseUser(@RequestParam Long courseId) {
+        // TODO delete
         return BasicResponse.success(userService.getUsers(courseId));
     }
 }
