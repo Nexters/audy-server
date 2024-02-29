@@ -88,6 +88,10 @@ public class RedisProvider {
         }
     }
 
+    public void deleteValue(String key, Object o) {
+        redisTemplate.opsForList().remove(key, 1L, o);
+    }
+
     public void delete(String key) {
         redisTemplate.delete(key);
     }
