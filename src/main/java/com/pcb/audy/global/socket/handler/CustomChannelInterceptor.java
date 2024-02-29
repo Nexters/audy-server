@@ -29,7 +29,8 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
             SocketPrincipal socketPrincipal =
                     objectMapper.convertValue(accessor.getUser(), SocketPrincipal.class);
             String courseId = objectMapper.convertValue(keys.get("courseId"), String.class);
-            redisProvider.setValues(getKey(courseId), socketPrincipal.getUser().getUserId(), Integer.MAX_VALUE);
+            redisProvider.setValues(
+                    getKey(courseId), socketPrincipal.getUser().getUserId(), Integer.MAX_VALUE);
         }
 
         if (isDisconnectRequest(accessor)) {
