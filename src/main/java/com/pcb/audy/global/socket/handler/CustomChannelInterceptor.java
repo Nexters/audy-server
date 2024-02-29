@@ -24,12 +24,21 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (isConnectRequest(accessor)) {
             Map<String, Object> keys = accessor.getSessionAttributes();
             SocketPrincipal socketPrincipal =
                     objectMapper.convertValue(accessor.getUser(), SocketPrincipal.class);
             String courseId = objectMapper.convertValue(keys.get("courseId"), String.class);
-            redisProvider.setValues(getKey(courseId), socketPrincipal.getUser(), Integer.MAX_VALUE);
+            redisProvider.setValues(
+                    getKey(courseId), socketPrincipal.getUser().getUserId(), Integer.MAX_VALUE);
+        }
+
+        if (isDisconnectRequest(accessor)) {
+            Map<String, Object> keys = accessor.getSessionAttributes();
+            SocketPrincipal socketPrincipal =
+                    objectMapper.convertValue(accessor.getUser(), SocketPrincipal.class);
+            String courseId = objectMapper.convertValue(keys.get("courseId"), String.class);
+            redisProvider.deleteValue(getKey(courseId), socketPrincipal.getUser().getUserId());
         }
 
         return message;
@@ -40,5 +49,13 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
 
     private String getKey(String courseId) {
         return SOCKET_PREFIX + courseId;
+    }
+
+    private boolean isConnectRequest(StompHeaderAccessor accessor) {
+        return accessor != null && StompCommand.CONNECT.equals(accessor.getCommand());
+    }
+
+    private boolean isDisconnectRequest(StompHeaderAccessor accessor) {
+        return accessor != null && StompCommand.DISCONNECT.equals(accessor.getCommand());
     }
 }
