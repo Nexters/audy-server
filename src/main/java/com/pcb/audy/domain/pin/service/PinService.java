@@ -1,11 +1,14 @@
 package com.pcb.audy.domain.pin.service;
 
+import static com.pcb.audy.global.response.ResultCode.FAILED_DECRYPT;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.request.PinDeleteReq;
 import com.pcb.audy.domain.pin.dto.request.PinNameUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinOrderUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
 import com.pcb.audy.domain.pin.dto.response.*;
+import com.pcb.audy.global.exception.GlobalException;
 import com.pcb.audy.global.redis.RedisProvider;
 import com.pcb.audy.global.util.LexoRankUtil;
 import com.pcb.audy.global.validator.PinValidator;
@@ -28,14 +31,18 @@ public class PinService {
 
     public PinSaveRes savePin(Long courseId, PinSaveReq pinSaveReq) {
         PinValidator.validateName(pinSaveReq.getPinName());
-        int size = redisProvider.getByPattern(courseId + ":*").size();
-        isExceedPinLimit(size);
+        try {
+            int size = redisProvider.multiGetRedisValue(courseId + ":*", PinGetRes.class).size();
+            isExceedPinLimit(size);
 
-        String sequence = lexoRankUtil.getLexoRank(courseId, size);
-        PinRedisRes pinRedisRes =
-                PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
-        redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
-        return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
+            String sequence = lexoRankUtil.getLexoRank(courseId, size);
+            PinRedisRes pinRedisRes =
+                    PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
+            redisProvider.set(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
+            return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
+        } catch (Exception e) {
+            throw new GlobalException(FAILED_DECRYPT);
+        }
     }
 
     public PinOrderUpdateRes updatePinOrder(Long courseId, PinOrderUpdateReq pinOrderUpdateReq) {

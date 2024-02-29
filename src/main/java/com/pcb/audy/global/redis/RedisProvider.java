@@ -1,10 +1,14 @@
 package com.pcb.audy.global.redis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
@@ -13,16 +17,49 @@ import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 @Component
 @RequiredArgsConstructor
 public class RedisProvider {
     private final RedisTemplate<String, Object> redisTemplate;
     private final long PIN_EXPIRE_TIME = Integer.MAX_VALUE;
+    private final ObjectMapper objectMapper;
 
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
+    }
+
+    public <T> T getRedisValue(String key, Class<T> classType) throws JsonProcessingException {
+        String redisValue = (String) redisTemplate.opsForValue().get(key);
+        if (ObjectUtils.isEmpty(redisValue)) {
+            return null;
+        } else {
+            return objectMapper.readValue(redisValue, classType);
+        }
+    }
+
+    public <T> List<T> multiGetRedisValue(String pattern, Class<T> classType)
+            throws JsonProcessingException {
+        Set<String> keys = redisTemplate.keys(pattern);
+        // Redis에서 여러 키에 대한 값을 한 번에 조회
+        List<Object> redisValues = redisTemplate.opsForValue().multiGet(new ArrayList<>(keys));
+        if (ObjectUtils.isEmpty(redisValues)) {
+            return List.of();
+        } else {
+            // 조회된 값들을 각각 지정된 클래스 타입으로 역직렬화
+            return redisValues.stream()
+                    .filter(redisValue -> !ObjectUtils.isEmpty(redisValue))
+                    .map(
+                            redisValue -> {
+                                try {
+                                    return objectMapper.convertValue(redisValue, classType);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            })
+                    .collect(Collectors.toList());
+        }
     }
 
     public List<Object> getValues(String key) {
@@ -32,14 +69,6 @@ public class RedisProvider {
         }
 
         return redisTemplate.opsForList().range(key, 0, len - 1);
-    }
-
-    public List<Object> getByPattern(String pattern) {
-        Set<String> keys = redisTemplate.keys(pattern);
-        if (CollectionUtils.isEmpty(keys)) {
-            return List.of();
-        }
-        return redisTemplate.opsForValue().multiGet(keys);
     }
 
     public void set(String key, Object o, long expireTime) {
