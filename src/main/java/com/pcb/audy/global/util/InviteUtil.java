@@ -48,11 +48,7 @@ public class InviteUtil {
 
     public CourseInviteRedisReq decryptCourseInviteReq(String encryptedData) {
         try {
-            String sanitizedData = encryptedData.replaceAll("\\s", "");
-            log.info(sanitizedData);
-
-            String decodedData = URLDecoder.decode(sanitizedData, "UTF-8");
-            log.info(decodedData);
+            String decodedData = URLDecoder.decode(encryptedData, "UTF-8");
 
             // Base64 인코딩된 문자열을 바이트 배열로 변환
             byte[] decodedBytes = Base64.getDecoder().decode(decodedData);
@@ -64,12 +60,8 @@ public class InviteUtil {
             byte[] decryptedBytes = cipher.doFinal(decodedBytes);
 
             // CourseInviteReq 객체로 변환
-            log.info(
-                    String.valueOf(
-                            objectMapper.readValue(decryptedBytes, CourseInviteRedisReq.class).getCourseId()));
             return objectMapper.readValue(decryptedBytes, CourseInviteRedisReq.class);
         } catch (Exception e) {
-            log.error("exception msg", e);
             throw new GlobalException(FAILED_DECRYPT);
         }
     }
