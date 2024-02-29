@@ -64,7 +64,9 @@ public class InviteUtil {
             byte[] decryptedBytes = cipher.doFinal(decodedBytes);
 
             // CourseInviteReq 객체로 변환
-            log.info(String.valueOf(objectMapper.readValue(decryptedBytes, CourseInviteRedisReq.class).getCourseId()));
+            log.info(
+                    String.valueOf(
+                            objectMapper.readValue(decryptedBytes, CourseInviteRedisReq.class).getCourseId()));
             return objectMapper.readValue(decryptedBytes, CourseInviteRedisReq.class);
         } catch (Exception e) {
             log.error("exception msg", e);
