@@ -35,7 +35,7 @@ public class PinController {
     @SendTo("/sub/{courseId}/pin/modification/sequence")
     public BasicResponse<PinOrderUpdateRes> updateOrder(
             @DestinationVariable Long courseId, @RequestBody PinOrderUpdateReq pinOrderUpdateReq) {
-        return BasicResponse.success(pinService.updatePinOrder(courseId, pinOrderUpdateReq));
+        return BasicResponse.success(pinService.updatePinSequence(courseId, pinOrderUpdateReq));
     }
 
     @MessageMapping("/{courseId}/pin/modification/name")

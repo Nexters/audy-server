@@ -28,7 +28,7 @@ public class PinHttpController {
     @PatchMapping("/{courseId}/order")
     public BasicResponse<PinOrderUpdateRes> updatePinOrder(
             @PathVariable("courseId") Long courseId, @RequestBody PinOrderUpdateReq pinOrderUpdateReq) {
-        return BasicResponse.success(pinService.updatePinOrder(courseId, pinOrderUpdateReq));
+        return BasicResponse.success(pinService.updatePinSequence(courseId, pinOrderUpdateReq));
     }
 
     @PatchMapping("/{courseId}/name")
