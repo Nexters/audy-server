@@ -45,4 +45,32 @@ public class PinRedisRes implements Comparable<PinRedisRes> {
         LexoRank otherRank = LexoRank.parse(other.sequence);
         return thisRank.compareTo(otherRank);
     }
+
+    @Override
+    public String toString() {
+        return "PinSaveReq {"
+                + ", courseId='"
+                + courseId
+                + '\''
+                + ", pinId='"
+                + pinId
+                + '\''
+                + ", pinName='"
+                + pinName
+                + '\''
+                + ", originName='"
+                + originName
+                + '\''
+                + ", latitude="
+                + latitude
+                + ", longitude="
+                + longitude
+                + ", address='"
+                + address
+                + '\''
+                + ", sequence='"
+                + sequence
+                + '\''
+                + '}';
+    }
 }
