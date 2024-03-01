@@ -34,8 +34,8 @@ public class LexoRankUtil {
             LexoRank nowRank = LexoRank.parse(pinGetResList.get(order).getSequence());
             return nowRank.genNext().toString();
         } else { // 어떤 것의 사이에 들어간다고 했을 때
-            LexoRank nowRank = LexoRank.parse(pinGetResList.get(order).getSequence());
-            LexoRank nextRank = LexoRank.parse(pinGetResList.get(order + 1).getSequence());
+            LexoRank nowRank = LexoRank.parse(pinGetResList.get(order - 1).getSequence());
+            LexoRank nextRank = LexoRank.parse(pinGetResList.get(order).getSequence());
             return nowRank.between(nextRank).toString();
         }
     }
