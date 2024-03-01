@@ -11,11 +11,13 @@ import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
 import com.pcb.audy.domain.pin.service.PinService;
 import com.pcb.audy.global.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PinController {
@@ -25,6 +27,7 @@ public class PinController {
     @SendTo("/sub/{courseId}/pin/addition")
     public BasicResponse<PinSaveRes> savePin(
             @DestinationVariable Long courseId, @RequestBody PinSaveReq pinSaveReq) {
+        log.info("SavePinReq: " + pinSaveReq.toString());
         return BasicResponse.success(pinService.savePin(courseId, pinSaveReq));
     }
 
