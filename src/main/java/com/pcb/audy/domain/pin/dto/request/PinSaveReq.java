@@ -30,4 +30,26 @@ public class PinSaveReq {
         this.address = address;
         this.sequence = sequence;
     }
+
+    @Override
+    public String toString() {
+        return "PinSaveReq {"
+                + "pinName='"
+                + pinName
+                + '\''
+                + ", originName='"
+                + originName
+                + '\''
+                + ", latitude="
+                + latitude
+                + ", longitude="
+                + longitude
+                + ", address='"
+                + address
+                + '\''
+                + ", sequence='"
+                + sequence
+                + '\''
+                + '}';
+    }
 }
