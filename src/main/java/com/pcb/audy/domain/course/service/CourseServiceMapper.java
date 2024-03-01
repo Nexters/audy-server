@@ -5,9 +5,6 @@ import com.pcb.audy.domain.course.dto.response.CourseSaveRes;
 import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.editor.entity.Editor;
-import com.pcb.audy.domain.pin.dto.response.PinGetRes;
-import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
-import com.pcb.audy.domain.pin.entity.Pin;
 import java.util.List;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -41,8 +38,4 @@ public interface CourseServiceMapper {
     EditorGetRes toEditorGetRes(Editor editor);
 
     List<EditorGetRes> toEditorGetResList(List<Editor> editor);
-
-    List<PinRedisRes> toPinRedisResList(List<Pin> pinList);
-
-    List<PinGetRes> toPinGetResList(List<Pin> pinList);
 }
