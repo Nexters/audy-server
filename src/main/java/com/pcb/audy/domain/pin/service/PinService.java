@@ -34,6 +34,7 @@ public class PinService {
         String sequence = lexoRankUtil.getLexoRank(courseId, size);
         PinRedisRes pinRedisRes =
                 PinServiceMapper.INSTANCE.toPinRedisRes(pinSaveReq, courseId, sequence);
+        log.info("PinRedisRes: " + pinRedisRes.toString());
         redisProvider.setPin(getKey(courseId, pinRedisRes.getPinId()), pinRedisRes, PIN_EXPIRE_TIME);
         return PinServiceMapper.INSTANCE.toPinSaveRes(pinRedisRes);
     }
