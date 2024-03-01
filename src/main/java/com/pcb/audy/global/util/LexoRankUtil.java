@@ -48,6 +48,6 @@ public class LexoRankUtil {
             return List.of();
         }
         Collections.sort(redisData);
-        return PinServiceMapper.INSTANCE.toPinGetResList(redisData);
+        return PinServiceMapper.INSTANCE.toPinGetResListFromRedis(redisData);
     }
 }

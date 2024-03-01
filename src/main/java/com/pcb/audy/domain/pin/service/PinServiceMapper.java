@@ -23,7 +23,14 @@ public interface PinServiceMapper {
 
     PinGetRes toPinGetRes(PinRedisRes pinRedisRes);
 
-    List<PinGetRes> toPinGetResList(List<PinRedisRes> pinList);
+    @Mapping(target = "courseId", expression = "java(pin.getCourse().getCourseId())")
+    PinRedisRes toPinRedisResFromPin(Pin pin);
+
+    List<PinRedisRes> toPinRedisResListFromPin(List<Pin> pinList);
+
+    List<PinGetRes> toPinGetResListFromPin(List<Pin> pinList);
+
+    List<PinGetRes> toPinGetResListFromRedis(List<PinRedisRes> pinList);
 
     PinNameUpdateRes toPinNameUpdateRes(PinRedisRes pinRedisRes);
 

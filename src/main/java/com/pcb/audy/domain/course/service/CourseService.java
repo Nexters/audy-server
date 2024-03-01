@@ -9,6 +9,7 @@ import com.pcb.audy.domain.editor.dto.response.EditorGetRes;
 import com.pcb.audy.domain.editor.entity.Editor;
 import com.pcb.audy.domain.editor.repository.EditorRepository;
 import com.pcb.audy.domain.pin.dto.response.PinGetRes;
+import com.pcb.audy.domain.pin.service.PinServiceMapper;
 import com.pcb.audy.domain.user.entity.User;
 import com.pcb.audy.domain.user.repository.UserRepository;
 import com.pcb.audy.global.meta.Role;
@@ -115,8 +116,9 @@ public class CourseService {
         List<PinGetRes> pinResList = lexoUtil.sortByLexoRank(courseId);
         if (CollectionUtils.isEmpty(pinResList)) {
             // Redis에 데이터가 없는 경우, DB에서 가져오기 + Redis에 캐싱
-            pinResList = CourseServiceMapper.INSTANCE.toPinGetResList(course.getPinList());
-            redisProvider.multiSet(CourseServiceMapper.INSTANCE.toPinRedisResList(course.getPinList()));
+            pinResList = PinServiceMapper.INSTANCE.toPinGetResListFromPin(course.getPinList());
+            redisProvider.multiSet(
+                    PinServiceMapper.INSTANCE.toPinRedisResListFromPin(course.getPinList()));
         }
 
         List<EditorGetRes> editorGetResList =
