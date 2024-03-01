@@ -1,6 +1,6 @@
 package com.pcb.audy.test;
 
-import com.pcb.audy.domain.pin.dto.response.PinSaveRes;
+import com.pcb.audy.domain.pin.dto.response.PinRedisRes;
 import com.pcb.audy.domain.pin.entity.Pin;
 import java.util.UUID;
 
@@ -27,8 +27,9 @@ public interface PinTest extends CourseTest {
                     .course(TEST_COURSE)
                     .build();
 
-    PinSaveRes TEST_PIN_SAVED =
-            PinSaveRes.builder()
+    PinRedisRes TEST_SAVED_PIN =
+            PinRedisRes.builder()
+                    .courseId(TEST_COURSE_ID)
                     .pinId(TEST_PIN_ID)
                     .pinName(TEST_PIN_NAME)
                     .originName(TEST_PIN_ORIGIN_NAME)
@@ -36,6 +37,5 @@ public interface PinTest extends CourseTest {
                     .longitude(TEST_LONGITUDE)
                     .address(TEST_ADDRESS)
                     .sequence(TEST_SEQUENCE)
-                    .courseId(TEST_COURSE_ID)
                     .build();
 }

@@ -3,6 +3,7 @@ package com.pcb.audy.global.socket.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcb.audy.global.auth.socket.SocketPrincipal;
 import com.pcb.audy.global.redis.RedisProvider;
+import com.pcb.audy.global.util.PinUtil;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 public class CustomChannelInterceptor implements ChannelInterceptor {
     private final RedisProvider redisProvider;
     private final ObjectMapper objectMapper;
+    private final PinUtil pinUtil;
     private final String SOCKET_PREFIX = "socket:";
 
     @Override
@@ -38,7 +40,12 @@ public class CustomChannelInterceptor implements ChannelInterceptor {
             SocketPrincipal socketPrincipal =
                     objectMapper.convertValue(accessor.getUser(), SocketPrincipal.class);
             String courseId = objectMapper.convertValue(keys.get("courseId"), String.class);
-            redisProvider.deleteValue(getKey(courseId), socketPrincipal.getUser().getUserId());
+            String key = getKey(courseId);
+            redisProvider.deleteValue(key, socketPrincipal.getUser().getUserId());
+            int size = redisProvider.getValues(key).size();
+            if (size == 0) {
+                pinUtil.movePinData(Long.parseLong(courseId));
+            }
         }
 
         return message;

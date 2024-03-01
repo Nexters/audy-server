@@ -38,6 +38,14 @@ public class RedisProvider {
         redisTemplate.opsForValue().set(key, o, Duration.ofMillis(expireTime));
     }
 
+    public void deletePinByPattern(String pattern) {
+        Set<String> keys = redisPinTemplate.keys(pattern);
+        if (CollectionUtils.isEmpty(keys)) {
+            return;
+        }
+        redisPinTemplate.delete(keys);
+    }
+
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
     }

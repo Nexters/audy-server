@@ -1,8 +1,10 @@
 package com.pcb.audy.domain.pin.service;
 
+import com.pcb.audy.domain.course.entity.Course;
 import com.pcb.audy.domain.pin.dto.request.PinOrderUpdateReq;
 import com.pcb.audy.domain.pin.dto.request.PinSaveReq;
 import com.pcb.audy.domain.pin.dto.response.*;
+import com.pcb.audy.domain.pin.entity.Pin;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,4 +30,10 @@ public interface PinServiceMapper {
     PinOrderUpdateRes toPinOrderUpdateRes(PinOrderUpdateReq pinOrderUpdateReq);
 
     PinDeleteRes toPinDeleteRes(PinRedisRes pinRedisRes);
+
+    Pin toPin(PinRedisRes pinRedisRes, Course course);
+
+    default List<Pin> toPinList(List<PinRedisRes> pinRedisResList, Course course) {
+        return pinRedisResList.stream().map(pinRedisRes -> toPin(pinRedisRes, course)).toList();
+    }
 }
