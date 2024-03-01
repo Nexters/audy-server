@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PinOrderUpdateRes {
     private UUID pinId;
-    private int order;
+    private String sequence;
 
     @Builder
-    private PinOrderUpdateRes(UUID pinId, int order) {
+    private PinOrderUpdateRes(UUID pinId, String sequence) {
         this.pinId = pinId;
-        this.order = order;
+        this.sequence = sequence;
     }
 }
